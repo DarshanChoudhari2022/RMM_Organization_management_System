@@ -1,0 +1,38 @@
+[
+  {
+    "id": "e1", "year": 2014, "titleMarathi": "शिवजयंती महोत्सव", "titleEnglish": "Shiv Jayanti Celebration",
+    "description": "Grand celebration of Shivaji Maharaj's birth anniversary with cultural programs and processions.",
+    "date": "2014-02-19", "location": "पुणे, महाराष्ट्र",
+    "images": ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    "id": "e2", "year": 2016, "titleMarathi": "गड-किल्ले मोहीम", "titleEnglish": "Fort Trek Campaign",
+    "description": "Community trek to historic forts with educational sessions about Maratha history.",
+    "date": "2016-11-15", "location": "रायगड, महाराष्ट्र",
+    "images": ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    "id": "e3", "year": 2018, "titleMarathi": "इतिहास परिषद", "titleEnglish": "History Conference",
+    "description": "Academic conference on Maratha military strategy and governance systems.",
+    "date": "2018-06-06", "location": "मुंबई, महाराष्ट्र",
+    "images": ["/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    "id": "e4", "year": 2020, "titleMarathi": "ऑनलाइन व्याख्यानमाला", "titleEnglish": "Online Lecture Series",
+    "description": "Virtual lecture series covering lesser-known aspects of Shivaji's administrative reforms.",
+    "date": "2020-08-10", "location": "ऑनलाइन",
+    "images": ["/placeholder.svg"]
+  },
+  {
+    "id": "e5", "year": 2022, "titleMarathi": "शिवगर्जना रॅली", "titleEnglish": "Shivgarjana Rally",
+    "description": "Cultural rally celebrating Maratha heritage with traditional music, dance, and martial arts.",
+    "date": "2022-03-15", "location": "सातारा, महाराष्ट्र",
+    "images": ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+  },
+  {
+    "id": "e6", "year": 2024, "titleMarathi": "स्वराज्य दिन", "titleEnglish": "Swarajya Day",
+    "description": "Commemoration of the founding of Swarajya with youth engagement programs and exhibitions.",
+    "date": "2024-06-06", "location": "कोल्हापूर, महाराष्ट्र",
+    "images": ["/placeholder.svg", "/placeholder.svg"]
+  }
+]

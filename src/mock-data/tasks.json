@@ -1,0 +1,27 @@
+[
+  {
+    "id": "t1", "titleMarathi": "शिवजयंती सजावट", "titleEnglish": "Shiv Jayanti Decoration",
+    "description": "Setup stage decoration and lighting for the Shiv Jayanti celebration event.",
+    "assignedTo": "राजेश पाटील", "dueDate": "2025-02-15", "priority": "high", "status": "pending"
+  },
+  {
+    "id": "t2", "titleMarathi": "ध्वनिक्षेपक व्यवस्था", "titleEnglish": "Sound System Arrangement",
+    "description": "Arrange and test sound systems for the cultural program venue.",
+    "assignedTo": "सुनील जाधव", "dueDate": "2025-02-14", "priority": "high", "status": "pending"
+  },
+  {
+    "id": "t3", "titleMarathi": "प्रसाद वितरण", "titleEnglish": "Prasad Distribution",
+    "description": "Coordinate prasad preparation and distribution among 500+ attendees.",
+    "assignedTo": "प्रिया देशमुख", "dueDate": "2025-02-19", "priority": "medium", "status": "pending"
+  },
+  {
+    "id": "t4", "titleMarathi": "सुरक्षा व्यवस्था", "titleEnglish": "Security Arrangement",
+    "description": "Coordinate with local authorities for security and crowd management.",
+    "assignedTo": "अमित शिंदे", "dueDate": "2025-02-18", "priority": "high", "status": "pending"
+  },
+  {
+    "id": "t5", "titleMarathi": "फोटो/व्हिडिओ", "titleEnglish": "Photography & Video",
+    "description": "Arrange professional photography and videography team for event coverage.",
+    "assignedTo": "निखिल कुलकर्णी", "dueDate": "2025-02-19", "priority": "low", "status": "pending"
+  }
+]

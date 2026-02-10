@@ -73,3 +73,17 @@ export interface Expense {
   category: string;
   status: "approved" | "pending" | "rejected";
 }
+
+export interface Fort {
+  id: string;
+  name: string;
+  nameMarathi?: string;
+  conquestDate?: string;
+  region?: string;
+  type?: "hill" | "sea" | "land";
+  latitude?: number;
+  longitude?: number;
+  strategicNotes?: string;
+  currentStatus?: string;
+  imageUrl?: string;
+}

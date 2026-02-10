@@ -1,0 +1,42 @@
+[
+  {
+    "id": "f1",
+    "name": "Raigad",
+    "nameMarathi": "रायगड",
+    "conquestDate": "1656-01-01",
+    "region": "Konkan",
+    "type": "hill",
+    "latitude": 18.2503,
+    "longitude": 73.4333,
+    "strategicNotes": "Capital fort of Swarajya; coronation site of Chhatrapati Shivaji Maharaj.",
+    "currentStatus": "Tourist fort with restored sections",
+    "imageUrl": "/placeholder.svg"
+  },
+  {
+    "id": "f2",
+    "name": "Pratapgad",
+    "nameMarathi": "प्रतापगड",
+    "conquestDate": "1656-11-01",
+    "region": "Satara",
+    "type": "hill",
+    "latitude": 17.9333,
+    "longitude": 73.5667,
+    "strategicNotes": "Site of the legendary Afzal Khan encounter; controls routes through Jawali forest.",
+    "currentStatus": "Heritage site with memorials",
+    "imageUrl": "/placeholder.svg"
+  },
+  {
+    "id": "f3",
+    "name": "Sinhagad",
+    "nameMarathi": "सिंहगड",
+    "conquestDate": "1670-02-04",
+    "region": "Pune",
+    "type": "hill",
+    "latitude": 18.3667,
+    "longitude": 73.7333,
+    "strategicNotes": "Famous for Tanaji Malusare's night assault; protects approaches to Pune.",
+    "currentStatus": "Popular trekking fort near Pune",
+    "imageUrl": "/placeholder.svg"
+  }
+]
+

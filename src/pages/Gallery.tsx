@@ -1,123 +1,153 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { getGallery } from "@/lib/api";
+import { Film, Hash, X, ZoomIn } from "lucide-react";
+
 import type { GalleryAlbum, GalleryImage } from "@/types";
+import { getGallery } from "@/lib/api";
 
 const Gallery = () => {
-  const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
-  const [selectedAlbum, setSelectedAlbum] = useState<GalleryAlbum | null>(null);
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const { data, isLoading } = useQuery({
+    queryKey: ["gallery"],
+    queryFn: getGallery,
+  });
 
-  useEffect(() => {
-    getGallery().then((data) => {
-      setAlbums(data);
-      if (data.length > 0) setSelectedAlbum(data[0]);
-    });
-  }, []);
+  const albums = data ?? [];
+  const [activeAlbumId, setActiveAlbumId] = useState<string | null>(albums[0]?.id ?? null);
 
-  const currentImages = selectedAlbum?.images || [];
+  const activeAlbum = useMemo(() => {
+    return albums.find((a) => a.id === activeAlbumId) ?? albums[0] ?? null;
+  }, [albums, activeAlbumId]);
 
-  const navigate = (dir: number) => {
-    if (lightboxIndex === null) return;
-    const next = (lightboxIndex + dir + currentImages.length) % currentImages.length;
-    setLightboxIndex(next);
-  };
+  const flatCount = useMemo(() => albums.reduce((sum, a) => sum + a.images.length, 0), [albums]);
+  const [lightbox, setLightbox] = useState<{ image: GalleryImage; album: GalleryAlbum } | null>(null);
 
   return (
-    <div className="bg-background min-h-screen pt-20">
-      {/* Header */}
-      <section className="section-padding pb-8">
-        <div className="max-w-5xl mx-auto text-center">
-          <h1 className="font-devanagari text-4xl md:text-5xl text-gradient-gold mb-3">गॅलरी</h1>
-          <p className="font-serif text-xl text-secondary">Gallery</p>
+    <div className="bg-shiv-dark min-h-screen pt-24">
+      {/* Hero */}
+      <section className="px-6 pb-12 text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="inline-flex items-center gap-3 px-5 py-2 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm">
+            <Film className="text-shiv-orange" size={16} />
+            <span className="text-[10px] text-white font-black uppercase tracking-[0.5em]">Media Gallery</span>
+          </div>
+          <h1 className="text-white mt-8 mb-4">
+            Mandal <span className="italic text-shiv-orange">Records</span>
+          </h1>
+          <p className="text-white/60 font-serif italic text-lg max-w-3xl leading-shiv">
+            Album-based archives with lightbox viewing. (Mock data today; designed for future bulk upload + Drive sync.)
+          </p>
         </div>
       </section>
 
-      {/* Album Selector */}
-      <section className="px-6 md:px-12 lg:px-24 mb-12">
-        <div className="flex gap-4 justify-center flex-wrap">
-          {albums.map((album) => (
-            <button
-              key={album.id}
-              onClick={() => { setSelectedAlbum(album); setLightboxIndex(null); }}
-              className={`glass rounded-xl p-4 w-40 text-center transition-all hover:scale-105 ${
-                selectedAlbum?.id === album.id ? "ring-2 ring-primary glow-saffron" : ""
-              }`}
-            >
-              <div className="w-full h-20 rounded-lg bg-gradient-to-br from-primary/15 to-secondary/15 mb-3" />
-              <p className="font-devanagari text-sm text-secondary">{album.nameMarathi}</p>
-              <p className="text-xs text-muted-foreground">{album.name}</p>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Gallery Grid */}
-      <section className="px-6 md:px-12 lg:px-24 pb-20">
-        <div className="max-w-6xl mx-auto">
-          <AnimatePresence mode="wait">
-            {selectedAlbum && (
-              <motion.div
-                key={selectedAlbum.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+      {/* Album selector */}
+      <section className="sticky top-16 z-30 border-y border-white/5 bg-shiv-dark/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar">
+            {albums.map((a) => (
+              <button
+                key={a.id}
+                onClick={() => setActiveAlbumId(a.id)}
+                className={`px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] border transition-all whitespace-nowrap ${
+                  (activeAlbum?.id ?? null) === a.id
+                    ? "bg-shiv-orange text-white border-shiv-orange shadow-[0_10px_30px_rgba(255,94,0,0.25)]"
+                    : "bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white"
+                }`}
               >
-                {currentImages.map((img, i) => (
-                  <motion.div
-                    key={img.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.05 }}
-                    onClick={() => setLightboxIndex(i)}
-                    className="group cursor-pointer rounded-xl overflow-hidden glass hover:glow-gold transition-all duration-300"
-                  >
-                    <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors flex items-center justify-center">
-                      <span className="text-muted-foreground text-xs">{img.alt}</span>
-                    </div>
-                    {img.caption && (
-                      <p className="p-3 text-xs text-muted-foreground font-devanagari">{img.caption}</p>
-                    )}
-                  </motion.div>
-                ))}
-              </motion.div>
+                {a.name}
+              </button>
+            ))}
+            {albums.length === 0 && (
+              <div className="text-white/50 text-sm font-serif italic">{isLoading ? "Loading…" : "No albums found."}</div>
             )}
-          </AnimatePresence>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/30">
+            <Hash size={12} className="text-shiv-orange" /> {flatCount} Assets
+          </div>
+        </div>
+      </section>
+
+      {/* Album grid */}
+      <section className="px-6 py-16">
+        <div className="max-w-7xl mx-auto">
+          {!activeAlbum ? (
+            <div className="bg-white/5 border border-white/10 p-10 text-white/60 font-serif italic">No album selected.</div>
+          ) : (
+            <div className="space-y-10">
+              <div className="flex items-end justify-between gap-6">
+                <div>
+                  <span className="logo-marathi text-4xl text-white block">{activeAlbum.nameMarathi}</span>
+                  <div className="text-white/50 text-sm font-serif italic mt-2">{activeAlbum.name}</div>
+                </div>
+                <div className="text-white/40 text-[10px] font-black uppercase tracking-widest">
+                  Category: <span className="text-shiv-orange">{activeAlbum.category}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <AnimatePresence mode="popLayout">
+                  {activeAlbum.images.map((img, i) => (
+                    <motion.button
+                      layout
+                      key={img.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.35, delay: Math.min(i * 0.02, 0.2) }}
+                      className="group relative aspect-square overflow-hidden border border-white/10 bg-white/5"
+                      onClick={() => setLightbox({ image: img, album: activeAlbum })}
+                      aria-label="Open image"
+                    >
+                      <img src={img.src} alt={img.alt} className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 flex items-center justify-center">
+                        <div className="w-12 h-12 bg-shiv-orange text-white flex items-center justify-center">
+                          <ZoomIn size={20} />
+                        </div>
+                      </div>
+                      {img.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-left">
+                          <div className="text-white/90 text-[10px] font-black uppercase tracking-widest line-clamp-1">{img.caption}</div>
+                        </div>
+                      )}
+                    </motion.button>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightboxIndex !== null && (
+        {lightbox && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex items-center justify-center"
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6"
+            onClick={() => setLightbox(null)}
           >
-            <button className="absolute top-6 right-6 text-foreground/60 hover:text-foreground z-10" onClick={() => setLightboxIndex(null)}>
-              <X size={28} />
-            </button>
-            <button className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground" onClick={() => navigate(-1)}>
-              <ChevronLeft size={36} />
-            </button>
-            <button className="absolute right-6 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground" onClick={() => navigate(1)}>
-              <ChevronRight size={36} />
-            </button>
-            <motion.div
-              key={lightboxIndex}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="w-full max-w-4xl aspect-video bg-gradient-to-br from-primary/15 to-secondary/15 rounded-xl flex flex-col items-center justify-center mx-8"
+            <button
+              className="absolute top-8 right-8 text-white/60 hover:text-shiv-orange transition-colors p-3 border border-white/10"
+              onClick={() => setLightbox(null)}
+              aria-label="Close"
             >
-              <p className="text-foreground/60">{currentImages[lightboxIndex]?.alt}</p>
-              {currentImages[lightboxIndex]?.caption && (
-                <p className="font-devanagari text-secondary mt-2">{currentImages[lightboxIndex].caption}</p>
-              )}
-            </motion.div>
+              <X size={26} />
+            </button>
+            <div className="max-w-6xl w-full grid lg:grid-cols-3 gap-10 items-center" onClick={(e) => e.stopPropagation()}>
+              <div className="lg:col-span-2 border border-white/10 bg-black/30">
+                <img src={lightbox.image.src} alt={lightbox.image.alt} className="w-full h-auto object-contain max-h-[80vh]" />
+              </div>
+              <div className="text-white space-y-6">
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">
+                  Album: <span className="text-shiv-orange">{lightbox.album.name}</span>
+                </div>
+                <div className="text-3xl logo-marathi">{lightbox.image.caption ?? "Gallery Asset"}</div>
+                <div className="text-white/50 font-serif italic leading-shiv">{lightbox.image.alt}</div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,36 +1,56 @@
-import type { HistoryEntry, EventEntry, GalleryAlbum, Task, BudgetItem, Expense } from "@/types";
+import type { HistoryEntry, EventEntry, GalleryAlbum, Task, BudgetItem, Expense, Fort } from "@/types";
 import historyData from "@/mock-data/history.json";
 import eventsData from "@/mock-data/events.json";
 import galleryData from "@/mock-data/gallery.json";
 import tasksData from "@/mock-data/tasks.json";
 import dashboardData from "@/mock-data/dashboard.json";
 
-// Simulate async API calls — swap internals for real backend later
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:5050/api";
+
+async function safeFetch<T>(path: string, fallback: () => T | Promise<T>): Promise<T> {
+  try {
+    const res = await fetch(`${API_BASE}${path}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()) as T;
+  } catch {
+    return await fallback();
+  }
+}
 
 export async function getHistory(): Promise<HistoryEntry[]> {
-  return historyData as HistoryEntry[];
+  return safeFetch<HistoryEntry[]>("/history", async () => historyData as HistoryEntry[]);
 }
 
 export async function getEvents(): Promise<EventEntry[]> {
-  return eventsData as EventEntry[];
+  return safeFetch<EventEntry[]>("/events", async () => eventsData as EventEntry[]);
 }
 
 export async function getGallery(): Promise<GalleryAlbum[]> {
-  return galleryData as GalleryAlbum[];
+  return safeFetch<GalleryAlbum[]>("/gallery", async () => galleryData as GalleryAlbum[]);
 }
 
 export async function getTasks(): Promise<Task[]> {
-  return tasksData as Task[];
+  return safeFetch<Task[]>("/tasks", async () => tasksData as Task[]);
 }
 
 export async function getBudget(): Promise<BudgetItem[]> {
-  return dashboardData.budget as BudgetItem[];
+  return safeFetch<BudgetItem[]>("/dashboard/budget", async () => dashboardData.budget as BudgetItem[]);
 }
 
 export async function getExpenses(): Promise<Expense[]> {
-  return dashboardData.expenses as Expense[];
+  return safeFetch<Expense[]>("/dashboard/expenses", async () => dashboardData.expenses as Expense[]);
 }
 
 export async function getMonthlyBudget(): Promise<{ month: string; budget: number; actual: number }[]> {
-  return dashboardData.monthlyBudget;
+  return safeFetch("/dashboard/monthly-budget", async () => dashboardData.monthlyBudget);
+}
+
+export async function getForts(params?: { region?: string; type?: "hill" | "sea" | "land" }): Promise<Fort[]> {
+  const query = new URLSearchParams();
+  if (params?.region) query.set("region", params.region);
+  if (params?.type) query.set("type", params.type);
+  const suffix = query.toString() ? `/forts?${query.toString()}` : "/forts";
+  // Fallback from local JSON
+  const fallback = async () => (await import("@/mock-data/forts.json")).default as Fort[];
+  return safeFetch<Fort[]>(suffix, fallback);
 }

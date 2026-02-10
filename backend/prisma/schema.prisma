@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth / RBAC ----------
+enum Role {
+  SUPER_ADMIN
+  EVENT_MANAGER
+  FINANCE_MANAGER
+  MEDIA_MANAGER
+  COMMITTEE_MEMBER
+  MEMBER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id          String     @id @default(cuid())
+  email       String     @unique
+  passwordHash String
+  firstName   String
+  lastName    String
+  phone       String?
+  avatarUrl   String?
+  role        Role       @default(MEMBER)
+  status      UserStatus @default(ACTIVE)
+  joinDate    DateTime   @default(now())
+  dateOfBirth DateTime?
+  address     String?
+  skills      String     @default("[]") // JSON string (simple for sqlite)
+
+  // Relationships
+  varganiPayments VarganiPayment[]
+  createdExpenses Expense[] @relation("ExpenseCreator")
+  approvals       Approval[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+  @@index([status])
+}
+
+// ---------- Public content ----------
+enum HistoryCategory {
+  fort
+  battle
+  treaty
+  event
+}
+
+model HistoryEntry {
+  id           String          @id
+  year         Int
+  titleMarathi String
+  titleEnglish String
+  description  String
+  category     HistoryCategory
+  imageUrl     String
+  sourceBook   String
+  sourcePage   Int
+  sourceAuthor String?
+  sourceChapter String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([year])
+  @@index([category])
+}
+
+enum FortType {
+  hill
+  sea
+  land
+}
+
+model Fort {
+  id              String   @id @default(cuid())
+  name            String
+  nameMarathi     String?
+  conquestDate    DateTime?
+  region          String?
+  type            FortType?
+  latitude        Float?
+  longitude       Float?
+  strategicNotes  String?
+  currentStatus   String?
+  imageUrl        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([region])
+}
+
+// ---------- Events ----------
+model Event {
+  id           String   @id
+  year         Int
+  titleMarathi String
+  titleEnglish String
+  description  String
+  date         String
+  location     String
+
+  mediaItems MediaItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([year])
+}
+
+// ---------- Media ----------
+enum MediaVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model Album {
+  id          String   @id
+  name        String
+  nameMarathi String
+  coverUrl    String
+  category    String
+  visibility  MediaVisibility @default(PUBLIC)
+
+  items       MediaItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MediaItem {
+  id        String   @id
+  type      MediaType @default(IMAGE)
+  src       String
+  alt       String
+  caption   String?
+  tags      String    @default("[]") // JSON string
+  year      Int?
+
+  albumId   String?
+  album     Album?   @relation(fields: [albumId], references: [id])
+
+  eventId   String?
+  event     Event?   @relation(fields: [eventId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([albumId])
+  @@index([eventId])
+}
+
+// ---------- Tasks & approvals ----------
+enum TaskPriority {
+  high
+  medium
+  low
+}
+
+enum TaskStatus {
+  pending
+  approved
+  rejected
+}
+
+model Task {
+  id           String       @id
+  titleMarathi String
+  titleEnglish String
+  description  String
+  assignedTo   String
+  dueDate      String
+  priority     TaskPriority
+  status       TaskStatus   @default(pending)
+
+  approvals Approval[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+model Approval {
+  id         String         @id @default(cuid())
+  token      String         @unique
+  status     ApprovalStatus @default(PENDING)
+  comment    String?
+  respondedAt DateTime?
+  expiresAt  DateTime?
+
+  taskId     String
+  task       Task           @relation(fields: [taskId], references: [id])
+
+  userId     String?
+  user       User?          @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([taskId])
+  @@index([status])
+}
+
+// ---------- Finance ----------
+enum PaymentMode {
+  CASH
+  UPI
+  BANK_TRANSFER
+  CHEQUE
+}
+
+enum PaymentStatus {
+  PENDING
+  RECEIVED
+  REJECTED
+}
+
+model VarganiBudget {
+  id          String @id @default(cuid())
+  year        Int    @unique
+  totalBudget Int
+  perHeadTarget Int
+  memberCount Int
+  notes       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VarganiPayment {
+  id          String        @id @default(cuid())
+  year        Int
+  amount      Int
+  mode        PaymentMode
+  status      PaymentStatus @default(RECEIVED)
+  paymentDate DateTime      @default(now())
+  reference   String?
+  receiptNo   String?
+
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([year])
+  @@index([mode])
+}
+
+enum ExpenseStatus {
+  approved
+  pending
+  rejected
+}
+
+model Expense {
+  id          String        @id
+  description String
+  amount      Int
+  date        String
+  category    String
+  status      ExpenseStatus
+  vendorName  String?
+  billUrl     String?
+  year        Int?
+
+  creatorId   String?
+  creator     User?         @relation("ExpenseCreator", fields: [creatorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+}
+
+model MonthlyBudget {
+  id     String @id @default(cuid())
+  month  String
+  budget Int
+  actual Int
+}
+

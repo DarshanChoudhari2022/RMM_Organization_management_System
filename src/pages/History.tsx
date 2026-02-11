@@ -41,7 +41,7 @@ const timelineData: TimelineEvent[] = [
     description: "At age 16, Chhatrapati Shivaji Maharaj captured his first fort, Torna.",
     details: "This pivotal event marked the beginning of the Maratha Empire. By capturing Torna, Chhatrapati Shivaji Maharaj sent a clear message of independence to the Bijapur Sultanate and began his legendary campaign of fort administration.",
     reference: "Sabhasad Bakhar, p. 8",
-    image: ""
+    image: "/images/Photo1.jpg"
   },
   {
     year: "1674",
@@ -59,7 +59,7 @@ const timelineData: TimelineEvent[] = [
     description: "A lifetime dedicated to sovereignty and mountain warfare.",
     details: "By the time of his passing, Chhatrapati Shivaji Maharaj had built and rebuilt a network of over 300 forts across the Sahyadri range and the Konkan coast, creating an impenetrable defense system that protected Swarajya for centuries.",
     reference: "Kincaid, 'History of Maratha People', p. 280",
-    image: ""
+    image: "/images/MarathaNavel.png"
   }
 ];
 

@@ -106,29 +106,32 @@ const Navbar = () => {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden bg-background border-t border-primary/20 mt-3 overflow-hidden shadow-xl"
+              className="lg:hidden absolute top-[70px] left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-[#D95D1E]/10 shadow-2xl z-[90] overflow-hidden"
             >
-              <div className="flex flex-col p-6 gap-2">
+              <div className="flex flex-col p-8 gap-1">
                 {navLinks.map((link) => (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`py-4 px-4 text-sm font-display font-bold tracking-widest uppercase transition-all border-b border-foreground/5 last:border-0 ${isActive(link.path)
-                      ? "text-primary bg-primary/5 pl-6"
-                      : "text-foreground/70 hover:text-primary hover:pl-6"
+                    className={`py-5 px-6 text-[15px] font-display font-black tracking-widest uppercase transition-all rounded-lg ${isActive(link.path)
+                      ? "text-[#D95D1E] bg-[#D95D1E]/5 pl-8"
+                      : "text-[#2C3E50]/70 hover:text-[#D95D1E] hover:pl-8 hover:bg-gray-50"
                       }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.name}
                   </Link>
                 ))}
+
+                <div className="h-[1px] bg-gray-100 my-4 mx-6"></div>
+
                 <Link
                   to="/login"
-                  className="mt-6 py-4 px-4 btn-primary w-full text-center"
+                  className="mx-6 py-5 rounded-xl bg-[#D95D1E] text-white text-center font-display font-black uppercase tracking-widest shadow-lg shadow-[#D95D1E]/20 active:scale-95 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Admin Portal Login

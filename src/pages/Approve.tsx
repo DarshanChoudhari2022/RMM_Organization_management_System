@@ -22,7 +22,7 @@ const Approve = () => {
       if (!taskId) return null;
       const { data, error } = await supabase.from('tasks').select('*').eq('id', taskId).single();
       if (error) throw error;
-      return data;
+      return data as any;
     },
     enabled: !!taskId
   });
@@ -33,7 +33,7 @@ const Approve = () => {
     queryFn: async () => {
       const { data, error } = await supabase.from('members').select('name').order('name');
       if (error) throw error;
-      return data;
+      return data as { name: string }[];
     }
   });
 
@@ -50,7 +50,7 @@ const Approve = () => {
           comment: comment,
           responded_at: new Date().toISOString()
         }
-      ]);
+      ] as any);
       if (error) throw error;
     },
     onSuccess: (_, status) => {
@@ -131,6 +131,9 @@ const Approve = () => {
 
           {/* Header */}
           <div className="text-center mb-8">
+            <div className="flex justify-center mb-6">
+              <img src="/images/logo.png" alt="Logo" className="w-20 h-20 object-contain drop-shadow-xl" />
+            </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-shiv-saffron/10 text-shiv-saffron rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
               <Shield size={12} /> Shiv Garjana Mandal
             </div>

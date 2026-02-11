@@ -803,7 +803,7 @@ const Dashboard = () => {
       {/* Mobile Header */}
       <div className="md:hidden bg-white p-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-30 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#D95D1E] text-white rounded-lg flex items-center justify-center font-black shadow-lg shadow-[#D95D1E]/20">S</div>
+          <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
             <span className="font-display font-black text-sm tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
             <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
@@ -838,7 +838,7 @@ const Dashboard = () => {
             `}>
         <div className="p-8 border-b border-gray-50 bg-white flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#D95D1E] text-white rounded-xl flex items-center justify-center font-black text-xl shadow-lg shadow-[#D95D1E]/20">S</div>
+            <img src="/images/logo.png" className="w-12 h-12 object-contain drop-shadow-lg" alt="Logo" />
             <div>
               <span className="font-display font-black text-lg tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
               <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>

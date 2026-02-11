@@ -40,15 +40,11 @@ const Navbar = () => {
           {/* Logo Brand */}
           <Link to="/" className="flex items-center gap-4 group">
             <div className="relative">
-              <svg width="48" height="48" viewBox="0 0 100 100" className="group-hover:scale-110 transition-transform duration-300">
-                <circle cx="50" cy="50" r="48" fill="#E67E22" />
-                <circle cx="50" cy="50" r="42" fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" />
-                <text x="50" y="65" textAnchor="middle" fill="white" fontSize="45" fontWeight="900" fontFamily="Playfair Display">श</text>
-                <path d="M50 5 L55 15 L45 15 Z" fill="white" />
-                <path d="M50 95 L55 85 L45 85 Z" fill="white" />
-                <path d="M5 50 L15 55 L15 45 Z" fill="white" />
-                <path d="M95 50 L85 55 L85 45 Z" fill="white" />
-              </svg>
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="w-14 h-14 object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-lg"
+              />
             </div>
             <div className="flex flex-col">
               <span className={`font-display font-black text-xl tracking-tight leading-none transition-colors ${scrolled ? "text-foreground" : "text-foreground"}`}>

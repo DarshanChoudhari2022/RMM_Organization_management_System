@@ -32,9 +32,11 @@ const Navbar = () => {
         >
             <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-sm rotate-45 group-hover:rotate-0 transition-transform duration-500 shadow-lg shadow-primary/20">
-                        <Crown size={20} className="text-white -rotate-45 group-hover:rotate-0 transition-transform duration-500" />
-                    </div>
+                    <img
+                        src="/images/logo.png"
+                        alt="Shivgarjana Logo"
+                        className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-lg"
+                    />
                     <div className="flex flex-col">
                         <span className={`text-xl font-bold tracking-tighter transition-colors font-marathi leading-none ${isScrolled ? "text-foreground" : "text-foreground md:text-white"}`}>
                             शिवगर्जना

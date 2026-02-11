@@ -1,207 +1,102 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle2, MessageSquare, Search, User, XCircle } from "lucide-react";
-
-import type { Task } from "@/types";
-import { getTasks } from "@/lib/api";
-
-type TaskAction = "available" | "not_available" | "comment";
+import { CheckCircle2, Search, Clock, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { Task } from "@/types/admin";
 
 const Tasks = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: getTasks,
+  // Fetch directly from supabase for public page
+  const { data: tasks, isLoading } = useQuery({
+    queryKey: ["public_tasks"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('tasks').select('*').order('date', { ascending: true });
+      if (error) throw error;
+      return data as Task[];
+    }
   });
 
   const [query, setQuery] = useState("");
-  const [commentById, setCommentById] = useState<Record<string, string>>({});
-  const [selectedActionById, setSelectedActionById] = useState<Record<string, TaskAction | null>>({});
 
   const filtered = useMemo(() => {
-    const list = data ?? [];
+    let list = tasks ?? [];
     const q = query.trim().toLowerCase();
     if (!q) return list;
-    return list.filter((t) => {
-      return (
-        t.titleEnglish.toLowerCase().includes(q) ||
-        t.titleMarathi.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q) ||
-        t.assignedTo.toLowerCase().includes(q) ||
-        t.dueDate.toLowerCase().includes(q)
-      );
-    });
-  }, [data, query]);
-
-  const logAction = (task: Task, action: TaskAction, comment?: string) => {
-    // PRD expects backend tracking; for now we keep this UI-only.
-    // eslint-disable-next-line no-console
-    console.log("[TASK_RESPONSE]", {
-      taskId: task.id,
-      action,
-      comment: comment?.trim() || undefined,
-      at: new Date().toISOString(),
-    });
-  };
+    return list.filter((t) =>
+      t.title.toLowerCase().includes(q) ||
+      (t.description && t.description.toLowerCase().includes(q))
+    );
+  }, [tasks, query]);
 
   return (
-    <div className="bg-shiv-dark min-h-screen pt-24 pb-16 px-6">
+    <div className="bg-[#FFFBF2] min-h-screen pt-28 pb-16 px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-white">
-            Task Approval <span className="text-shiv-orange italic">(Mobile-First)</span>
+        <div className="mb-8 text-center md:text-left">
+          <span className="text-[#F05A22] font-bold text-[11px] uppercase tracking-[0.3em] mb-3 block">Mandal Operations</span>
+          <h1 className="text-[#3E2723] text-3xl md:text-4xl font-display font-black tracking-tight mb-3">
+            Active <span className="text-[#F05A22] italic">Tasks</span>
           </h1>
-          <p className="text-white/60 font-serif italic mt-3 leading-shiv max-w-3xl">
-            Tap one action: <span className="text-white/80">उपलब्ध</span>, <span className="text-white/80">अनुपलब्ध</span>, or{" "}
-            <span className="text-white/80">टिप्पणी</span>. This logs to console for now (backend-ready).
+          <p className="text-[#3E2723]/70 text-sm max-w-2xl">
+            View upcoming tasks and confirm your availability.
           </p>
         </div>
 
         {/* Search */}
-        <div className="relative mb-8">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+        <div className="relative mb-8 max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3E2723]/40" size={18} />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tasks…"
-            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-shiv-orange/30"
+            placeholder="Search tasks..."
+            className="w-full pl-12 pr-4 py-3 bg-white border border-[#3E2723]/10 rounded-xl text-[#3E2723] placeholder:text-[#3E2723]/40 focus:outline-none focus:ring-2 focus:ring-[#F05A22]/20 text-sm"
           />
         </div>
 
         {/* Cards */}
         {isLoading ? (
-          <div className="text-white/60 font-serif italic">Loading tasks…</div>
+          <div className="text-[#3E2723]/60 text-sm text-center py-20">Loading tasks...</div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white/5 border border-white/10 p-10 text-white/60 font-serif italic">No tasks match your search.</div>
+          <div className="bg-white border border-[#3E2723]/10 p-10 rounded-2xl text-[#3E2723]/60 text-sm text-center">No active tasks found.</div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <AnimatePresence mode="popLayout">
-              {filtered.map((task, i) => {
-                const selected = selectedActionById[task.id] ?? null;
-                const comment = commentById[task.id] ?? "";
-                const showComment = selected === "comment";
-
-                return (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.25, delay: Math.min(i * 0.03, 0.2) }}
-                    className="bg-white/5 border border-white/10 backdrop-blur-sm overflow-hidden"
-                  >
-                    <div className="p-8">
-                      <div className="flex items-start justify-between gap-6">
-                        <div>
-                          <span className="logo-marathi text-3xl text-white block">{task.titleMarathi}</span>
-                          <div className="text-white/50 text-sm font-serif italic mt-1">{task.titleEnglish}</div>
-                        </div>
-                        <div className="text-right text-white/60 text-sm font-serif italic space-y-2">
-                          <div className="flex items-center justify-end gap-2">
-                            <User size={16} className="text-shiv-orange" />
-                            <span>{task.assignedTo}</span>
-                          </div>
-                          <div className="flex items-center justify-end gap-2">
-                            <Calendar size={16} className="text-shiv-orange" />
-                            <span>{task.dueDate}</span>
-                          </div>
-                        </div>
+              {filtered.map((task, i) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.25, delay: Math.min(i * 0.05, 0.3) }}
+                  className="bg-white border border-[#3E2723]/10 rounded-2xl overflow-hidden hover:border-[#F05A22]/30 hover:shadow-lg transition-all"
+                >
+                  <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="px-3 py-1 bg-[#F05A22]/10 text-[#F05A22] rounded-full text-[10px] font-black uppercase tracking-widest">
+                          Task
+                        </span>
+                        <span className="text-xs text-[#3E2723]/60 font-bold uppercase tracking-wider">{task.date}</span>
                       </div>
+                      <h3 className="text-xl font-display font-black text-[#3E2723] mb-2">{task.title}</h3>
+                      <p className="text-[#3E2723]/80 text-sm mb-4 leading-relaxed max-w-xl">{task.description}</p>
 
-                      <p className="text-white/60 font-serif italic mt-6 leading-shiv">{task.description}</p>
-
-                      <div className="mt-8 grid grid-cols-3 gap-3">
-                        <button
-                          className={`py-4 text-[10px] font-black uppercase tracking-[0.3em] border transition-all ${
-                            selected === "available"
-                              ? "bg-[#228B22] text-white border-[#228B22]"
-                              : "bg-white/5 text-white/70 border-white/10 hover:border-white/20"
-                          }`}
-                          onClick={() => {
-                            setSelectedActionById((s) => ({ ...s, [task.id]: "available" }));
-                            logAction(task, "available");
-                          }}
-                        >
-                          उपलब्ध
-                        </button>
-                        <button
-                          className={`py-4 text-[10px] font-black uppercase tracking-[0.3em] border transition-all ${
-                            selected === "not_available"
-                              ? "bg-[#DC143C] text-white border-[#DC143C]"
-                              : "bg-white/5 text-white/70 border-white/10 hover:border-white/20"
-                          }`}
-                          onClick={() => {
-                            setSelectedActionById((s) => ({ ...s, [task.id]: "not_available" }));
-                            logAction(task, "not_available");
-                          }}
-                        >
-                          अनुपलब्ध
-                        </button>
-                        <button
-                          className={`py-4 text-[10px] font-black uppercase tracking-[0.3em] border transition-all ${
-                            selected === "comment"
-                              ? "bg-shiv-orange text-white border-shiv-orange"
-                              : "bg-white/5 text-white/70 border-white/10 hover:border-white/20"
-                          }`}
-                          onClick={() => setSelectedActionById((s) => ({ ...s, [task.id]: "comment" }))}
-                        >
-                          टिप्पणी
-                        </button>
-                      </div>
-
-                      <AnimatePresence>
-                        {showComment && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="mt-5 overflow-hidden"
-                          >
-                            <textarea
-                              value={comment}
-                              onChange={(e) => setCommentById((s) => ({ ...s, [task.id]: e.target.value }))}
-                              placeholder="Write a comment / reason…"
-                              className="w-full min-h-[110px] p-4 bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-shiv-orange/30 resize-y"
-                            />
-                            <div className="mt-3 flex items-center justify-between gap-3">
-                              <div className="text-white/40 text-xs font-serif italic">
-                                This will be stored in backend later; for now it logs to console.
-                              </div>
-                              <div className="flex gap-3">
-                                <button
-                                  className="px-6 py-3 bg-white/5 border border-white/10 text-white/70 hover:text-white hover:border-white/20 transition-all text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2"
-                                  onClick={() => {
-                                    setSelectedActionById((s) => ({ ...s, [task.id]: null }));
-                                    setCommentById((s) => ({ ...s, [task.id]: "" }));
-                                  }}
-                                >
-                                  <XCircle size={16} className="text-white/40" /> Cancel
-                                </button>
-                                <button
-                                  className="px-6 py-3 bg-shiv-orange text-white border border-shiv-orange transition-all text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2"
-                                  onClick={() => logAction(task, "comment", comment)}
-                                >
-                                  <MessageSquare size={16} /> Submit
-                                </button>
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-
-                      <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between">
-                        <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">
-                          Priority: <span className="text-white/60">{task.priority}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-widest">
-                          <CheckCircle2 size={14} className="text-shiv-orange" /> Status: {task.status}
-                        </div>
+                      <div className="flex flex-wrap gap-4 text-xs text-[#3E2723]/60 font-medium">
+                        <span className="flex items-center gap-1.5"><Clock size={14} className="text-[#F05A22]" /> {task.time}</span>
+                        <span className="flex items-center gap-1.5"><MapPin size={14} className="text-[#F05A22]" /> {task.location}</span>
                       </div>
                     </div>
-                  </motion.div>
-                );
-              })}
+
+                    <Link
+                      to={`/approve/${task.id}`}
+                      className="w-full md:w-auto px-8 py-4 bg-[#3E2723] text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-[#F05A22] transition-colors flex items-center justify-center gap-2 shadow-xl shadow-[#3E2723]/10"
+                    >
+                      Respond Now <CheckCircle2 size={16} />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
             </AnimatePresence>
           </div>
         )}

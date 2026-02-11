@@ -1,156 +1,270 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
-import { Film, Hash, X, ZoomIn } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useState } from "react";
+import { Camera, Calendar, X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import Footer from "@/components/landing/Footer";
 
-import type { GalleryAlbum, GalleryImage } from "@/types";
-import { getGallery } from "@/lib/api";
+interface GalleryItem {
+  id: number;
+  year: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
+// Placeholder gallery — the user will upload their own images via the admin dashboard
+// For now, using representative images
+const galleryData: GalleryItem[] = [
+  {
+    id: 1,
+    year: 2024,
+    title: "Shiv Jayanti Celebration 2024",
+    description: "Grand procession through Kedari Nagar with traditional decorations and musical performances.",
+    image: "https://images.unsplash.com/photo-1604604296972-1e5a17e3aeae?q=80&w=1000"
+  },
+  {
+    id: 2,
+    year: 2024,
+    title: "Cultural Program 2024",
+    description: "Youth cultural program showcasing Maratha heritage and historical dramas.",
+    image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=1000"
+  },
+  {
+    id: 3,
+    year: 2023,
+    title: "Shiv Jayanti Miravnuk 2023",
+    description: "Massive Shiv Jayanti procession with decorated floats and community participation.",
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000"
+  },
+  {
+    id: 4,
+    year: 2023,
+    title: "Community Gathering 2023",
+    description: "Annual meeting of Shivgarjana Prathisthan members at Kedari Nagar.",
+    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1000"
+  },
+  {
+    id: 5,
+    year: 2022,
+    title: "Decoration & Stage Setup 2022",
+    description: "Elaborate stage setup with Shivaji Maharaj theme and traditional artwork.",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000"
+  },
+  {
+    id: 6,
+    year: 2022,
+    title: "Youth Rally 2022",
+    description: "Youth wing rally promoting awareness about Maratha history and culture.",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000"
+  },
+  {
+    id: 7,
+    year: 2021,
+    title: "Shiv Jayanti 2021",
+    description: "Intimate celebration during challenging times, keeping the spirit of Swarajya alive.",
+    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1000"
+  },
+  {
+    id: 8,
+    year: 2020,
+    title: "Virtual Celebration 2020",
+    description: "Community celebration adapting to new formats while maintaining traditions.",
+    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=1000"
+  },
+];
 
 const Gallery = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["gallery"],
-    queryFn: getGallery,
-  });
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const albums = data ?? [];
-  const [activeAlbumId, setActiveAlbumId] = useState<string | null>(albums[0]?.id ?? null);
+  const years = [...new Set(galleryData.map((g) => g.year))].sort((a, b) => b - a);
 
-  const activeAlbum = useMemo(() => {
-    return albums.find((a) => a.id === activeAlbumId) ?? albums[0] ?? null;
-  }, [albums, activeAlbumId]);
+  const filtered = selectedYear === "all"
+    ? galleryData
+    : galleryData.filter((g) => g.year === selectedYear);
 
-  const flatCount = useMemo(() => albums.reduce((sum, a) => sum + a.images.length, 0), [albums]);
-  const [lightbox, setLightbox] = useState<{ image: GalleryImage; album: GalleryAlbum } | null>(null);
+  const openLightbox = (index: number) => setLightboxIndex(index);
+  const closeLightbox = () => setLightboxIndex(null);
+  const nextImage = () => {
+    if (lightboxIndex !== null) setLightboxIndex((lightboxIndex + 1) % filtered.length);
+  };
+  const prevImage = () => {
+    if (lightboxIndex !== null) setLightboxIndex((lightboxIndex - 1 + filtered.length) % filtered.length);
+  };
 
   return (
-    <div className="bg-shiv-dark min-h-screen pt-24">
+    <div className="bg-background min-h-screen">
       {/* Hero */}
-      <section className="px-6 pb-12 text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="inline-flex items-center gap-3 px-5 py-2 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm">
-            <Film className="text-shiv-orange" size={16} />
-            <span className="text-[10px] text-white font-black uppercase tracking-[0.5em]">Media Gallery</span>
-          </div>
-          <h1 className="text-white mt-8 mb-4">
-            Mandal <span className="italic text-shiv-orange">Records</span>
-          </h1>
-          <p className="text-white/60 font-serif italic text-lg max-w-3xl leading-shiv">
-            Album-based archives with lightbox viewing. (Mock data today; designed for future bulk upload + Drive sync.)
-          </p>
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden bg-muted">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-1/3 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[200px]" />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 block">
+              Our Memories · Since 2014
+            </span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-secondary tracking-tight mb-6">
+              Photo <span className="text-primary italic">Gallery</span>
+            </h1>
+            <p className="text-foreground/70 text-base md:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
+              Relive the moments from our Shiv Jayanti celebrations, cultural programs, and community
+              events at Shrimant Shivgarjana Prathisthan, Kedari Nagar.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* Album selector */}
-      <section className="sticky top-16 z-30 border-y border-white/5 bg-shiv-dark/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
-          <div className="flex gap-3 overflow-x-auto no-scrollbar">
-            {albums.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => setActiveAlbumId(a.id)}
-                className={`px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] border transition-all whitespace-nowrap ${
-                  (activeAlbum?.id ?? null) === a.id
-                    ? "bg-shiv-orange text-white border-shiv-orange shadow-[0_10px_30px_rgba(255,94,0,0.25)]"
-                    : "bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white"
+      {/* Year Filters */}
+      <section className="max-w-6xl mx-auto px-6 md:px-12 mb-10 mt-10">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setSelectedYear("all")}
+            className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border ${selectedYear === "all"
+              ? "bg-primary text-white border-primary"
+              : "bg-white text-foreground hover:bg-muted border-foreground/10"
+              }`}
+          >
+            All Years
+          </button>
+          {years.map((year) => (
+            <button
+              key={year}
+              onClick={() => setSelectedYear(year)}
+              className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border ${selectedYear === year
+                ? "bg-primary text-white border-primary"
+                : "bg-white text-foreground hover:bg-muted border-foreground/10"
                 }`}
-              >
-                {a.name}
-              </button>
-            ))}
-            {albums.length === 0 && (
-              <div className="text-white/50 text-sm font-serif italic">{isLoading ? "Loading…" : "No albums found."}</div>
-            )}
-          </div>
-
-          <div className="hidden lg:flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/30">
-            <Hash size={12} className="text-shiv-orange" /> {flatCount} Assets
-          </div>
+            >
+              {year}
+            </button>
+          ))}
         </div>
       </section>
 
-      {/* Album grid */}
-      <section className="px-6 py-16">
-        <div className="max-w-7xl mx-auto">
-          {!activeAlbum ? (
-            <div className="bg-white/5 border border-white/10 p-10 text-white/60 font-serif italic">No album selected.</div>
-          ) : (
-            <div className="space-y-10">
-              <div className="flex items-end justify-between gap-6">
-                <div>
-                  <span className="logo-marathi text-4xl text-white block">{activeAlbum.nameMarathi}</span>
-                  <div className="text-white/50 text-sm font-serif italic mt-2">{activeAlbum.name}</div>
+      {/* Gallery Grid */}
+      <section ref={ref} className="max-w-6xl mx-auto px-6 md:px-12 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((item, i) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: i * 0.05, duration: 0.5 }}
+              className="group cursor-pointer"
+              onClick={() => openLightbox(i)}
+            >
+              <div className="clean-card group p-0 relative overflow-hidden cursor-pointer hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Camera size={24} className="text-white drop-shadow-lg" />
+                  </div>
                 </div>
-                <div className="text-white/40 text-[10px] font-black uppercase tracking-widest">
-                  Category: <span className="text-shiv-orange">{activeAlbum.category}</span>
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar size={12} className="text-primary/70" />
+                    <span className="text-primary font-bold text-[10px] uppercase tracking-wider">{item.year}</span>
+                  </div>
+                  <h3 className="text-foreground font-bold text-sm mb-1">{item.title}</h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed">{item.description}</p>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <AnimatePresence mode="popLayout">
-                  {activeAlbum.images.map((img, i) => (
-                    <motion.button
-                      layout
-                      key={img.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.97 }}
-                      transition={{ duration: 0.35, delay: Math.min(i * 0.02, 0.2) }}
-                      className="group relative aspect-square overflow-hidden border border-white/10 bg-white/5"
-                      onClick={() => setLightbox({ image: img, album: activeAlbum })}
-                      aria-label="Open image"
-                    >
-                      <img src={img.src} alt={img.alt} className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity" />
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-shiv-orange text-white flex items-center justify-center">
-                          <ZoomIn size={20} />
-                        </div>
-                      </div>
-                      {img.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-left">
-                          <div className="text-white/90 text-[10px] font-black uppercase tracking-widest line-clamp-1">{img.caption}</div>
-                        </div>
-                      )}
-                    </motion.button>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
-          )}
+            </motion.div>
+          ))}
         </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-20">
+            <ImageIcon size={40} className="text-white/10 mx-auto mb-4" />
+            <p className="text-white/30 text-sm">No photos for this year yet.</p>
+          </div>
+        )}
+
+        {/* Upload CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-16 text-center"
+        >
+          <div className="bg-white/[0.03] border border-dashed border-white/10 rounded-2xl p-8 max-w-lg mx-auto">
+            <Camera size={28} className="text-shiv-saffron/30 mx-auto mb-4" />
+            <h3 className="text-white/60 font-bold text-sm mb-2">Want to Add Photos?</h3>
+            <p className="text-white/30 text-xs leading-relaxed">
+              Mandal admins can upload new photos through the Admin Dashboard.
+              Contact the Mandal President for access.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightbox && (
+        {lightboxIndex !== null && filtered[lightboxIndex] && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6"
-            onClick={() => setLightbox(null)}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center"
+            onClick={closeLightbox}
           >
+            {/* Close Button */}
             <button
-              className="absolute top-8 right-8 text-white/60 hover:text-shiv-orange transition-colors p-3 border border-white/10"
-              onClick={() => setLightbox(null)}
-              aria-label="Close"
+              className="absolute top-6 right-6 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all z-10"
+              onClick={closeLightbox}
             >
-              <X size={26} />
+              <X size={20} />
             </button>
-            <div className="max-w-6xl w-full grid lg:grid-cols-3 gap-10 items-center" onClick={(e) => e.stopPropagation()}>
-              <div className="lg:col-span-2 border border-white/10 bg-black/30">
-                <img src={lightbox.image.src} alt={lightbox.image.alt} className="w-full h-auto object-contain max-h-[80vh]" />
+
+            {/* Navigation */}
+            <button
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all z-10"
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all z-10"
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            {/* Image */}
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="max-w-4xl max-h-[80vh] mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={filtered[lightboxIndex].image}
+                alt={filtered[lightboxIndex].title}
+                className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
+              />
+              <div className="mt-4 text-center">
+                <h3 className="text-white font-bold text-lg">{filtered[lightboxIndex].title}</h3>
+                <p className="text-white/40 text-sm mt-1">{filtered[lightboxIndex].description}</p>
+                <p className="text-shiv-saffron/40 text-xs mt-2">{filtered[lightboxIndex].year}</p>
               </div>
-              <div className="text-white space-y-6">
-                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">
-                  Album: <span className="text-shiv-orange">{lightbox.album.name}</span>
-                </div>
-                <div className="text-3xl logo-marathi">{lightbox.image.caption ?? "Gallery Asset"}</div>
-                <div className="text-white/50 font-serif italic leading-shiv">{lightbox.image.alt}</div>
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Footer />
     </div>
   );
 };

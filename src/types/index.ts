@@ -48,13 +48,17 @@ export interface Task {
   dueDate: string;
   priority: "high" | "medium" | "low";
   status: "pending" | "approved" | "rejected";
+  category: "flag_hosting" | "sound_dj" | "stage_construction" | "decoration" | "murti_installation" | "other";
 }
 
-export interface Member {
+export interface MandaIMember {
   id: string;
   name: string;
+  phone: string;
+  vargani: number;
+  paid: boolean;
+  paidDate: string | null;
   role: string;
-  avatar: string;
 }
 
 export interface BudgetItem {
@@ -74,6 +78,33 @@ export interface Expense {
   status: "approved" | "pending" | "rejected";
 }
 
+export interface InvitationResponse {
+  memberId: string;
+  status: "approved" | "declined";
+  comment?: string;
+  respondedAt: string;
+}
+
+export interface Invitation {
+  id: string;
+  title: string;
+  titleMarathi: string;
+  date: string;
+  time: string;
+  location: string;
+  message: string;
+  responses: InvitationResponse[];
+}
+
+export interface Photo {
+  id: string;
+  url: string;
+  caption: string;
+  category: string;
+  year: number;
+  uploadDate: string;
+}
+
 export interface Fort {
   id: string;
   name: string;
@@ -86,4 +117,11 @@ export interface Fort {
   strategicNotes?: string;
   currentStatus?: string;
   imageUrl?: string;
+}
+
+export interface Member {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
 }

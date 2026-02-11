@@ -52,11 +52,10 @@ const Events = () => {
             <button
               key={y}
               onClick={() => setActiveYear(y)}
-              className={`px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] border transition-all whitespace-nowrap ${
-                resolvedYear === y
+              className={`px-6 py-3 text-[10px] font-black uppercase tracking-[0.3em] border transition-all whitespace-nowrap ${resolvedYear === y
                   ? "bg-shiv-orange text-white border-shiv-orange shadow-[0_10px_30px_rgba(255,94,0,0.25)]"
                   : "bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white"
-              }`}
+                }`}
             >
               {y}
             </button>
@@ -108,25 +107,26 @@ const Events = () => {
                   </div>
 
                   {/* Masonry-ish grid */}
-                  <div className="p-10 bg-black/10">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <div className="p-6 md:p-10 bg-black/10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                       {e.images.map((src, i) => (
                         <button
                           key={`${e.id}-${i}`}
                           onClick={() => setLightbox({ src, alt: `${e.titleEnglish} photo ${i + 1}` })}
-                          className="group relative aspect-square overflow-hidden border border-white/10 bg-white/5"
-                          aria-label="Open photo"
+                          className="group relative aspect-square overflow-hidden border border-white/10 bg-white/5 focus-visible:ring-2 focus-visible:ring-shiv-saffron focus-visible:outline-none"
+                          aria-label={`View ${e.titleEnglish} photo ${i + 1}`}
                         >
-                          <img src={src} alt={`${e.titleEnglish} ${i + 1}`} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                          <img src={src} alt="" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-shiv-dark/60 flex items-center justify-center">
-                            <div className="w-12 h-12 bg-shiv-orange text-white flex items-center justify-center">
-                              <ZoomIn size={20} />
+                            <div className="w-12 h-12 bg-shiv-orange text-white flex items-center justify-center shadow-2xl">
+                              <ZoomIn size={20} aria-hidden="true" />
                             </div>
                           </div>
                         </button>
                       ))}
                     </div>
                   </div>
+
                 </motion.article>
               ))}
             </div>

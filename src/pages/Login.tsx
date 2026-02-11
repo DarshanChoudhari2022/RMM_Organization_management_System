@@ -1,98 +1,128 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Lock, User, ArrowRight, ChevronLeft, Sparkles, Scroll, AlertCircle } from "lucide-react";
+import { Shield, Lock, Mail, ArrowRight, ChevronLeft, AlertCircle, UserPlus } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 const Login = () => {
-    const [username, setUsername] = useState("");
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError("");
+        setMessage("");
 
-        // Specific Mandal Admin Credentials
-        setTimeout(() => {
-            if (username === "Admin" && password === "Bliss@108") {
-                localStorage.setItem("isCommander", "true");
-                setIsLoading(false);
-                navigate("/dashboard");
+        try {
+            if (isSignUp) {
+                const { error, data } = await supabase.auth.signUp({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                if (data.user) {
+                    setMessage("Account created! You can now log in.");
+                    setIsSignUp(false);
+                }
             } else {
-                setIsLoading(false);
-                setError("Unauthorized access. Invalid Cipher or Identifier.");
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                navigate("/dashboard");
             }
-        }, 1000);
+        } catch (err: any) {
+            setError(err.message || "Authentication failed. Please check your credentials.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-[#FFF8DC] flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Decorative Elements */}
-            <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
-                <Scroll size={800} className="absolute -top-40 -left-60 -rotate-12" />
-                <Shield size={600} className="absolute -bottom-40 -right-40 rotate-12" />
-            </div>
+        <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 z-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/royal.png')]" />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-md w-full relative z-10"
             >
-                <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-shiv-orange transition-colors mb-12 group">
+                <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8 group font-display font-bold uppercase tracking-widest text-xs">
                     <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Return to Swarajya</span>
+                    Back to Home
                 </Link>
 
-                <div className="bg-white border border-gray-100 shadow-2xl p-10 md:p-14 relative overflow-hidden">
-                    {/* Corner Accent */}
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-shiv-orange/10 flex items-center justify-center -rotate-45 translate-x-12 -translate-y-12">
-                        <Sparkles className="text-shiv-orange rotate-45" size={20} />
+                <div className="clean-card p-10 md:p-12 relative overflow-hidden">
+                    {/* Orange Border Accent */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0" />
+
+                    <div className="text-center mb-10 relative z-10 w-full flex flex-col items-center">
+                        <div className="w-16 h-16 bg-primary/10 text-primary rounded-sm mx-auto mb-6 flex items-center justify-center shadow-lg transform rotate-45 border border-primary/20">
+                            <Shield className="transform -rotate-45" size={28} />
+                        </div>
+                        <h1 className="text-3xl font-display font-black text-foreground mb-2 uppercase tracking-wide">
+                            {isSignUp ? "Create Admin" : "Admin Portal"}
+                        </h1>
+                        <p className="font-marathi text-secondary font-bold text-lg mb-1">शिवगर्जना प्रतिष्ठान</p>
+                        <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">Authorized Access Only</p>
                     </div>
 
-                    <div className="text-center mb-12">
-                        <span className="logo-marathi text-4xl mb-2 block">शिवगर्जना Portal</span>
-                        <h1 className="text-2xl mb-4 font-serif italic text-gray-400 border-b border-gray-50 pb-6">Restricted Archives Access</h1>
-                        <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">Authorized Commanders Only</p>
-                    </div>
-
-                    <form onSubmit={handleLogin} className="space-y-8">
+                    <form onSubmit={handleAuth} className="space-y-6 relative z-10">
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-[10px] font-black uppercase tracking-widest flex items-center gap-3"
+                                className="p-3 bg-red-900/40 border border-red-500/30 rounded text-red-200 text-xs font-bold flex items-center gap-3"
                             >
-                                <AlertCircle size={14} /> {error}
+                                <AlertCircle size={16} /> {error}
                             </motion.div>
                         )}
+                        {message && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="p-3 bg-green-900/40 border border-green-500/30 rounded text-green-200 text-xs font-bold flex items-center gap-3"
+                            >
+                                <Shield size={16} /> {message}
+                            </motion.div>
+                        )}
+
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 block">Commander Identifier</label>
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">Email Address</label>
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-shiv-orange transition-colors" size={18} />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
                                 <input
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    placeholder="Enter Identifier"
-                                    className="w-full bg-gray-50 border-transparent border-b-2 border-b-gray-100 py-4 pl-12 pr-4 focus:bg-white focus:border-b-shiv-orange transition-all outline-none font-serif"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="admin@example.com"
+                                    className="input-clean pl-12"
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 block">Security Cipher</label>
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">Password</label>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-shiv-orange transition-colors" size={18} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    className="w-full bg-gray-50 border-transparent border-b-2 border-b-gray-100 py-4 pl-12 pr-4 focus:bg-white focus:border-b-shiv-orange transition-all outline-none font-serif"
+                                    className="input-clean pl-12"
                                     required
                                 />
                             </div>
@@ -101,22 +131,34 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full btn-shiv !py-5 flex items-center justify-center gap-4 group"
+                            className="btn-primary w-full py-4 text-xs"
                         >
-                            {isLoading ? "Authenticating..." : "Establish Secure Link"}
-                            {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />}
+                            {isLoading ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    {isSignUp ? "Create Account" : "Access Dashboard"}
+                                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                </>
+                            )}
                         </button>
                     </form>
 
-                    <div className="mt-12 pt-8 border-t border-gray-50 text-center">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-loose">
-                            By accessing this portal, you agree to uphold the <br /><strong>Code of Swarajya</strong> and protect the archives.
-                        </p>
+                    <div className="mt-8 pt-6 border-t border-secondary/5 text-center relative z-10">
+                        <button
+                            onClick={() => setIsSignUp(!isSignUp)}
+                            className="text-muted-foreground hover:text-primary text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 mx-auto"
+                        >
+                            {isSignUp ? (
+                                <>Already have an account? Login</>
+                            ) : (
+                                <>
+                                    <UserPlus size={14} />
+                                    No account? Create one
+                                </>
+                            )}
+                        </button>
                     </div>
-                </div>
-
-                <div className="mt-8 text-center">
-                    <p className="text-gray-400 text-xs font-serif italic">Lost your cipher? Contact the Council scribe.</p>
                 </div>
             </motion.div>
         </div>

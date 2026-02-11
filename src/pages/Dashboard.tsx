@@ -1,239 +1,787 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CreditCard,
-  ImageIcon,
   LayoutDashboard,
-  LineChart,
-  LogOut,
-  Shield,
-  Users,
   Wallet,
+  Shield,
+  CreditCard,
+  Send,
+  LogOut,
+  Plus,
+  Trash2,
+  Phone,
+  CheckCircle2,
+  XCircle,
+  Calendar,
+  Clock,
+  MapPin,
+  Search,
+  Users,
+  ChevronDown,
+  Filter,
+  Share2,
+  MessageSquare,
+  MoreHorizontal,
+  Menu,
+  X
 } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Line, LineChart as ReLineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useMembers, useTasks, useExpenses, useInvitations } from "@/lib/admin-api";
+import { supabase } from "@/lib/supabase";
+import { Task, Expense, Invitation, Member, TaskCategory } from "@/types/admin";
 
-import { getBudget, getExpenses, getMonthlyBudget, getTasks } from "@/lib/api";
+// --- Components ---
 
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"overview" | "vargani" | "tasks" | "expenses" | "archives">("overview");
+const SidebarItem = ({ id, label, icon: Icon, active, onClick }: any) => (
+  <button
+    onClick={() => onClick(id)}
+    className={`w-full flex items-center gap-4 px-6 py-4 transition-all relative rounded-xl text-left mb-1 font-bold ${active
+      ? "bg-[#D95D1E]/10 text-[#D95D1E]"
+      : "text-[#2C1810]/60 hover:text-[#2C1810] hover:bg-[#2C1810]/5"
+      }`}
+  >
+    <Icon size={20} className={active ? "text-[#D95D1E]" : "text-[#2C1810]/40"} />
+    <span className="text-[11px] uppercase tracking-[0.15em]">{label}</span>
+    {active && (
+      <motion.div
+        layoutId="active-nav"
+        className="absolute left-0 w-1 h-8 bg-[#D95D1E] rounded-r-full"
+      />
+    )}
+  </button>
+);
 
-  useEffect(() => {
-    const isAuth = localStorage.getItem("isCommander");
-    if (!isAuth) navigate("/login");
-  }, [navigate]);
+const YearSelector = ({ selected, onChange }: { selected: number, onChange: (y: number) => void }) => {
+  const years = [2024, 2025, 2026, 2027];
+  return (
+    <div className="relative">
+      <select
+        value={selected}
+        onChange={(e) => onChange(parseInt(e.target.value))}
+        className="appearance-none bg-white border border-gray-200 px-4 py-2 pr-8 rounded-xl text-sm font-bold text-[#2C1810]/90 outline-none focus:ring-2 focus:ring-[#D95D1E]/20 cursor-pointer"
+      >
+        {years.map(y => <option key={y} value={y}>Year {y}</option>)}
+      </select>
+      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2C1810]/60 pointer-events-none" size={14} />
+    </div>
+  )
+}
 
-  const handleLogout = () => {
-    localStorage.removeItem("isCommander");
-    navigate("/login");
+// --- Tabs ---
+
+const MembersTab = () => {
+  const { data: members, addMember, deleteMember, updateVargani } = useMembers();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [newMember, setNewMember] = useState({ name: "", phone: "", role: "Member" });
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [editingVargani, setEditingVargani] = useState<{ id: string, amount: number } | null>(null);
+
+  const stats = useMemo(() => {
+    const total = members?.length || 0;
+    const yearPayments = members?.map(m => m.varganiHistory.find(v => v.year === selectedYear)).filter(Boolean);
+    const paid = yearPayments?.filter(v => v?.paid).length || 0;
+    const collected = yearPayments?.reduce((sum, v) => sum + (v?.paid ? (v?.amount || 0) : 0), 0) || 0;
+    const pending = yearPayments?.reduce((sum, v) => sum + (!v?.paid ? (v?.amount || 0) : 0), 0) || 0;
+    return { total, paid, collected, pending };
+  }, [members, selectedYear]);
+
+  const handleAdd = () => {
+    if (!newMember.name || !newMember.phone) return;
+    addMember.mutate({ ...newMember, joinedYear: selectedYear, role: newMember.role });
+    setNewMember({ name: "", phone: "", role: "Member" });
+    setIsAddOpen(false);
   };
 
-  const budgetQ = useQuery({ queryKey: ["budget"], queryFn: getBudget });
-  const expensesQ = useQuery({ queryKey: ["expenses"], queryFn: getExpenses });
-  const monthlyQ = useQuery({ queryKey: ["monthlyBudget"], queryFn: getMonthlyBudget });
-  const tasksQ = useQuery({ queryKey: ["tasks"], queryFn: getTasks });
-
-  const totals = useMemo(() => {
-    const allocated = (budgetQ.data ?? []).reduce((s, b) => s + b.allocated, 0);
-    const spent = (budgetQ.data ?? []).reduce((s, b) => s + b.spent, 0);
-    const expenseTotal = (expensesQ.data ?? []).reduce((s, e) => s + e.amount, 0);
-    const pendingTasks = (tasksQ.data ?? []).filter((t) => t.status === "pending").length;
-    return { allocated, spent, expenseTotal, pendingTasks };
-  }, [budgetQ.data, expensesQ.data, tasksQ.data]);
+  const saveVarganiAmount = (id: string, amount: number) => {
+    // Keep paid status same, just update amount
+    const member = members?.find(m => m.id === id);
+    const vargani = member?.varganiHistory.find(v => v.year === selectedYear);
+    const isPaid = vargani?.paid || false;
+    updateVargani.mutate({ id, paid: isPaid, year: selectedYear, amount });
+    setEditingVargani(null);
+  };
 
   return (
-    <div className="min-h-screen bg-shiv-dark flex">
-      {/* Sidebar */}
-      <aside className="w-80 bg-black/40 text-white flex flex-col fixed inset-y-0 left-0 z-50 border-r border-white/5 backdrop-blur-xl">
-        <div className="p-10 border-b border-white/5">
-          <Link to="/" className="flex flex-col gap-3">
-            <span className="logo-marathi text-shiv-orange text-4xl font-black">शिवगर्जना</span>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-shiv-orange animate-pulse" />
-              <span className="text-[9px] font-black uppercase tracking-[0.5em] text-white/40">Admin Portal</span>
-            </div>
-          </Link>
+    <div className="space-y-8">
+      {/* Toolbar */}
+      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-display font-black text-[#2C1810]">Member Directory</h2>
+          <YearSelector selected={selectedYear} onChange={setSelectedYear} />
         </div>
+        <button
+          onClick={() => setIsAddOpen(true)}
+          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20"
+        >
+          <Plus size={16} /> Add Member
+        </button>
+      </div>
 
-        <nav className="flex-grow p-8 space-y-3 mt-8">
-          {[
-            { id: "overview", label: "Dashboard", icon: LayoutDashboard },
-            { id: "vargani", label: "Budget", icon: Wallet },
-            { id: "tasks", label: "Approvals", icon: Shield },
-            { id: "expenses", label: "Expenses", icon: CreditCard },
-            { id: "archives", label: "Media", icon: ImageIcon },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-6 px-6 py-5 transition-all relative rounded-sm ${
-                activeTab === item.id ? "bg-shiv-orange/10 text-shiv-orange" : "text-white/40 hover:text-white hover:bg-white/5"
-              }`}
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Total Members</div>
+          <div className="text-3xl font-black text-[#2C1810]">{stats.total}</div>
+        </div>
+        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Vargani Collected</div>
+          <div className="text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
+          <div className="text-xs text-[#2C1810]/60 mt-1">{stats.paid} Members Paid</div>
+        </div>
+        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Pending Amount</div>
+          <div className="text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
+          <div className="text-xs text-[#2C1810]/60 mt-1">{stats.total - stats.paid} Members Pending</div>
+        </div>
+      </div>
+
+      {/* List */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
+        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+          <div className="col-span-4">Name & Role</div>
+          <div className="col-span-3">Contact</div>
+          <div className="col-span-3">Vargani ({selectedYear})</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+        {members?.length === 0 ? (
+          <div className="p-10 text-center text-[#2C1810]/60 text-sm">No members found. Add one to get started.</div>
+        ) : (
+          members?.map((member) => {
+            const vargani = member.varganiHistory.find(v => v.year === selectedYear);
+            const isPaid = vargani?.paid;
+            const amount = vargani?.amount || 1500;
+            const isEditing = editingVargani?.id === member.id;
+
+            return (
+              <div key={member.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                <div className="col-span-4">
+                  <div className="font-bold text-[#2C1810]">{member.name}</div>
+                  <div className="text-[10px] text-[#2C1810]/60">{member.role}</div>
+                </div>
+                <div className="col-span-3 text-sm text-[#2C1810]/80 font-mono">{member.phone}</div>
+                <div className="col-span-3 flex items-center gap-3">
+                  {isEditing ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        className="w-20 px-2 py-1 border border-[#D95D1E] rounded text-sm font-bold outline-none"
+                        value={editingVargani.amount}
+                        onChange={(e) => setEditingVargani({ ...editingVargani, amount: parseInt(e.target.value) || 0 })}
+                      />
+                      <button
+                        onClick={() => saveVarganiAmount(member.id, editingVargani.amount)}
+                        className="p-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                      >
+                        <CheckCircle2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => setEditingVargani(null)}
+                        className="p-1 bg-red-50 text-red-500 rounded hover:bg-red-100"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="font-bold text-[#2C1810] w-12">₹{amount}</span>
+                      <button
+                        onClick={() => setEditingVargani({ id: member.id, amount })}
+                        className="p-1 text-[#D95D1E]/60 hover:text-[#D95D1E] rounded transition-colors"
+                        title="Edit Amount"
+                      >
+                        <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                      </button>
+                      <button
+                        onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: selectedYear, amount })}
+                        disabled={updateVargani.isPending}
+                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 w-fit transition-all ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500 hover:bg-red-100"
+                          } disabled:opacity-50`}
+                      >
+                        {isPaid ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                        {isPaid ? "Paid" : "Pending"}
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className="col-span-2 flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      const msg = `नमस्कार ${member.name}, कृपया ${selectedYear} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
+                      window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                    }}
+                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                    title="Send WhatsApp Reminder"
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                  <button
+                    onClick={() => deleteMember.mutate(member.id)}
+                    className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete Member"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Add Modal */}
+      <AnimatePresence>
+        {isAddOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl"
             >
-              <item.icon size={18} />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em]">{item.label}</span>
-              {activeTab === item.id && (
-                <motion.div
-                  layoutId="nav-active"
-                  className="absolute left-0 w-1.5 h-6 bg-shiv-orange rounded-r-full shadow-[0_0_15px_rgba(255,94,0,0.5)]"
-                />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-10">
-          <button onClick={handleLogout} className="flex items-center gap-4 text-white/30 hover:text-red-300 transition-all w-full">
-            <LogOut size={18} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Logout</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-grow ml-80 p-12 lg:p-16 max-w-[1600px] mx-auto w-full">
-        <header className="flex items-end justify-between mb-12 border-b border-white/5 pb-10">
-          <div>
-            <div className="flex items-center gap-3 text-shiv-orange font-black tracking-widest text-[10px] uppercase mb-4">
-              <LineChart size={14} /> Swarajya Operations
-            </div>
-            <h1 className="text-white text-5xl font-black">
-              Commander <span className="text-shiv-orange italic">Admin</span>
-            </h1>
-            <p className="text-white/50 font-serif italic text-lg leading-shiv mt-3">
-              UI-only dashboard powered by mock JSON via service functions.
-            </p>
-          </div>
-        </header>
-
-        <AnimatePresence mode="wait">
-          {activeTab === "overview" && (
-            <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard label="Allocated" value={`₹${totals.allocated.toLocaleString("en-IN")}`} icon={Wallet} trend="Total budget" />
-                <StatCard label="Spent" value={`₹${totals.spent.toLocaleString("en-IN")}`} icon={CreditCard} trend="Budget used" />
-                <StatCard label="Expenses" value={`₹${totals.expenseTotal.toLocaleString("en-IN")}`} icon={CreditCard} trend="Logged items" />
-                <StatCard label="Pending Tasks" value={`${totals.pendingTasks}`} icon={Shield} trend="Awaiting response" />
-              </div>
-
-              <div className="grid lg:grid-cols-2 gap-8">
-                <div className="bg-white/5 border border-white/10 p-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-white text-lg font-black uppercase tracking-widest">Monthly Budget vs Actual</h2>
-                  </div>
-                  <div className="h-[320px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ReLineChart data={monthlyQ.data ?? []}>
-                        <CartesianGrid stroke="rgba(255,255,255,0.08)" />
-                        <XAxis dataKey="month" stroke="rgba(255,255,255,0.4)" />
-                        <YAxis stroke="rgba(255,255,255,0.4)" />
-                        <Tooltip contentStyle={{ background: "#120606", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
-                        <Line type="monotone" dataKey="budget" stroke="#FF5E00" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="actual" stroke="#D4AF37" strokeWidth={2} dot={false} />
-                      </ReLineChart>
-                    </ResponsiveContainer>
-                  </div>
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">Add New Member</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Full Name</label>
+                  <input
+                    value={newMember.name}
+                    onChange={e => setNewMember({ ...newMember, name: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Enter name"
+                  />
                 </div>
-
-                <div className="bg-white/5 border border-white/10 p-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-white text-lg font-black uppercase tracking-widest">Category Spend</h2>
-                  </div>
-                  <div className="h-[320px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={budgetQ.data ?? []}>
-                        <CartesianGrid stroke="rgba(255,255,255,0.08)" />
-                        <XAxis dataKey="category" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 10 }} interval={0} height={80} />
-                        <YAxis stroke="rgba(255,255,255,0.4)" />
-                        <Tooltip contentStyle={{ background: "#120606", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
-                        <Bar dataKey="allocated" fill="rgba(255,94,0,0.35)" />
-                        <Bar dataKey="spent" fill="rgba(212,175,55,0.55)" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Mobile Number</label>
+                  <input
+                    value={newMember.phone}
+                    onChange={e => setNewMember({ ...newMember, phone: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="10 digit mobile number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Role</label>
+                  <select
+                    value={newMember.role}
+                    onChange={e => setNewMember({ ...newMember, role: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                  >
+                    <option value="Member">Member</option>
+                    <option value="President">President</option>
+                    <option value="Treasurer">Treasurer</option>
+                  </select>
                 </div>
               </div>
-            </motion.div>
-          )}
-
-          {activeTab === "tasks" && (
-            <motion.div key="tasks" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
-              <div className="bg-white/5 border border-white/10 p-8">
-                <h2 className="text-white text-lg font-black uppercase tracking-widest mb-6">Pending Approvals</h2>
-                <div className="grid gap-4">
-                  {(tasksQ.data ?? []).slice(0, 6).map((t) => (
-                    <div key={t.id} className="p-6 border border-white/10 bg-black/20 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                      <div>
-                        <div className="text-white font-black">{t.titleEnglish}</div>
-                        <div className="text-white/50 text-sm font-serif italic">{t.description}</div>
-                      </div>
-                      <div className="text-white/50 text-sm font-serif italic">
-                        Assigned: <span className="text-white/70">{t.assignedTo}</span> • Due: <span className="text-white/70">{t.dueDate}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#B94A15]">Add Member</button>
               </div>
             </motion.div>
-          )}
-
-          {activeTab === "expenses" && (
-            <motion.div key="expenses" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
-              <div className="bg-white/5 border border-white/10 p-8">
-                <h2 className="text-white text-lg font-black uppercase tracking-widest mb-6">Expense Ledger</h2>
-                <div className="grid gap-4">
-                  {(expensesQ.data ?? []).map((e) => (
-                    <div key={e.id} className="p-6 border border-white/10 bg-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div>
-                        <div className="text-white font-black">{e.description}</div>
-                        <div className="text-white/40 text-sm font-serif italic">
-                          {e.date} • {e.category} • <span className="text-white/60">{e.status}</span>
-                        </div>
-                      </div>
-                      <div className="text-shiv-orange font-black">₹{e.amount.toLocaleString("en-IN")}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "archives" && (
-            <motion.div key="archives" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <div className="bg-white/5 border border-white/10 p-10 text-white/60 font-serif italic">
-                Google Drive sync + bulk upload is a backend feature (PRD FR-6.x). UI placeholder only for now.
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "vargani" && (
-            <motion.div key="vargani" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <div className="bg-white/5 border border-white/10 p-10 text-white/60 font-serif italic">
-                Vargani collection + receipts + reminders are backend features (PRD FR-3.x). This mock UI currently focuses on budgets/expenses.
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-const StatCard = ({ label, value, icon: Icon, trend }: { label: string; value: string; icon: any; trend: string }) => (
-  <div className="bg-white/5 border border-white/10 p-8 overflow-hidden relative group">
-    <div className="relative z-10 flex justify-between items-start">
-      <div>
-        <span className="text-[10px] font-black uppercase tracking-widest text-white/40 block mb-3">{label}</span>
-        <div className="text-3xl font-black text-white mb-3">{value}</div>
-        <div className="text-[10px] font-black text-shiv-orange uppercase tracking-widest">{trend}</div>
+const TasksTab = () => {
+  const { data: tasks, addTask, deleteTask } = useTasks();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+
+  const handleAdd = () => {
+    if (!newTask.title || !newTask.date) return;
+    addTask.mutate(newTask as any);
+    setNewTask({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+    setIsAddOpen(false);
+  };
+
+  const generateShareText = (task: Task) => {
+    const approvalLink = `${window.location.origin}/approve/${task.id}`;
+    return `🚩 *शिवगर्जना मंडळ - नवीन कार्य*\n\n🔹 *${task.title}*\n📅 ${task.date} | 🕐 ${task.time}\n📍 ${task.location}\n\n📝 ${task.description}\n\n✅ खालील लिंकवर क्लिक करून उपस्थिती कळवा:\n${approvalLink}`;
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-display font-black text-[#2C1810]">Task Manager</h2>
+        <button
+          onClick={() => setIsAddOpen(true)}
+          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+        >
+          <Plus size={16} /> Assign Task
+        </button>
       </div>
-      <div className="p-4 bg-white/5 text-white/70 group-hover:bg-shiv-orange group-hover:text-white transition-all duration-500">
-        <Icon size={22} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tasks?.length === 0 ? (
+          <div className="col-span-full py-20 text-center bg-[#F5F5F0] rounded-3xl border border-dashed border-gray-200">
+            <div className="text-[#2C1810]/60 font-medium">No tasks scheduled yet.</div>
+            <button onClick={() => setIsAddOpen(true)} className="mt-4 text-[#D95D1E] font-bold text-sm hover:underline">Create your first task</button>
+          </div>
+        ) : (
+          tasks?.map(task => (
+            <div key={task.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-orange-50 text-[#D95D1E] rounded-xl">
+                  <CheckCircle2 size={20} />
+                </div>
+                <button onClick={() => deleteTask.mutate(task.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              <h3 className="text-lg font-bold text-[#2C1810] mb-2">{task.title}</h3>
+              <p className="text-sm text-[#2C1810]/70 line-clamp-2 mb-4">{task.description}</p>
+
+              <div className="space-y-2 mb-6">
+                <div className="flex items-center gap-2 text-xs text-[#2C1810]/70 font-medium">
+                  <Calendar size={14} className="text-[#D95D1E]" /> {task.date}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#2C1810]/70 font-medium">
+                  <Clock size={14} className="text-[#D95D1E]" /> {task.time}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#2C1810]/70 font-medium">
+                  <MapPin size={14} className="text-[#D95D1E]" /> {task.location}
+                </div>
+              </div>
+
+              <button
+                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(generateShareText(task))}`, '_blank')}
+                className="w-full py-3 bg-green-50 text-green-600 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-green-100 transition-colors"
+              >
+                <Share2 size={14} /> Share on WhatsApp
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+      {/* Add Modal */}
+      <AnimatePresence>
+        {isAddOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl"
+            >
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">Assign New Task</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Task Title</label>
+                  <input
+                    value={newTask.title}
+                    onChange={e => setNewTask({ ...newTask, title: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="e.g. Stage Decoration"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Description</label>
+                  <textarea
+                    value={newTask.description}
+                    onChange={e => setNewTask({ ...newTask, description: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[80px]"
+                    placeholder="Details about the task..."
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Date</label>
+                    <input
+                      type="date"
+                      value={newTask.date}
+                      onChange={e => setNewTask({ ...newTask, date: e.target.value })}
+                      className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Time</label>
+                    <input
+                      type="time"
+                      value={newTask.time}
+                      onChange={e => setNewTask({ ...newTask, time: e.target.value })}
+                      className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Location</label>
+                  <input
+                    value={newTask.location}
+                    onChange={e => setNewTask({ ...newTask, location: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Location"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">Create Task</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+const ExpensesTab = () => {
+  const { data: expenses, addExpense, updateRefundStatus } = useExpenses();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [newEx, setNewEx] = useState({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  // Filter by year
+  const filteredExpenses = useMemo(() => {
+    return expenses?.filter(e => {
+      const year = parseInt(e.date.split("-")[0]);
+      return year === selectedYear;
+    }) || [];
+  }, [expenses, selectedYear]);
+
+  const totalSpent = filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+
+  const handleAdd = () => {
+    if (!newEx.description || !newEx.amount) return;
+    addExpense.mutate({
+      description: newEx.description,
+      amount: parseFloat(newEx.amount),
+      category: newEx.category,
+      date: newEx.date,
+      status: "approved",
+      year: parseInt(newEx.date.split("-")[0]),
+      paidBy: newEx.paidBy,
+      isRefunded: false
+    });
+    setNewEx({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
+    setIsAddOpen(false);
+  };
+
+  const toggleRefund = (id: string, currentStatus: boolean) => {
+    updateRefundStatus.mutate({ id, isRefunded: !currentStatus });
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-display font-black text-[#2C1810]">Expenses</h2>
+          <YearSelector selected={selectedYear} onChange={setSelectedYear} />
+          <p className="text-xs text-[#2C1810]/60 font-bold uppercase tracking-wider ml-4 border-l pl-4 border-gray-100">
+            Total for {selectedYear}: <span className="text-[#D95D1E] text-lg ml-1">₹{totalSpent.toLocaleString()}</span>
+          </p>
+        </div>
+        <button
+          onClick={() => setIsAddOpen(true)}
+          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+        >
+          <Plus size={16} /> Add Expense
+        </button>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
+        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+          <div className="col-span-4">Description</div>
+          <div className="col-span-2">Paid By</div>
+          <div className="col-span-2">Category</div>
+          <div className="col-span-2">Date</div>
+          <div className="col-span-2 text-right">Amount & Status</div>
+        </div>
+        {filteredExpenses.length === 0 ? (
+          <div className="p-10 text-center text-[#2C1810]/60 text-sm">No expenses recorded for {selectedYear}.</div>
+        ) : (
+          filteredExpenses.map((ex) => (
+            <div key={ex.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+              <div className="col-span-4">
+                <div className="font-bold text-[#2C1810]">{ex.description}</div>
+              </div>
+              <div className="col-span-2">
+                <span className={`text-xs font-bold px-2 py-1 rounded-md ${ex.paidBy === 'Mandal' ? 'bg-[#D95D1E]/10 text-[#D95D1E]' : 'bg-purple-100 text-purple-700'}`}>
+                  {ex.paidBy}
+                </span>
+              </div>
+              <div className="col-span-2">
+                <span className="bg-gray-100 text-[#2C1810]/80 px-2 py-1 rounded-md text-xs font-medium">{ex.category}</span>
+              </div>
+              <div className="col-span-2 text-sm text-[#2C1810]/70 font-mono">{ex.date}</div>
+              <div className="col-span-2 text-right">
+                <div className="font-black text-[#D95D1E] mb-1">₹{ex.amount.toLocaleString()}</div>
+                {ex.paidBy !== 'Mandal' && (
+                  <button
+                    onClick={() => toggleRefund(ex.id, ex.isRefunded)}
+                    className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full border transition-all ${ex.isRefunded
+                      ? "bg-green-100 text-green-700 border-green-200"
+                      : "bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"}`}
+                  >
+                    {ex.isRefunded ? "Refunded ✅" : "Pending Refund ⚠️"}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Add Modal */}
+      <AnimatePresence>
+        {isAddOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-white rounded-2xl w-full max-w-sm p-8 shadow-2xl"
+            >
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">Log Expense</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Description</label>
+                  <input
+                    value={newEx.description}
+                    onChange={e => setNewEx({ ...newEx, description: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Item name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Amount (₹)</label>
+                  <input
+                    type="number"
+                    value={newEx.amount}
+                    onChange={e => setNewEx({ ...newEx, amount: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Paid By</label>
+                  <input
+                    value={newEx.paidBy}
+                    onChange={e => setNewEx({ ...newEx, paidBy: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="e.g. Mandal, Yash, Rahul"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={newEx.date}
+                    onChange={e => setNewEx({ ...newEx, date: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Category</label>
+                  <select
+                    value={newEx.category}
+                    onChange={e => setNewEx({ ...newEx, category: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                  >
+                    <option>Decoration</option>
+                    <option>Sound/DJ</option>
+                    <option>Food</option>
+                    <option>Transport</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">Add</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+const InvitationsTab = () => {
+  const [invitation, setInvitation] = useState({ title: "", date: "", time: "", location: "Kedari Nagar Chowk", message: "" });
+  const generateMsg = () => {
+    return `🎉 *ग्रूप निमंत्रण - शिवगर्जना मंडळ*\n\n📣 *${invitation.title}*\n📅 ${invitation.date} | 🕐 ${invitation.time}\n📍 ${invitation.location}\n\n📝 ${invitation.message}\n\nसर्वांनी वेळेवर उपस्थित राहावे!`;
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-100/50">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-[#D95D1E]/10 text-[#D95D1E] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Send size={28} />
+          </div>
+          <h2 className="text-2xl font-display font-black text-[#2C1810]">Create Invitation</h2>
+          <p className="text-sm text-[#2C1810]/60 mt-2">Design a message and share it instantly.</p>
+        </div>
+
+        <div className="space-y-4">
+          <input
+            value={invitation.title}
+            onChange={e => setInvitation({ ...invitation, title: e.target.value })}
+            className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            placeholder="Event Title (e.g. Planning Meeting)"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="date"
+              value={invitation.date}
+              onChange={e => setInvitation({ ...invitation, date: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+            <input
+              type="time"
+              value={invitation.time}
+              onChange={e => setInvitation({ ...invitation, time: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+          <textarea
+            value={invitation.message}
+            onChange={e => setInvitation({ ...invitation, message: e.target.value })}
+            className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[100px]"
+            placeholder="Additional details..."
+          />
+
+          <div className="bg-green-50 rounded-xl p-4 border border-green-100 mt-6">
+            <div className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-2">Preview</div>
+            <pre className="whitespace-pre-wrap text-sm text-[#2C1810]/80 font-sans">{generateMsg()}</pre>
+          </div>
+
+          <button
+            onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(generateMsg())}`, '_blank')}
+            className="w-full py-4 bg-green-500 text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-green-600 transition-all shadow-lg shadow-green-500/20 mt-4"
+          >
+            <Share2 size={16} /> Share via WhatsApp
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  )
+}
+
+// --- Main Layout ---
+
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState("members");
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/login");
+      }
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) navigate("/login");
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setIsMobileOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col md:flex-row font-sans overflow-hidden">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-white p-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-30 shrink-0 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#D95D1E] text-white rounded-lg flex items-center justify-center font-black shadow-lg shadow-[#D95D1E]/20">S</div>
+          <div>
+            <span className="font-display font-black text-sm tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
+            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsMobileOpen(true)}
+          className="p-2 text-[#2C1810]/70 hover:bg-[#F5F5F0] rounded-lg transition-colors border border-gray-100"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileOpen(false)}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <aside className={`
+                fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none
+                md:relative md:translate-x-0
+                ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
+            `}>
+        <div className="p-8 border-b border-gray-50 bg-white flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#D95D1E] text-white rounded-xl flex items-center justify-center font-black text-xl shadow-lg shadow-[#D95D1E]/20">S</div>
+            <div>
+              <span className="font-display font-black text-lg tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
+            </div>
+          </div>
+          <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#2C1810]/60 hover:text-red-500 transition-colors">
+            <X size={20} />
+          </button>
+        </div>
+
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
+          <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
+          <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
+          <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
+        </nav>
+
+        <div className="p-4 border-t border-gray-50 bg-[#FDFBF7]">
+          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-4 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-xs uppercase tracking-wider group bg-white border border-gray-200 shadow-sm hover:border-red-200">
+            <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] md:h-screen">
+        <div className="flex-1 overflow-y-auto p-4 md:p-12 scrollbar-hide">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-6xl mx-auto space-y-6 md:space-y-8 pb-20"
+          >
+            {activeTab === "members" && <MembersTab />}
+            {activeTab === "tasks" && <TasksTab />}
+            {activeTab === "expenses" && <ExpensesTab />}
+            {activeTab === "invitations" && <InvitationsTab />}
+          </motion.div>
+        </div>
+      </main>
+    </div>
+  );
+};
 
 export default Dashboard;

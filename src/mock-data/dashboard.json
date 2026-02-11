@@ -1,25 +1,8 @@
 {
-  "budget": [
-    { "id": "b1", "category": "Decoration", "allocated": 50000, "spent": 32000, "month": "Jan" },
-    { "id": "b2", "category": "Sound & Lighting", "allocated": 75000, "spent": 68000, "month": "Jan" },
-    { "id": "b3", "category": "Food & Prasad", "allocated": 30000, "spent": 25000, "month": "Feb" },
-    { "id": "b4", "category": "Transportation", "allocated": 20000, "spent": 18000, "month": "Feb" },
-    { "id": "b5", "category": "Marketing", "allocated": 15000, "spent": 12000, "month": "Mar" },
-    { "id": "b6", "category": "Venue Rental", "allocated": 40000, "spent": 40000, "month": "Mar" }
-  ],
-  "expenses": [
-    { "id": "ex1", "description": "Stage banner printing", "amount": 8500, "date": "2025-01-10", "category": "Decoration", "status": "approved" },
-    { "id": "ex2", "description": "Sound system rental", "amount": 25000, "date": "2025-01-15", "category": "Sound & Lighting", "status": "approved" },
-    { "id": "ex3", "description": "Flower arrangements", "amount": 5500, "date": "2025-02-01", "category": "Decoration", "status": "pending" },
-    { "id": "ex4", "description": "Bus hire for volunteers", "amount": 12000, "date": "2025-02-05", "category": "Transportation", "status": "approved" },
-    { "id": "ex5", "description": "Social media ads", "amount": 3000, "date": "2025-02-08", "category": "Marketing", "status": "rejected" }
-  ],
-  "monthlyBudget": [
-    { "month": "Oct", "budget": 80000, "actual": 65000 },
-    { "month": "Nov", "budget": 90000, "actual": 72000 },
-    { "month": "Dec", "budget": 120000, "actual": 110000 },
-    { "month": "Jan", "budget": 150000, "actual": 125000 },
-    { "month": "Feb", "budget": 200000, "actual": 95000 },
-    { "month": "Mar", "budget": 100000, "actual": 52000 }
-  ]
+  "budget": [],
+  "expenses": [],
+  "monthlyBudget": [],
+  "members": [],
+  "invitations": [],
+  "photos": []
 }

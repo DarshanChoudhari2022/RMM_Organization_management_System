@@ -1,134 +1,148 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, History, Image as ImageIcon, Shield, Users, Crown, Mountain } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isHome = location.pathname === "/";
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const navLinks = [
-    { name: "The Legend", path: "/history", icon: History },
-    { name: "Forts", path: "/forts", icon: Mountain },
-    { name: "Archives", path: "/gallery", icon: ImageIcon },
-    { name: "Celebrations", path: "/events", icon: Shield },
-    { name: "Committee", path: "/committee", icon: Users },
+    { name: "Home", path: "/" },
+    { name: "History", path: "/history" },
+    { name: "Forts", path: "/forts" },
+    { name: "Gallery", path: "/gallery" },
   ];
 
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${scrolled
-        ? "bg-[#1a0505]/95 backdrop-blur-xl border-b border-white/5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.5)]"
-        : isHome ? "bg-transparent py-8" : "bg-[#1a0505] py-5"
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Logo - Heritage Style */}
-        <Link to="/" className="flex flex-col group leading-none">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 border border-shiv-orange/30 flex items-center justify-center bg-shiv-orange/5 group-hover:bg-shiv-orange/20 transition-all">
-              <Crown size={20} className="text-shiv-orange" />
-            </div>
-            <div>
-              <span className="logo-marathi font-devanagari text-shiv-orange text-3xl font-black transition-all group-hover:tracking-wider">
-                शिवगर्जना
-              </span>
-              <span className="text-[8px] font-black uppercase tracking-[0.5em] mt-1 text-white/40 block">
-                PUNE HEADQUARTERS
-              </span>
-            </div>
-          </div>
-        </Link>
+  const isActive = (path: string) => location.pathname === path;
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-12">
-          {navLinks.map((link) => (
+  return (
+    <>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white p-2 rounded z-50">Skip to content</a>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+          ? "bg-background/95 backdrop-blur-xl py-3 shadow-md border-b border-primary/10"
+          : "bg-transparent py-6"
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+          {/* Logo Brand */}
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="relative">
+              <svg width="48" height="48" viewBox="0 0 100 100" className="group-hover:scale-110 transition-transform duration-300">
+                <circle cx="50" cy="50" r="48" fill="#E67E22" />
+                <circle cx="50" cy="50" r="42" fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" />
+                <text x="50" y="65" textAnchor="middle" fill="white" fontSize="45" fontWeight="900" fontFamily="Playfair Display">श</text>
+                <path d="M50 5 L55 15 L45 15 Z" fill="white" />
+                <path d="M50 95 L55 85 L45 85 Z" fill="white" />
+                <path d="M5 50 L15 55 L15 45 Z" fill="white" />
+                <path d="M95 50 L85 55 L85 45 Z" fill="white" />
+              </svg>
+            </div>
+            <div className="flex flex-col">
+              <span className={`font-display font-black text-xl tracking-tight leading-none transition-colors ${scrolled ? "text-foreground" : "text-foreground"}`}>
+                SHIVGARJANA
+              </span>
+              <span className={`text-[10px] font-sans font-bold uppercase tracking-[0.3em] transition-colors ${scrolled ? "text-primary" : "text-primary/80"}`}>
+                Kedari Nagar
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`relative px-5 py-2 text-[11px] font-display font-bold uppercase tracking-[0.15em] transition-all duration-300 rounded-sm ${isActive(link.path)
+                  ? "text-primary"
+                  : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                  }`}
+              >
+                {link.name}
+                {isActive(link.path) && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-primary"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </Link>
+            ))}
+
+            <div className={`w-[1px] h-6 mx-4 ${scrolled ? "bg-foreground/20" : "bg-white/20"}`}></div>
+
             <Link
-              key={link.path}
-              to={link.path}
-              className={`text-[10px] font-black uppercase tracking-[0.3em] transition-all relative group py-2 ${location.pathname === link.path ? "text-shiv-orange" : "text-white/60 hover:text-white"
+              to="/login"
+              className={`px-6 py-2 border rounded-sm text-[10px] font-display font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-sm ${scrolled
+                ? "border-primary text-primary hover:bg-primary hover:text-white"
+                : "bg-primary text-white border-primary hover:bg-primary/90"
                 }`}
             >
-              {link.name}
-              <motion.span
-                layoutId="nav-underline"
-                className={`absolute -bottom-1 left-0 h-[1.5px] bg-shiv-orange shadow-[0_0_10px_rgba(255,94,0,0.8)] ${location.pathname === link.path ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
+              Portal
             </Link>
-          ))}
-          <Link to="/login">
-            <button className="px-10 py-3.5 bg-shiv-orange text-white font-black uppercase tracking-widest text-[10px] shadow-[0_5px_15px_rgba(255,94,0,0.3)] hover:scale-105 active:scale-95 transition-all">
-              Establish Link
-            </button>
-          </Link>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-foreground hover:text-primary transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="lg:hidden p-3 bg-white/5 border border-white/5 text-white hover:border-shiv-orange transition-all"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            className="fixed inset-0 bg-[#1a0505] z-[60] p-12 flex flex-col items-center justify-center text-center space-y-12"
-          >
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-10 right-10 text-white border border-white/10 p-4 hover:border-shiv-orange transition-all"
+        {/* Mobile Navigation Panel */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden bg-background border-t border-primary/20 mt-3 overflow-hidden shadow-xl"
             >
-              <X size={32} />
-            </button>
-
-            <div className="flex flex-col items-center gap-4">
-              <Crown size={40} className="text-shiv-orange mb-4" />
-              <span className="logo-marathi text-6xl">शिवगर्जना</span>
-              <span className="text-[10px] font-black uppercase tracking-[0.8em] text-white/30">Mandal Pune</span>
-            </div>
-
-            <nav className="flex flex-col gap-8 w-full max-w-sm">
-              {navLinks.map((link) => (
+              <div className="flex flex-col p-6 gap-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`py-4 px-4 text-sm font-display font-bold tracking-widest uppercase transition-all border-b border-foreground/5 last:border-0 ${isActive(link.path)
+                      ? "text-primary bg-primary/5 pl-6"
+                      : "text-foreground/70 hover:text-primary hover:pl-6"
+                      }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
                 <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-2xl font-black uppercase tracking-[0.2em] py-4 border-b border-white/5 transition-all ${location.pathname === link.path ? "text-shiv-orange" : "text-white/40 hover:text-white"
-                    }`}
-                  onClick={() => setIsOpen(false)}
+                  to="/login"
+                  className="mt-6 py-4 px-4 btn-primary w-full text-center"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="pt-12">
-                <Link to="/login" onClick={() => setIsOpen(false)}>
-                  <button className="btn-shiv w-full !py-6 !text-lg">Access Portal</button>
+                  Admin Portal Login
                 </Link>
               </div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    </>
   );
 };
 

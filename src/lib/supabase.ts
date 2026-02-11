@@ -36,69 +36,17 @@ export const getCurrentUser = async () => {
     return { user, error };
 };
 
-// Data fetching helpers
-export const fetchMembers = async () => {
-    const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .order('created_at', { ascending: false });
-    return { data, error };
-};
+/*
+// Data fetching helpers (DEPRECATED - Moved to hooks/admin-api.ts or direct queries)
 
-export const fetchEvents = async () => {
-    const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .order('event_date', { ascending: false });
-    return { data, error };
-};
-
-export const fetchTasks = async () => {
-    const { data, error } = await supabase
-        .from('tasks')
-        .select('*, assigned_members:task_assignments(member_id)')
-        .order('due_date', { ascending: true });
-    return { data, error };
-};
-
-export const fetchVargani = async (year?: number) => {
-    let query = supabase.from('vargani_payments').select('*, member:members(*)');
-    if (year) {
-        query = query.eq('year', year);
-    }
-    const { data, error } = await query.order('payment_date', { ascending: false });
-    return { data, error };
-};
-
-export const fetchExpenses = async (year?: number) => {
-    let query = supabase.from('expenses').select('*');
-    if (year) {
-        query = query.eq('year', year);
-    }
-    const { data, error } = await query.order('expense_date', { ascending: false });
-    return { data, error };
-};
-
-export const fetchPhotos = async (year?: number, category?: string) => {
-    let query = supabase.from('photos').select('*');
-    if (year) {
-        query = query.eq('year', year);
-    }
-    if (category) {
-        query = query.eq('category', category);
-    }
-    const { data, error } = await query.order('upload_date', { ascending: false });
-    return { data, error };
-};
-
-export const fetchApprovals = async (eventId?: string) => {
-    let query = supabase.from('approvals').select('*, member:members(*), event:events(*)');
-    if (eventId) {
-        query = query.eq('event_id', eventId);
-    }
-    const { data, error } = await query.order('created_at', { ascending: false });
-    return { data, error };
-};
+// export const fetchMembers = async () => { ... }
+// export const fetchEvents = async () => { ... }
+// export const fetchTasks = async () => { ... }
+// export const fetchVargani = async (year?: number) => { ... }
+// export const fetchExpenses = async (year?: number) => { ... }
+// export const fetchPhotos = async (year?: number, category?: string) => { ... }
+// export const fetchApprovals = async (eventId?: string) => { ... }
+*/
 
 // Fort data for Shivaji Maharaj biography section
 export const fetchForts = async (category?: string, region?: string) => {

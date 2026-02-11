@@ -295,9 +295,10 @@ const AttendanceList = ({ taskId }: { taskId: string }) => {
   const declined = responses?.filter(r => r.status === 'declined') || [];
 
   return (
-    <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-4">
+    <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-6">
+      {/* Available Section */}
       <div>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-3 border-b border-green-100 pb-1">
           <span className="text-[10px] font-black uppercase tracking-widest text-green-600">Available ({approved.length})</span>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -307,32 +308,25 @@ const AttendanceList = ({ taskId }: { taskId: string }) => {
             approved.map(r => (
               <div key={r.id} className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold group relative">
                 {r.memberName}
-                {r.comment && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-800 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity w-32 pointer-events-none z-10">
-                    {r.comment}
-                  </div>
-                )}
               </div>
             ))
           )}
         </div>
       </div>
-      <div className="pt-2 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-2">
+
+      {/* Not Available Section with Reason */}
+      <div>
+        <div className="flex items-center justify-between mb-3 border-b border-red-100 pb-1">
           <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Not Available ({declined.length})</span>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="space-y-2">
           {declined.length === 0 ? (
             <span className="text-[10px] text-gray-400">No absences recorded.</span>
           ) : (
             declined.map(r => (
-              <div key={r.id} className="px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-bold group relative">
-                {r.memberName}
-                {r.comment && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-800 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity w-32 pointer-events-none z-10">
-                    {r.comment}
-                  </div>
-                )}
+              <div key={r.id} className="flex items-center justify-between gap-4 bg-red-50 p-2 rounded-lg border border-red-100">
+                <span className="text-[10px] font-bold text-red-700 whitespace-nowrap">{r.memberName}</span>
+                <span className="text-[9px] text-red-500/80 italic line-clamp-1">{r.comment || "No reason provided"}</span>
               </div>
             ))
           )}

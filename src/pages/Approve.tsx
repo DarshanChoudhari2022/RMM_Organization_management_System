@@ -64,6 +64,13 @@ const Approve = () => {
       alert("कृपया आपलं नाव निवडा (Please select your name)");
       return;
     }
+
+    if (action === "declined" && !comment.trim()) {
+      setShowComment(true);
+      alert("कृपया न येण्याचं कारण नमूद करा (Please provide a reason for unavailability)");
+      return;
+    }
+
     submitResponse.mutate(action);
   };
 

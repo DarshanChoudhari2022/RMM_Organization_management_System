@@ -72,12 +72,12 @@ const NavySection = () => {
                         className="order-1 lg:order-2 relative"
                     >
                         {/* Background Glow */}
-                        <div className="absolute -inset-10 bg-[#E67E22]/5 blur-3xl rounded-full" />
+                        <div className="absolute -inset-10 bg-[#D95D1E]/5 blur-3xl rounded-full" />
 
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-[#FBE8D3] transform -rotate-2 hover:rotate-0 transition-transform duration-500">
                             <img
-                                src="https://images.unsplash.com/photo-1588416936097-4188d9b2e04e?auto=format&fit=crop&q=80"
-                                alt="Sindhudurg Fort - Maratha Navy Base"
+                                src="/images/MarathaNavel.png"
+                                alt="Maratha Navy Ships and Forts"
                                 className="w-full h-[500px] object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

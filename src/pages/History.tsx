@@ -28,56 +28,47 @@ const timelineData: TimelineEvent[] = [
   {
     year: "1630",
     category: "EARLY LIFE",
-    title: "Birth of Shivaji Maharaj",
+    title: "Birth of a Legend",
     description: "Born on 19th February 1630 at Shivneri Fort.",
-    details: "Shivaji was born to Shahaji Bhosale and Jijabai. He was named 'Shivaji' after the local deity Goddess Shivai at Shivneri Fort, near Junnar.",
-    reference: "Sarkar, Jadunath. 'Shivaji and His Times', p. 12",
+    details: "Born to Jijabai and Shahaji Bhosale, his upbringing was fueled by stories of Ramayana and Mahabharata, shaping his vision of 'Hindavi Swarajya'.",
+    reference: "Sarkar, 'Shivaji and His Times', p. 12",
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Shivneri01.JPG"
   },
   {
     year: "1645",
     category: "POLITICAL MILESTONE",
-    title: "Oath of Swarajya",
-    description: "Young Shivaji took the oath of Swarajya at Raireshwar.",
-    details: "At age 15, Shivaji and his companions pledged to establish Hindavi Swarajya at the Raireshwar temple, dedicating their lives to the cause of freedom.",
+    title: "The Oath of Swarajya",
+    description: "Young Shivaji took the oath at Raireshwar Temple.",
+    details: "At just 15, he gathered his Maval companions and cut his finger to perform a blood ritual, pledging to liberate Bharat from foreign rule.",
     reference: "Sabhasad Bakhar, p. 8",
     image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
-  },
-  {
-    year: "1646",
-    category: "MILITARY CAMPAIGN",
-    title: "Capture of Torna Fort",
-    description: "First conquest: Captured Torna Fort from Bijapur.",
-    details: "This marked the beginning of Swarajya. He renamed it 'Prachandagad'. The treasure found during repairs funded the fortification of Rajgad.",
-    reference: "Sarkar, 'Shivaji and His Times', p. 27",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/FortTorna3.JPG/1280px-FortTorna3.JPG"
   },
   {
     year: "1659",
     category: "MILITARY CAMPAIGN",
     title: "Battle of Pratapgad",
-    description: "Defeat of Afzal Khan.",
-    details: "Shivaji killed the mighty Afzal Khan in a legendary one-on-one encounter at the foot of Pratapgad, proving his tactical brilliance against a superior force.",
-    reference: "Sarkar, 'Shivaji and His Times', p. 78",
+    description: "The defeat of the mighty Afzal Khan.",
+    details: "Using the 'Wagh Nakh' (Tiger Claws), Maharaj outsmarted the giant Afzal Khan in a legendary encounter that shook the foundations of the Bijapur Sultanate.",
+    reference: "Sarkar, p. 78",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Pratapgad_from_distance.JPG/1280px-Pratapgad_from_distance.JPG"
+  },
+  {
+    year: "1666",
+    category: "POLITICAL MILESTONE",
+    title: "The Great Escape from Agra",
+    description: "Strategic escape from Aurangzeb's house arrest.",
+    details: "Imprisoned in Agra by Aurangzeb, Maharaj executed a brilliant escape inside large fruit baskets, a primary example of his 'Ganimi Kava' (Guerrilla Tactics).",
+    reference: "Kincaid, 'History of Maratha People', p. 210",
+    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
   },
   {
     year: "1674",
     category: "POLITICAL MILESTONE",
-    title: "Coronation",
-    description: "Crowned Chhatrapati at Raigad Fort.",
-    details: "Grand coronation ceremony establishing the sovereign Maratha Kingdom (Hindavi Swarajya). He was formally enthroned as Chhatrapati by Gaga Bhatt on June 6, 1674.",
-    reference: "Sarkar, 'Shivaji and His Times', p. 195",
+    title: "The Coronation (Rajyabhishek)",
+    description: "Establishment of the independent Maratha Kingdom.",
+    details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya.",
+    reference: "Sarkar, p. 195",
     image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
-  },
-  {
-    year: "1680",
-    category: "LEGACY",
-    title: "Legacy",
-    description: "Passed away at Raigad.",
-    details: "Left behind a powerful empire that would dominate India for the next century. His administrative, naval, and military reforms remained the blueprint for future rulers of Bharat.",
-    reference: "Sarkar, 'Shivaji and His Times', p. 306",
-    image: "https://images.unsplash.com/photo-1620311397333-e99d86899f8d?auto=format&fit=crop&q=80"
   }
 ];
 
@@ -243,6 +234,49 @@ const TimelineCard = ({ event, index }: { event: TimelineEvent; index: number })
   );
 };
 
+const AshtapradhanSection = () => {
+  const ministers = [
+    { title: "Peshwa", name: "Moropant Pingale", role: "Prime Minister / Administration" },
+    { title: "Amatya", name: "Ramchandra Nilkanth", role: "Finance Minister / Accounts" },
+    { title: "Surnis", name: "Annaji Datto", role: "General Secretary / Records" },
+    { title: "Waqia-Navis", name: "Dattaji Limaye", role: "Intelligence / Home Minister" },
+    { title: "Sar-i-Naubat", name: "Hambirrao Mohite", role: "Commander-in-Chief / Military" },
+    { title: "Dabir", name: "Somnath Pant", role: "Foreign Minister / Ethics" },
+    { title: "Nyayadhish", name: "Niraji Rauji", role: "Chief Justice / Law" },
+    { title: "Panditrao", name: "Moreshwar Panditrao", role: "High Priest / Religious Affairs" }
+  ];
+
+  return (
+    <section className="py-24 bg-[#F7F6F3] border-t border-[#FBE8D3]">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-[#E67E22] font-display font-black text-[36px] mb-4">Ashtapradhan Mandal</h2>
+          <p className="text-[#2C3E50] opacity-80 max-w-2xl mx-auto italic font-medium uppercase tracking-widest text-xs" style={{ fontFamily: "Inter, sans-serif" }}>
+            The Council of Eight: Chhatrapati Shivaji Maharaj's Blueprint for Governance
+          </p>
+          <div className="w-[60px] h-1 bg-[#E67E22] mx-auto mt-6" />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {ministers.map((m, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-xl shadow-sm border border-[#FBE8D3] relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-12 h-12 bg-[#FBE8D3] opacity-10 rounded-bl-full group-hover:bg-[#E67E22] group-hover:opacity-10 transition-all" />
+              <h4 className="text-[#E67E22] font-display font-black text-xl mb-1">{m.title}</h4>
+              <p className="text-[#2C3E50] font-bold text-sm mb-4">{m.name}</p>
+              <div className="h-[1px] w-full bg-gray-100 mb-4" />
+              <p className="text-[11px] text-[#7F8C8D] uppercase tracking-widest font-black leading-tight" style={{ fontFamily: "Inter, sans-serif" }}>{m.role}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Footer = () => {
   return (
     <footer className="w-full bg-[#F7F6F3] pt-[60px] pb-0 border-t-2 border-[#FBE8D3]">
@@ -349,15 +383,15 @@ const History = () => {
 
       {/* Timeline Section */}
       <section className="max-w-[1100px] mx-auto px-6 md:px-12 py-[60px] relative">
-        {/* Vertical Center Line */}
         <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-[#FBE8D3] md:-translate-x-1/2" />
-
         <div className="flex flex-col">
           {timelineData.map((event, i) => (
             <TimelineCard key={i} event={event} index={i} />
           ))}
         </div>
       </section>
+
+      <AshtapradhanSection />
 
       <Footer />
     </div>

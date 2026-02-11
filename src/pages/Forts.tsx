@@ -254,12 +254,12 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
         <div className="p-6 flex flex-col flex-grow">
           <div className="flex flex-wrap gap-4 mb-4 pb-4 border-b border-[#FBE8D3]/50">
             <span className="inline-flex items-center gap-2 text-[#7F8C8D] text-[11px] font-medium uppercase tracking-[0.05em]">
-              <MapPin size={14} className="text-[#E67E22]" />
+              <MapPin size={14} className="text-[#D95D1E]" />
               {fort.location}
             </span>
             {fort.elevation && (
               <span className="inline-flex items-center gap-2 text-[#7F8C8D] text-[11px] font-medium uppercase tracking-[0.05em]">
-                <Mountain size={14} className="text-[#E67E22]" />
+                <Mountain size={14} className="text-[#D95D1E]" />
                 {fort.elevation}
               </span>
             )}
@@ -271,9 +271,9 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
 
           <div className="mt-auto">
             {/* Expand Toggle */}
-            <button className="flex items-center gap-2 text-[#E67E22] text-[11px] font-bold uppercase tracking-widest group/btn">
+            <button className="flex items-center gap-2 text-[#D95D1E] text-[11px] font-bold uppercase tracking-widest group/btn">
               {expanded ? "Read Less" : "Discover History"}
-              <div className="w-6 h-[1px] bg-[#E67E22] group-hover/btn:w-10 transition-all duration-300" />
+              <div className="w-6 h-[1px] bg-[#D95D1E] group-hover/btn:w-10 transition-all duration-300" />
             </button>
 
             {/* Expanded Content */}
@@ -285,17 +285,17 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
             >
               <div className="pt-6 mt-6 border-t border-[#FBE8D3] space-y-4 bg-[#FBE8D3]/10 -mx-6 px-6 pb-4">
                 <div>
-                  <h4 className="text-[#E67E22] text-[11px] font-bold uppercase tracking-widest mb-2">Historical Significance</h4>
+                  <h4 className="text-[#D95D1E] text-[11px] font-bold uppercase tracking-widest mb-2">Historical Significance</h4>
                   <p className="text-[#2C3E50] text-sm leading-relaxed">{fort.significance}</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <span className="text-[#E67E22] font-bold text-xs">Captured:</span>
+                  <span className="text-[#D95D1E] font-bold text-xs">Captured:</span>
                   <span className="text-[#2C3E50] text-xs">{fort.captured}</span>
                 </div>
 
                 <div className="flex items-start gap-2 p-3 bg-white border border-[#FBE8D3] rounded-[4px]">
-                  <BookOpen size={14} className="text-[#E67E22] flex-shrink-0 mt-0.5" />
+                  <BookOpen size={14} className="text-[#D95D1E] flex-shrink-0 mt-0.5" />
                   <p className="text-[#7F8C8D] text-[11px] italic font-medium">{fort.reference}</p>
                 </div>
               </div>
@@ -323,7 +323,7 @@ const Forts = () => {
     <div className="bg-background min-h-screen">
       {/* Hero */}
       <section className="relative pt-[140px] pb-24 px-6 md:px-12 overflow-hidden bg-[#FFFFFF] text-center">
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#E67E22] to-transparent opacity-30" />
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#D95D1E] to-transparent opacity-30" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
@@ -331,11 +331,11 @@ const Forts = () => {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full border border-[#E67E22]/20 bg-[#FBE8D3]/30 text-[#E67E22] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full border border-[#D95D1E]/20 bg-[#FBE8D3]/30 text-[#D95D1E] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
               Guardians of Swarajya
             </span>
             <h1 className="text-5xl md:text-7xl font-display font-black text-[#2C3E50] tracking-tight mb-6 leading-[1.1]">
-              <span className="text-[#E67E22]">350+</span> Forts of the <br />
+              <span className="text-[#D95D1E]">350+</span> Forts of the <br />
               <span className="text-[#2C3E50]">Maratha Empire</span>
             </h1>
             <p className="text-[#2C3E50]/70 text-lg md:text-xl font-sans font-light leading-relaxed max-w-2xl mx-auto mb-12">
@@ -351,18 +351,18 @@ const Forts = () => {
             className="flex flex-col md:flex-row items-center justify-center gap-4 max-w-2xl mx-auto"
           >
             <div className="relative w-full md:w-[60%]">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E67E22]" />
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D95D1E]" />
               <input
                 type="text"
                 placeholder="Find a fort (e.g. 'Raigad', 'Sea Fort')..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white border border-[#FBE8D3] focus:border-[#E67E22] rounded-[4px] py-4 pl-12 pr-4 text-[#2C3E50] placeholder:text-[#2C3E50]/40 outline-none transition-all shadow-sm focus:shadow-md"
+                className="w-full bg-white border border-[#FBE8D3] focus:border-[#D95D1E] rounded-[4px] py-4 pl-12 pr-4 text-[#2C3E50] placeholder:text-[#2C3E50]/40 outline-none transition-all shadow-sm focus:shadow-md"
               />
               {search && (
                 <button
                   onClick={() => setSearch("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2C3E50]/40 hover:text-[#E67E22]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2C3E50]/40 hover:text-[#D95D1E]"
                 >
                   <X size={16} />
                 </button>
@@ -379,8 +379,8 @@ const Forts = () => {
                   key={item.key}
                   onClick={() => setFilter(item.key as any)}
                   className={`px-6 py-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all border min-w-fit ${filter === item.key
-                    ? "bg-[#E67E22] text-white border-[#E67E22] shadow-md"
-                    : "bg-white text-[#2C3E50] border-[#FBE8D3] hover:border-[#E67E22] hover:text-[#E67E22]"
+                    ? "bg-[#D95D1E] text-white border-[#D95D1E] shadow-md"
+                    : "bg-white text-[#2C3E50] border-[#FBE8D3] hover:border-[#D95D1E] hover:text-[#D95D1E]"
                     }`}
                 >
                   {item.label}
@@ -436,11 +436,11 @@ const StrategicImportance = () => {
     <section className="py-24 bg-[#F7F6F3] border-t border-[#FBE8D3]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-[#E67E22] font-display font-black text-3xl md:text-4xl mb-4">The Science of Fortification</h2>
+          <h2 className="text-[#D95D1E] font-display font-black text-3xl md:text-4xl mb-4">The Science of Fortification</h2>
           <p className="text-[#2C3E50]/60 max-w-2xl mx-auto uppercase tracking-widest text-[10px] font-black">
             Chhatrapati Shivaji Maharaj's 3-Tier Defense System for Perpetual Sovereignty
           </p>
-          <div className="w-12 h-1 bg-[#E67E22] mx-auto mt-6" />
+          <div className="w-12 h-1 bg-[#D95D1E] mx-auto mt-6" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -450,9 +450,9 @@ const StrategicImportance = () => {
               whileHover={{ y: -8 }}
               className="bg-white p-8 rounded-2xl border border-[#FBE8D3] shadow-sm hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-[10px] font-black text-[#E67E22] uppercase tracking-[0.2em] mb-2">{s.label}</div>
+              <div className="text-[10px] font-black text-[#D95D1E] uppercase tracking-[0.2em] mb-2">{s.label}</div>
               <h4 className="text-2xl font-display font-black text-[#2C3E50] mb-1">{s.type}</h4>
-              <div className="text-4xl font-display font-black text-[#E67E22]/20 mb-6">{s.count}</div>
+              <div className="text-4xl font-display font-black text-[#D95D1E]/20 mb-6">{s.count}</div>
               <p className="text-sm text-[#2C3E50]/70 leading-relaxed font-medium">{s.desc}</p>
             </motion.div>
           ))}
@@ -469,7 +469,7 @@ const StrategicImportance = () => {
             </div>
             <Link
               to="/history"
-              className="px-8 py-4 bg-[#E67E22] text-white rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
+              className="px-8 py-4 bg-[#D95D1E] text-white rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
             >
               Explore Timeline
             </Link>

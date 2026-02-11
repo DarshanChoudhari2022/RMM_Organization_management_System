@@ -31,62 +31,62 @@ const Navbar = () => {
     <>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white p-2 rounded z-50">Skip to content</a>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-          ? "bg-background/95 backdrop-blur-xl py-3 shadow-md border-b border-primary/10"
-          : "bg-transparent py-6"
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 h-[70px] flex items-center ${scrolled
+          ? "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+          : "bg-white/80 backdrop-blur-md border-b border-gray-100"
           }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between w-full">
           {/* Logo Brand */}
           <Link to="/" className="flex items-center gap-4 group">
             <div className="relative">
-              <img
-                src="/images/logo.png"
-                alt="Logo"
-                className="w-14 h-14 object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-lg"
-              />
+              <svg width="42" height="42" viewBox="0 0 100 100" className="group-hover:scale-110 transition-transform duration-300 drop-shadow-md">
+                <circle cx="50" cy="50" r="48" fill="#D95D1E" />
+                <circle cx="50" cy="50" r="42" fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" />
+                <text x="50" y="65" textAnchor="middle" fill="white" fontSize="45" fontWeight="900" fontFamily="Playfair Display">श</text>
+                <path d="M50 5 L55 15 L45 15 Z" fill="white" />
+                <path d="M50 95 L55 85 L45 85 Z" fill="white" />
+                <path d="M5 50 L15 55 L15 45 Z" fill="white" />
+                <path d="M95 50 L85 55 L85 45 Z" fill="white" />
+              </svg>
             </div>
             <div className="flex flex-col">
-              <span className={`font-display font-black text-xl tracking-tight leading-none transition-colors ${scrolled ? "text-foreground" : "text-foreground"}`}>
+              <span className="font-display font-black text-xl tracking-tight leading-none text-[#2C3E50] uppercase">
                 SHIVGARJANA
               </span>
-              <span className={`text-[10px] font-sans font-bold uppercase tracking-[0.3em] transition-colors ${scrolled ? "text-primary" : "text-primary/80"}`}>
+              <span className="text-[10px] font-sans font-bold text-[#D95D1E] uppercase tracking-[0.25em]">
                 Kedari Nagar
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative px-5 py-2 text-[11px] font-display font-bold uppercase tracking-[0.15em] transition-all duration-300 rounded-sm ${isActive(link.path)
-                  ? "text-primary"
-                  : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                className={`relative px-5 py-2 text-[13px] font-display font-bold uppercase tracking-[0.1em] transition-all duration-300 rounded-sm ${isActive(link.path)
+                  ? "text-[#D95D1E]"
+                  : "text-[#2C3E50] hover:text-[#D95D1E]"
                   }`}
               >
                 {link.name}
                 {isActive(link.path) && (
                   <motion.div
                     layoutId="nav-active"
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-primary"
+                    className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#D95D1E]"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
               </Link>
             ))}
 
-            <div className={`w-[1px] h-6 mx-4 ${scrolled ? "bg-foreground/20" : "bg-white/20"}`}></div>
+            <div className={`w-[1px] h-6 mx-4 bg-gray-200`}></div>
 
             <Link
               to="/login"
-              className={`px-6 py-2 border rounded-sm text-[10px] font-display font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-sm ${scrolled
-                ? "border-primary text-primary hover:bg-primary hover:text-white"
-                : "bg-primary text-white border-primary hover:bg-primary/90"
-                }`}
+              className="px-6 py-2 border border-[#D95D1E] text-[#D95D1E] text-[12px] font-display font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-sm hover:bg-[#D95D1E] hover:text-white"
             >
               Portal
             </Link>

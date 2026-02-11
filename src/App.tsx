@@ -20,7 +20,7 @@ const MainContent = () => {
   const isDashboard = location.pathname.startsWith("/dashboard");
   const isLogin = location.pathname === "/login";
   const isApprove = location.pathname.startsWith("/approve");
-  const shouldHideNavbar = isDashboard || isLogin || isApprove || location.pathname === "/history";
+  const shouldHideNavbar = isDashboard || isLogin || isApprove;
 
   return (
     <>

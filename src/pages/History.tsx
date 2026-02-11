@@ -1,11 +1,11 @@
 import { motion, useInView, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { ChevronDown, Mail, MapPin, BookOpen, Crown, Menu, X, Landmark, Shield, Swords } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { ChevronDown, Mail, MapPin, BookOpen, Landmark, Shield, Swords } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Colors (as per requirements)
 const colors = {
-  primary: "#E67E22", // Deep Saffron
+  primary: "#D95D1E", // Deep Saffron (Shivsrushti Match)
   secondary: "#F39C12", // Vibrant Orange
   light: "#FBE8D3", // Pastel Orange
   white: "#FFFFFF",
@@ -67,103 +67,6 @@ const timelineData: TimelineEvent[] = [
   }
 ];
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
-
-  const navLinks = [
-    { name: "HOME", path: "/" },
-    { name: "HISTORY", path: "/history" },
-    { name: "FORTS", path: "/forts" },
-    { name: "GALLERY", path: "/gallery" },
-  ];
-
-  const activePath = location.pathname;
-
-  return (
-    <nav className={`fixed top-0 left-0 w-full h-[70px] bg-white z-[100] flex items-center px-6 md:px-12 transition-all duration-300 ${isScrolled ? "shadow-[0_2px_8px_rgba(0,0,0,0.08)]" : "border-b border-gray-100"}`}>
-      <div className="max-w-[1200px] w-full mx-auto flex justify-between items-center">
-        {/* Logo Left */}
-        <Link to="/" className="flex items-center gap-4 group h-[70px]">
-          <div className="relative">
-            <svg width="42" height="42" viewBox="0 0 100 100" className="group-hover:scale-110 transition-transform duration-300">
-              <circle cx="50" cy="50" r="48" fill="#E67E22" />
-              <circle cx="50" cy="50" r="42" fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" />
-              <text x="50" y="65" textAnchor="middle" fill="white" fontSize="45" fontWeight="900" fontFamily="Playfair Display">श</text>
-              <path d="M50 5 L55 15 L45 15 Z" fill="white" />
-              <path d="M50 95 L55 85 L45 85 Z" fill="white" />
-              <path d="M5 50 L15 55 L15 45 Z" fill="white" />
-              <path d="M95 50 L85 55 L85 45 Z" fill="white" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[16px] font-display font-black text-[#2C3E50] tracking-tight leading-none uppercase">SHIVGARJANA</span>
-            <span className="text-[10px] font-sans font-bold text-[#E67E22] uppercase tracking-[0.25em]">Kedari Nagar</span>
-          </div>
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={`px-5 py-2 text-[14px] font-sans font-semibold tracking-wide transition-all relative group h-[70px] flex items-center ${activePath === link.path ? "text-[#E67E22]" : "text-[#2C3E50] hover:text-[#E67E22]"}`}
-            >
-              {link.name}
-              <div className={`absolute bottom-0 left-0 w-full h-[2px] bg-[#E67E22] transition-transform duration-300 ${activePath === link.path ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`} />
-            </Link>
-          ))}
-          <Link
-            to="/login"
-            className="ml-5 px-6 py-2 border border-[#E67E22] text-[#E67E22] text-[14px] font-sans font-bold uppercase tracking-widest rounded-sm hover:bg-[#E67E22] hover:text-white transition-all duration-300"
-          >
-            PORTAL
-          </Link>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-[#2C3E50]">
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="absolute top-[70px] left-0 w-full bg-white border-b border-gray-100 shadow-xl md:hidden overflow-hidden"
-          >
-            <div className="flex flex-col p-6 gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-lg font-bold tracking-widest ${activePath === link.path ? "text-[#E67E22]" : "text-[#2C3E50]"}`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link
-                to="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="mt-4 px-6 py-3 bg-[#E67E22] text-white text-center font-bold tracking-widest rounded-sm"
-              >
-                ADMIN PORTAL
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
-  );
-};
-
 const TimelineCard = ({ event, index }: { event: TimelineEvent; index: number }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const ref = useRef(null);
@@ -174,12 +77,12 @@ const TimelineCard = ({ event, index }: { event: TimelineEvent; index: number })
   return (
     <div ref={ref} className="relative w-full flex flex-col md:flex-row items-center gap-12 md:gap-0 mb-[120px] last:mb-0">
       {/* Central Year Badge (Desktop) */}
-      <div className="hidden md:flex absolute left-1/2 top-0 -translate-x-1/2 z-10 w-[80px] h-[50px] bg-[#E67E22] text-white font-display font-bold text-[28px] items-center justify-center rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
+      <div className="hidden md:flex absolute left-1/2 top-0 -translate-x-1/2 z-10 w-[80px] h-[50px] bg-[#D95D1E] text-white font-display font-bold text-[28px] items-center justify-center rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
         {event.year}
       </div>
 
       {/* Mobile Year Badge */}
-      <div className="md:hidden flex self-start ml-[50px] mb-4 bg-[#E67E22] text-white px-4 py-1.5 font-display font-bold text-[18px] rounded-[4px] shadow-sm">
+      <div className="md:hidden flex self-start ml-[50px] mb-4 bg-[#D95D1E] text-white px-4 py-1.5 font-display font-bold text-[18px] rounded-[4px] shadow-sm">
         {event.year}
       </div>
 
@@ -196,16 +99,16 @@ const TimelineCard = ({ event, index }: { event: TimelineEvent; index: number })
             <div className="bg-[#F39C12] text-white text-[11px] font-sans font-bold uppercase tracking-[1px] px-3 py-1.5 rounded-[4px] w-fit mb-4">
               {event.category}
             </div>
-            <h3 className="text-[24px] font-display font-bold text-[#2C3E50] mb-3 leading-tight group-hover:text-[#E67E22] transition-colors">{event.title}</h3>
+            <h3 className="text-[24px] font-display font-bold text-[#2C3E50] mb-3 leading-tight group-hover:text-[#D95D1E] transition-colors">{event.title}</h3>
             <p className="text-[15px] text-[#2C3E50] leading-[1.6] mb-5">
               {isExpanded ? event.details : event.description}
             </p>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-[12px] italic text-[#7F8C8D]">
-                <BookOpen size={14} className="text-[#E67E22]" />
+                <BookOpen size={14} className="text-[#D95D1E]" />
                 {event.reference}
               </div>
-              <div className="flex items-center gap-1 text-[13px] font-bold text-[#E67E22] mt-2 group-hover:underline">
+              <div className="flex items-center gap-1 text-[13px] font-bold text-[#D95D1E] mt-2 group-hover:underline">
                 {isExpanded ? "Collapse" : "Expand"}
                 <ChevronDown size={16} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
               </div>
@@ -245,11 +148,11 @@ const AshtapradhanSection = () => {
     <section className="py-24 bg-[#F7F6F3] border-t border-[#FBE8D3]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-[#E67E22] font-display font-black text-[36px] mb-4">Ashtapradhan Mandal</h2>
+          <h2 className="text-[#D95D1E] font-display font-black text-[36px] mb-4">Ashtapradhan Mandal</h2>
           <p className="text-[#2C3E50] opacity-80 max-w-2xl mx-auto italic font-medium uppercase tracking-widest text-xs" style={{ fontFamily: "Inter, sans-serif" }}>
             The Council of Eight: Chhatrapati Shivaji Maharaj's Blueprint for Governance
           </p>
-          <div className="w-[60px] h-1 bg-[#E67E22] mx-auto mt-6" />
+          <div className="w-[60px] h-1 bg-[#D95D1E] mx-auto mt-6" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -259,8 +162,8 @@ const AshtapradhanSection = () => {
               whileHover={{ y: -5 }}
               className="bg-white p-8 rounded-xl shadow-sm border border-[#FBE8D3] relative overflow-hidden group"
             >
-              <div className="absolute top-0 right-0 w-12 h-12 bg-[#FBE8D3] opacity-10 rounded-bl-full group-hover:bg-[#E67E22] group-hover:opacity-10 transition-all" />
-              <h4 className="text-[#E67E22] font-display font-black text-xl mb-1">{m.title}</h4>
+              <div className="absolute top-0 right-0 w-12 h-12 bg-[#FBE8D3] opacity-10 rounded-bl-full group-hover:bg-[#D95D1E] group-hover:opacity-10 transition-all" />
+              <h4 className="text-[#D95D1E] font-display font-black text-xl mb-1">{m.title}</h4>
               <p className="text-[#2C3E50] font-bold text-sm mb-4">{m.name}</p>
               <div className="h-[1px] w-full bg-gray-100 mb-4" />
               <p className="text-[11px] text-[#7F8C8D] uppercase tracking-widest font-black leading-tight" style={{ fontFamily: "Inter, sans-serif" }}>{m.role}</p>
@@ -279,8 +182,8 @@ const Footer = () => {
         {/* About */}
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-[32px] font-display font-black text-[#E67E22]">श</span>
-            <span className="text-[14px] font-sans font-bold text-[#E67E22] uppercase tracking-widest leading-none">SHIVGARJANA<br />PRATHISTHAN</span>
+            <span className="text-[32px] font-display font-black text-[#D95D1E]">श</span>
+            <span className="text-[14px] font-sans font-bold text-[#D95D1E] uppercase tracking-widest leading-none">SHIVGARJANA<br />PRATHISTHAN</span>
           </div>
           <p className="text-[13px] text-[#2C3E50] leading-[1.6] max-w-[280px]">
             Celebrating the legacy of Chhatrapati Shivaji Maharaj through education, culture, and community engagement at Wanowrie, Pune.
@@ -289,11 +192,11 @@ const Footer = () => {
 
         {/* Navigate */}
         <div>
-          <h4 className="text-[14px] font-sans font-bold text-[#E67E22] uppercase tracking-widest mb-6">NAVIGATE</h4>
+          <h4 className="text-[14px] font-sans font-bold text-[#D95D1E] uppercase tracking-widest mb-6">NAVIGATE</h4>
           <ul className="flex flex-col gap-3">
             {["Home", "History & Timeline", "Forts of Swarajya", "Photo Gallery"].map((item) => (
               <li key={item}>
-                <Link to="/" className="text-[13px] text-[#2C3E50] hover:text-[#E67E22] hover:underline transition-all">{item}</Link>
+                <Link to="/" className="text-[13px] text-[#2C3E50] hover:text-[#D95D1E] hover:underline transition-all">{item}</Link>
               </li>
             ))}
           </ul>
@@ -301,7 +204,7 @@ const Footer = () => {
 
         {/* Sources */}
         <div>
-          <h4 className="text-[14px] font-sans font-bold text-[#E67E22] uppercase tracking-widest mb-6">SOURCES</h4>
+          <h4 className="text-[14px] font-sans font-bold text-[#D95D1E] uppercase tracking-widest mb-6">SOURCES</h4>
           <ul className="flex flex-col gap-3">
             {[
               "Shivaji and His Times — Sir Jadunath Sarkar",
@@ -316,14 +219,14 @@ const Footer = () => {
 
         {/* Contact */}
         <div>
-          <h4 className="text-[14px] font-sans font-bold text-[#E67E22] uppercase tracking-widest mb-6">CONTACT</h4>
+          <h4 className="text-[14px] font-sans font-bold text-[#D95D1E] uppercase tracking-widest mb-6">CONTACT</h4>
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-4 text-[13px] text-[#2C3E50]">
-              <MapPin size={18} className="text-[#E67E22] shrink-0" />
+              <MapPin size={18} className="text-[#D95D1E] shrink-0" />
               <span>Kedari Nagar, Wanowrie,<br />Pune 411040, Maharashtra, India</span>
             </div>
             <div className="flex items-start gap-4 text-[13px] text-[#2C3E50]">
-              <Mail size={18} className="text-[#E67E22] shrink-0" />
+              <Mail size={18} className="text-[#D95D1E] shrink-0" />
               <span>info@shivgarjana.org</span>
             </div>
           </div>
@@ -334,7 +237,7 @@ const Footer = () => {
       <div className="w-full border-t border-[#FBE8D3] py-8 bg-white/50">
         <div className="max-w-[1200px] mx-auto px-6 text-center flex flex-col gap-2">
           <p className="text-[12px] text-[#7F8C8D]">© 2026 Shrimant Shivgarjana Prathisthan. All rights reserved.</p>
-          <p className="text-[14px] font-display font-bold text-[#E67E22] tracking-widest mt-2 uppercase">जय शिवराय · हर हर महादेव</p>
+          <p className="text-[14px] font-display font-bold text-[#D95D1E] tracking-widest mt-2 uppercase">जय शिवराय · हर हर महादेव</p>
         </div>
       </div>
     </footer>
@@ -351,11 +254,10 @@ const History = () => {
 
   return (
     <div className="w-full bg-[#FFFFFF] font-sans text-[#2C3E50]">
-      <Navbar />
 
       {/* Progress Bar (Sticky) */}
       <motion.div
-        className="fixed top-[70px] left-0 right-0 h-1 bg-[#E67E22] origin-left z-[90]"
+        className="fixed top-[70px] left-0 right-0 h-1 bg-[#D95D1E] origin-left z-[90]"
         style={{ scaleX: scrollYProgress }}
       />
 
@@ -364,7 +266,7 @@ const History = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#FBE8D3] px-5 py-1.5 rounded-[20px] text-[13px] font-display font-medium text-[#E67E22] mb-6"
+          className="bg-[#FBE8D3] px-5 py-1.5 rounded-[20px] text-[13px] font-display font-medium text-[#D95D1E] mb-6"
         >
           Chhatrapati Shivaji Maharaj • 1630–1680
         </motion.div>
@@ -372,7 +274,7 @@ const History = () => {
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[#E67E22] font-display font-extrabold text-[48px] md:text-[56px] tracking-[1px] mb-4 leading-tight"
+          className="text-[#D95D1E] font-display font-extrabold text-[48px] md:text-[56px] tracking-[1px] mb-4 leading-tight"
         >
           Historical Timeline
         </motion.h1>
@@ -386,7 +288,7 @@ const History = () => {
           From birth to legacy: The journey of Chhatrapati Shivaji Maharaj.
         </motion.p>
 
-        <div className="w-[100px] h-[3px] bg-[#E67E22] rounded-full mx-auto" />
+        <div className="w-[100px] h-[3px] bg-[#D95D1E] rounded-full mx-auto" />
       </header>
 
       {/* Timeline Section */}

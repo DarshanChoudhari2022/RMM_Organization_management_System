@@ -1,4 +1,4 @@
-import { Member, Task, Expense, Invitation } from "@/types/admin";
+import { Member, Task, Expense, Invitation, TaskResponse } from "@/types/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
@@ -133,6 +133,26 @@ export const useTasks = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
     });
 
+    const updateTask = useMutation({
+        mutationFn: async (task: Partial<Task> & { id: string }) => {
+            const { data, error } = await supabase
+                .from('tasks')
+                .update({
+                    title: task.title,
+                    description: task.description,
+                    date: task.date,
+                    time: task.time,
+                    location: task.location
+                })
+                .eq('id', task.id)
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    });
+
     const deleteTask = useMutation({
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('tasks').delete().eq('id', id);
@@ -141,7 +161,32 @@ export const useTasks = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
     });
 
-    return { ...query, addTask, deleteTask };
+    return { ...query, addTask, updateTask, deleteTask };
+};
+
+export const useTaskResponses = (taskId?: string) => {
+    return useQuery({
+        queryKey: ["task-responses", taskId],
+        queryFn: async () => {
+            if (!taskId) return [];
+            const { data, error } = await supabase
+                .from('task_responses')
+                .select('*')
+                .eq('task_id', taskId)
+                .order('responded_at', { ascending: false });
+            if (error) throw error;
+
+            return data.map((d: any) => ({
+                id: d.id,
+                taskId: d.task_id,
+                memberName: d.member_name,
+                status: d.status,
+                comment: d.comment,
+                respondedAt: d.responded_at
+            })) as TaskResponse[];
+        },
+        enabled: !!taskId
+    });
 };
 
 // --- Expenses ---

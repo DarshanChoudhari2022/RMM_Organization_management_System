@@ -26,7 +26,7 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { useMembers, useTasks, useExpenses, useInvitations } from "@/lib/admin-api";
+import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses } from "@/lib/admin-api";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory } from "@/types/admin";
 
@@ -284,16 +284,88 @@ const MembersTab = () => {
   );
 };
 
-const TasksTab = () => {
-  const { data: tasks, addTask, deleteTask } = useTasks();
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+// --- Components ---
 
-  const handleAdd = () => {
-    if (!newTask.title || !newTask.date) return;
-    addTask.mutate(newTask as any);
-    setNewTask({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
-    setIsAddOpen(false);
+const AttendanceList = ({ taskId }: { taskId: string }) => {
+  const { data: responses, isLoading } = useTaskResponses(taskId);
+
+  if (isLoading) return <div className="p-4 text-xs text-center text-gray-400">Loading attendance...</div>;
+
+  const approved = responses?.filter(r => r.status === 'approved') || [];
+  const declined = responses?.filter(r => r.status === 'declined') || [];
+
+  return (
+    <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-4">
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-green-600">Available ({approved.length})</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {approved.length === 0 ? (
+            <span className="text-[10px] text-gray-400">No one marked available yet.</span>
+          ) : (
+            approved.map(r => (
+              <div key={r.id} className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold group relative">
+                {r.memberName}
+                {r.comment && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-800 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity w-32 pointer-events-none z-10">
+                    {r.comment}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+      <div className="pt-2 border-t border-gray-200">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Not Available ({declined.length})</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {declined.length === 0 ? (
+            <span className="text-[10px] text-gray-400">No absences recorded.</span>
+          ) : (
+            declined.map(r => (
+              <div key={r.id} className="px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-bold group relative">
+                {r.memberName}
+                {r.comment && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-800 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity w-32 pointer-events-none z-10">
+                    {r.comment}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TasksTab = () => {
+  const { data: tasks, addTask, updateTask, deleteTask } = useTasks();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+  const [showAttendees, setShowAttendees] = useState<string | null>(null);
+
+  const handleSave = () => {
+    if (editingTask) {
+      if (!editingTask.title || !editingTask.date) return;
+      updateTask.mutate(editingTask);
+      setEditingTask(null);
+      setIsAddOpen(false);
+    } else {
+      if (!newTask.title || !newTask.date) return;
+      addTask.mutate(newTask as any);
+      setNewTask({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+      setIsAddOpen(false);
+    }
+  };
+
+  const openEdit = (task: Task) => {
+    setEditingTask(task);
+    setIsAddOpen(true);
   };
 
   const generateShareText = (task: Task) => {
@@ -326,9 +398,17 @@ const TasksTab = () => {
                 <div className="p-3 bg-orange-50 text-[#D95D1E] rounded-xl">
                   <CheckCircle2 size={20} />
                 </div>
-                <button onClick={() => deleteTask.mutate(task.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => openEdit(task)}
+                    className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
+                  >
+                    <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                  </button>
+                  <button onClick={() => deleteTask.mutate(task.id)} className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
               <h3 className="text-lg font-bold text-[#2C1810] mb-2">{task.title}</h3>
               <p className="text-sm text-[#2C1810]/70 line-clamp-2 mb-4">{task.description}</p>
@@ -345,12 +425,23 @@ const TasksTab = () => {
                 </div>
               </div>
 
-              <button
-                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(generateShareText(task))}`, '_blank')}
-                className="w-full py-3 bg-green-50 text-green-600 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-green-100 transition-colors"
-              >
-                <Share2 size={14} /> Share on WhatsApp
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => setShowAttendees(showAttendees === task.id ? null : task.id)}
+                  className={`w-full py-2 ${showAttendees === task.id ? "bg-[#2C1810] text-white" : "bg-gray-100 text-[#2C1810]/60"} rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all`}
+                >
+                  {showAttendees === task.id ? "Close Attendance" : "View Attendance"}
+                </button>
+
+                {showAttendees === task.id && <AttendanceList taskId={task.id} />}
+
+                <button
+                  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(generateShareText(task))}`, '_blank')}
+                  className="w-full py-3 bg-green-50 text-green-600 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-green-100 transition-colors"
+                >
+                  <Share2 size={14} /> Share on WhatsApp
+                </button>
+              </div>
             </div>
           ))
         )}
@@ -364,15 +455,15 @@ const TasksTab = () => {
           >
             <motion.div
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
             >
-              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">Assign New Task</h3>
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">{editingTask ? "Edit Task" : "Assign New Task"}</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Task Title</label>
                   <input
-                    value={newTask.title}
-                    onChange={e => setNewTask({ ...newTask, title: e.target.value })}
+                    value={editingTask ? editingTask.title : newTask.title}
+                    onChange={e => editingTask ? setEditingTask({ ...editingTask, title: e.target.value }) : setNewTask({ ...newTask, title: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     placeholder="e.g. Stage Decoration"
                   />
@@ -380,8 +471,8 @@ const TasksTab = () => {
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Description</label>
                   <textarea
-                    value={newTask.description}
-                    onChange={e => setNewTask({ ...newTask, description: e.target.value })}
+                    value={editingTask ? editingTask.description : newTask.description}
+                    onChange={e => editingTask ? setEditingTask({ ...editingTask, description: e.target.value }) : setNewTask({ ...newTask, description: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[80px]"
                     placeholder="Details about the task..."
                   />
@@ -391,8 +482,8 @@ const TasksTab = () => {
                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Date</label>
                     <input
                       type="date"
-                      value={newTask.date}
-                      onChange={e => setNewTask({ ...newTask, date: e.target.value })}
+                      value={editingTask ? editingTask.date : newTask.date}
+                      onChange={e => editingTask ? setEditingTask({ ...editingTask, date: e.target.value }) : setNewTask({ ...newTask, date: e.target.value })}
                       className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     />
                   </div>
@@ -400,8 +491,8 @@ const TasksTab = () => {
                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Time</label>
                     <input
                       type="time"
-                      value={newTask.time}
-                      onChange={e => setNewTask({ ...newTask, time: e.target.value })}
+                      value={editingTask ? editingTask.time : newTask.time}
+                      onChange={e => editingTask ? setEditingTask({ ...editingTask, time: e.target.value }) : setNewTask({ ...newTask, time: e.target.value })}
                       className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     />
                   </div>
@@ -409,16 +500,26 @@ const TasksTab = () => {
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Location</label>
                   <input
-                    value={newTask.location}
-                    onChange={e => setNewTask({ ...newTask, location: e.target.value })}
+                    value={editingTask ? editingTask.location : newTask.location}
+                    onChange={e => editingTask ? setEditingTask({ ...editingTask, location: e.target.value }) : setNewTask({ ...newTask, location: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     placeholder="Location"
                   />
                 </div>
               </div>
               <div className="flex gap-3 mt-8">
-                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
-                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">Create Task</button>
+                <button
+                  onClick={() => {
+                    setIsAddOpen(false);
+                    setEditingTask(null);
+                  }}
+                  className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">
+                  {editingTask ? "Update Task" : "Create Task"}
+                </button>
               </div>
             </motion.div>
           </motion.div>

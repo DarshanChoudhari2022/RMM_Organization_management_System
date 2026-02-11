@@ -50,7 +50,7 @@ const timelineData: TimelineEvent[] = [
     description: "Establishment of the independent Hindu Sovereignty.",
     details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya and establishing a separate legal identity for the Maratha people.",
     reference: "Sarkar, p. 195",
-    image: ""
+    image: "/images/Coronation.jpg"
   },
   {
     year: "1680",

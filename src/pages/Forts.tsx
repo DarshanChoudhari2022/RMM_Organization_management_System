@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { MapPin, Mountain, Calendar, Shield, Anchor, ChevronDown, BookOpen, Search, X } from "lucide-react";
+import { MapPin, Mountain, Calendar, Shield, Anchor, ChevronDown, BookOpen, Search, X, ScrollText, History as HistoryIcon, Flag } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/landing/Footer";
 
@@ -13,8 +13,8 @@ interface Fort {
   elevation?: string;
   description: string;
   significance: string;
+  history: string;
   reference: string;
-  image: string;
 }
 
 const forts: Fort[] = [
@@ -27,8 +27,8 @@ const forts: Fort[] = [
     elevation: "2,700 ft",
     description: "Known as the 'Gibraltar of the East', Raigad was the capital of the Maratha Empire. Site of the grand coronation ceremony in 1674.",
     significance: "The heart of Swarajya. Houses the Samadhi of Chhatrapati Shivaji Maharaj and the Jagdishwar Temple.",
-    reference: "Sarkar, 'Shivaji and His Times'",
-    image: ""
+    history: "Chhatrapati Shivaji Maharaj captured this fort from Chandrarao More in 1656. He chose it as his capital due to its impregnable position. The coronation took place here on June 6, 1674. It remained a symbol of Maratha power until it was captured by the British in 1818.",
+    reference: "Sarkar, 'Shivaji and His Times'"
   },
   {
     name: "Torna Fort",
@@ -39,8 +39,8 @@ const forts: Fort[] = [
     elevation: "4,603 ft",
     description: "The first fort captured by Chhatrapati Shivaji Maharaj at age 16, marking the dawn of the Maratha Empire.",
     significance: "Cradle of Swarajya. Renamed 'Prachandagad' due to its massive spread.",
-    reference: "Sabhasad Bakhar",
-    image: ""
+    history: "In 1646, a young Shivaji Maharaj captured Torna from the Bijapur Sultanate. During repairs, he discovered hidden treasure which was used to build Rajgad Fort. This event marked the beginning of his quest for Hindavi Swarajya.",
+    reference: "Sabhasad Bakhar"
   },
   {
     name: "Rajgad Fort",
@@ -51,8 +51,8 @@ const forts: Fort[] = [
     elevation: "4,514 ft",
     description: "Served as the first capital of Swarajya for 26 years. Known as the 'King of Forts'.",
     significance: "Political powerhouse. Famous for Padmavati, Suvela, and Sanjivani machis.",
-    reference: "Purandare, 'Raja Shivchhatrapati'",
-    image: ""
+    history: "Constructed using the treasure found at Torna. Chhatrapati Shivaji Maharaj stayed here for over 25 years, more than any other fort. It witnessed many historic events, including the birth of Rajaram Maharaj.",
+    reference: "Purandare, 'Raja Shivchhatrapati'"
   },
   {
     name: "Pratapgad Fort",
@@ -63,8 +63,8 @@ const forts: Fort[] = [
     elevation: "3,543 ft",
     description: "Strategically built to control Jawali region. Famous for the duel between Chhatrapati Shivaji Maharaj and Afzal Khan.",
     significance: "Symbol of Maratha valor and guerrilla tactics. Houses Bhawani Temple.",
-    reference: "Sarkar, p. 78",
-    image: ""
+    history: "Built by Moropant Pingale on the orders of Shivaji Maharaj to command the Jawali valley. In 1659, the historic encounter with Afzal Khan took place at the foot of this fort, resulting in a decisive Maratha victory.",
+    reference: "Sarkar, p. 78"
   },
   {
     name: "Sindhudurg Fort",
@@ -74,8 +74,8 @@ const forts: Fort[] = [
     captured: "1664 (Built)",
     description: "A naval masterpiece built on Kurte Island with foundations of molten lead.",
     significance: "Headquarters of the Maratha Navy. Contains a temple dedicated to Shivaji Maharaj.",
-    reference: "Sarkar, p. 240",
-    image: ""
+    history: "Personally designed by Chhatrapati Shivaji Maharaj. Over 4,000 pounds of iron were used for the foundation and the walls are built with lead-filled stones to withstand the corrosive sea. It was the centerpiece of Maratha maritime defense.",
+    reference: "Sarkar, p. 240"
   },
   {
     name: "Sinhagad Fort",
@@ -86,8 +86,8 @@ const forts: Fort[] = [
     elevation: "4,300 ft",
     description: "Originally Kondana, famous for Tanaji Malusare's heroic scaling of the Donaje cliff.",
     significance: "Renamed 'Lion's Fort' in honor of Tanaji. Critical outpost for Pune's defense.",
-    reference: "Purandare, p. 302",
-    image: ""
+    history: "In 1670, Tanaji Malusare and his men scaled the steep cliff at night using a monitor lizard (Ghorpad). Tanaji fought bravely but died in the battle. Shivaji Maharaj famously said, 'Gad aala pan Sinha gela' (The fort is won, but the lion is lost).",
+    reference: "Purandare, p. 302"
   },
   {
     name: "Shivneri Fort",
@@ -98,8 +98,8 @@ const forts: Fort[] = [
     elevation: "3,500 ft",
     description: "Sacred birthplace of Chhatrapati Shivaji Maharaj, featuring seven defensive gates.",
     significance: "The dawn of Swarajya. Houses Shiv Kunj and Shivai Temple.",
-    reference: "Sarkar, p. 12",
-    image: ""
+    history: "Jijabai stayed here during her pregnancy due to the fort's security. Shivaji Maharaj was born on Feb 19, 1630. He spent his early childhood here, learning the basics of administration and warfare from his mother and companions.",
+    reference: "Sarkar, p. 12"
   },
   {
     name: "Panhala Fort",
@@ -110,8 +110,8 @@ const forts: Fort[] = [
     elevation: "3,127 ft",
     description: "Site of the daring night escape to Vishalgad during Siddhi Johar's siege.",
     significance: "Witnessed the sacrifice of Baji Prabhu Deshpande at Pavan Khind.",
-    reference: "Purandare, p. 198",
-    image: ""
+    history: "Captured from Bijapur in 1659. In 1660, Shivaji Maharaj was trapped here by Siddhi Johar. He made a miraculous escape on a rainy night, while Baji Prabhu Deshpande and 300 soldiers held off the enemy at Ghod Khind (later Pavan Khind).",
+    reference: "Purandare, p. 198"
   },
   {
     name: "Vijaydurg Fort",
@@ -121,8 +121,8 @@ const forts: Fort[] = [
     captured: "1653",
     description: "Considered the 'Gibraltar of Asia', featuring a triple line of naval fortifications.",
     significance: "Key naval base. Features an underwater stone wall for defense.",
-    reference: "Sarkar, p. 250",
-    image: ""
+    history: "One of the oldest forts on the coast, rebuilt by Shivaji Maharaj. It survived multiple attacks by the British, Portuguese, and Dutch. Its unique triple-walled structure made it virtually impregnable from the sea.",
+    reference: "Sarkar, p. 250"
   },
   {
     name: "Purandar Fort",
@@ -133,8 +133,8 @@ const forts: Fort[] = [
     elevation: "4,472 ft",
     description: "Site of Murarbaji's last stand. Birthplace of Chhatrapati Sambhaji Maharaj.",
     significance: "Strategic twin-fort. Witnessed the Treaty of Purandar (1665).",
-    reference: "Sarkar, p. 142",
-    image: ""
+    history: "Besieged by Jai Singh of Amber in 1665. Murarbaji Deshpande defended the Vajragad peak with incredible bravery until his death. This led to the Treaty of Purandar where Shivaji Maharaj had to surrender 23 forts to the Mughals.",
+    reference: "Sarkar, p. 142"
   },
   {
     name: "Lohagad Fort",
@@ -145,8 +145,8 @@ const forts: Fort[] = [
     elevation: "3,400 ft",
     description: "Strong treasury fort near Bor Ghat. Famous for the Vinchu Kata spur.",
     significance: "Impregnable storage for Surat campaign treasury.",
-    reference: "Kincaid, p. 50",
-    image: ""
+    history: "Used to store the wealth looted from Surat. Its high walls and four sequential gates (Ganesh, Narayan, Hanuman, Maha) made it one of the most secure treasury locations in the empire.",
+    reference: "Kincaid, p. 50"
   },
   {
     name: "Jinji Fort",
@@ -157,8 +157,8 @@ const forts: Fort[] = [
     elevation: "800 ft",
     description: "Eastern stronghold described as an 'Eastern Troy' by Europeans.",
     significance: "Southern capital. Withstood an 8-year Mughal siege (1690-1698).",
-    reference: "Sarkar, p. 270",
-    image: ""
+    history: "Captured during the Dakshin Digvijay campaign. It later became the refuge for Rajaram Maharaj when the Mughals captured Raigad. The fort's three hills (Rajagiri, Krishnagiri, Chandrayandurg) form a massive defensive complex.",
+    reference: "Sarkar, p. 270"
   },
   {
     name: "Vishalgad Fort",
@@ -169,8 +169,8 @@ const forts: Fort[] = [
     elevation: "3,630 ft",
     description: "Surrounded by dense forests, it was the safe haven during the Panhala escape.",
     significance: "Site of extreme loyalty. Guards the Konkan trade routes.",
-    reference: "Sarkar, p. 78",
-    image: ""
+    history: "Originally Khelna, captured from Adilshahi. The journey from Panhala to Vishalgad is legendary for the sacrifice of Baji Prabhu Deshpande. The fort remains a symbol of extreme loyalty and mountain warfare mastery.",
+    reference: "Sarkar, p. 78"
   },
   {
     name: "Suvarnadurg Fort",
@@ -180,19 +180,8 @@ const forts: Fort[] = [
     captured: "1660",
     description: "A golden guardian on the coast, birthplace of Admiral Kanhoji Angre.",
     significance: "Major shipbuilding yard for the Maratha Navy.",
-    reference: "Kincaid, p. 77",
-    image: ""
-  },
-  {
-    name: "Kolaba Fort",
-    marathi: "कुलाबा",
-    type: "sea",
-    location: "Alibag, Raigad",
-    captured: "1662 (Built/Strengthened)",
-    description: "Strategic island fortress used to check Portuguese and Siddhi influence.",
-    significance: "Last major sea fort strengthened by Shivaji Maharaj.",
-    reference: "Sarkar, 'Maratha Navy'",
-    image: ""
+    history: "Built specifically to counter the Siddis of Janjira. It served as a vital naval base and a site for constructing 'Galbats' and 'Gurabs' (Maratha warships). It was later the headquarters of the famous Admiral Kanhoji Angre.",
+    reference: "Kincaid, p. 77"
   },
   {
     name: "Khanderi Fort",
@@ -202,8 +191,8 @@ const forts: Fort[] = [
     captured: "1679 (Built)",
     description: "Challenged British naval superiority near Mumbai.",
     significance: "Sentinel of the Arabian Sea. Key to Karwar campaign.",
-    reference: "Gazetteer",
-    image: ""
+    history: "Built in 1679 despite intense opposition from the British at Mumbai. Shivaji Maharaj successfully fortified the island, forcing the British to acknowledge Maratha dominance in the nearby waters.",
+    reference: "Gazetteer"
   },
   {
     name: "Salher Fort",
@@ -214,140 +203,53 @@ const forts: Fort[] = [
     elevation: "5,141 ft",
     description: "Highest fort in Maharashtra. Site of a decisive battle against Mughals.",
     significance: "Symbol of Maratha resurgence in Baglan region.",
-    reference: "Sabhasad",
-    image: ""
+    history: "In 1672, a massive open-field battle took place here where the Marathas defeated a superior Mughal army. This was one of the first major Maratha victories over the Mughals in an open battle.",
+    reference: "Sabhasad"
   },
   {
-    name: "Mulher Fort",
-    marathi: "मुल्हेर",
+    name: "Harihar Fort",
+    marathi: "हरीहर",
     type: "hill",
-    location: "Nashik Region",
-    captured: "1671",
-    elevation: "4,300 ft",
-    description: "Strategic fort guarding the Baglan trade routes alongside Salher.",
-    significance: "Crucial for control over the Surat-Khandesh trade corridor.",
-    reference: "Gazetteer",
-    image: ""
+    location: "Igatpuri, Nashik",
+    captured: "1670",
+    elevation: "3,676 ft",
+    description: "Famous for its nearly vertical rock-cut steps. A masterpiece of rock engineering.",
+    significance: "Strategic surveillance point for the Gonda Ghat.",
+    history: "Captured during the campaign following the escape from Agra. The fort's almost 80-degree staircase carved into the rock face remains a marvel of engineering and defensive strategy.",
+    reference: "Gazetteer"
   },
   {
-    name: "Tikona Fort",
-    marathi: "तिकोणा",
-    type: "hill",
-    location: "Kamshet, Pune",
-    captured: "1657",
-    elevation: "3,500 ft",
-    description: "Triangular hill fort offering views of the entire Pawana region.",
-    significance: "Strategic observation point for Maval region.",
-    reference: "Local Records",
-    image: ""
-  },
-  {
-    name: "Tung Fort",
-    marathi: "तुंग",
-    type: "hill",
-    location: "Kamshet, Pune",
-    captured: "1657",
-    elevation: "3,526 ft",
-    description: "Also known as Kathingad (Difficult Fort) due to its conical shape.",
-    significance: "Sentinel of Pawana Maval. Difficult to climb and defend.",
-    reference: "Local Records",
-    image: ""
-  },
-  {
-    name: "Visapur Fort",
-    marathi: "विसापूर",
-    type: "hill",
-    location: "Maval, Pune",
-    captured: "1648",
-    elevation: "3,556 ft",
-    description: "Twin fort of Lohagad, featuring massive plateaus and stone carvings.",
-    significance: "Part of the Lohagad-Visapur protective barrier.",
-    reference: "Gazetteer",
-    image: ""
-  },
-  {
-    name: "Korigad Fort",
-    marathi: "कोरीगड",
-    type: "hill",
-    location: "Lonavala",
-    captured: "1657",
-    elevation: "3,028 ft",
-    description: "Impregnable fort near Aamby Valley, known for its massive perimeter walls.",
-    significance: "Controlled the trade routes passing through Mulshi valley.",
-    reference: "Local Records",
-    image: ""
-  },
-  {
-    name: "Sajjangad Fort",
-    marathi: "सज्जनगड",
-    type: "hill",
-    location: "Satara",
-    captured: "1663",
-    elevation: "3,000 ft",
-    description: "Spiritual residence of Samarth Ramdas Swami, the Guru of Shivaji Maharaj.",
-    significance: "Center of spiritual guidance for Swarajya.",
-    reference: "Saints of Maharashtra",
-    image: ""
-  },
-  {
-    name: "Ajinkyatara",
-    marathi: "अजिंक्यतारा",
-    type: "hill",
-    location: "Satara City",
-    captured: "1673",
-    elevation: "3,300 ft",
-    description: "The 'Invincible Star', overlooking the historic Satara city.",
-    significance: "Important administrative seat during the late Swarajya period.",
-    reference: "Gazetteer",
-    image: ""
-  },
-  {
-    name: "Vasota Fort",
-    marathi: "वासोटा",
-    type: "hill",
-    location: "Koyna Sanctuary",
-    captured: "1655",
-    elevation: "3,842 ft",
-    description: "Among the most difficult 'jungle' forts, surrounded by deep valleys.",
-    significance: "Used as a high-security prison for important captives.",
-    reference: "Purandare",
-    image: ""
-  },
-  {
-    name: "Harishchandragad",
-    marathi: "हरिश्चंद्रगड",
-    type: "hill",
-    location: "Ahmednagar",
+    name: "Chakan Fort",
+    marathi: "चाकण",
+    type: "land",
+    location: "Chakan, Pune",
     captured: "1647",
-    elevation: "4,600 ft",
-    description: "Ancient fort known for the Konkan Kada cliff and Kedareshwar Cave.",
-    significance: "Strategic northern boundary protector of Swarajya.",
-    reference: "Gazetteer",
-    image: ""
+    description: "A vital land fort guarding the northern approaches to Pune.",
+    significance: "Witnessed the heroic defense by Firangoji Narsala.",
+    history: "In 1660, Shaista Khan's massive army besieged this small fort. Firangoji Narsala and his garrison held out for 56 days against overwhelming odds, earning praise even from the enemy general.",
+    reference: "Purandare"
   },
   {
-    name: "Ratangad Fort",
-    marathi: "रतनगड",
-    type: "hill",
-    location: "Bhandardara",
-    captured: "1648",
-    elevation: "4,250 ft",
-    description: "Known as the 'Jewel of Forts', it has a natural rock hole (Nedhe).",
-    significance: "Controlled the passes between Ahmednagar and Konkan.",
-    reference: "Gazetteer",
-    image: ""
+    name: "Murud-Janjira",
+    marathi: "जंजिरा",
+    type: "sea",
+    location: "Murud, Raigad",
+    captured: "Unconquered",
+    description: "The invincible sea fort of the Siddis. Shivaji Maharaj built Padmadurg to challenge it.",
+    significance: "The only fort on the west coast that Marathas couldn't capture despite many attempts.",
+    history: "A major source of frustration for the Maratha Navy. Shivaji Maharaj attempted to capture it multiple times, even trying to build a stone causeway across the sea. He eventually built Padmadurg to keep the Siddis in check.",
+    reference: "Maratha Navy History"
   },
   {
-    name: "Rajmachi Fort",
-    marathi: "राजमाची",
-    type: "hill",
-    location: "Lonavala",
-    captured: "1657",
-    elevation: "2,710 ft",
-    description: "Strategic fort complex with Shrivardhan and Manoranjan peaks.",
-    significance: "Controlled the Bor Ghat trade route between Pune and Mumbai.",
-    reference: "Gazetteer",
-    image: ""
+    name: "Padmadurg Fort",
+    marathi: "पद्मदुर्ग",
+    type: "sea",
+    location: "Murud, Raigad",
+    captured: "1676 (Built)",
+    description: "Built by Shivaji Maharaj specifically to challenge the Siddhi's Janjira.",
+    significance: "Lotus-shaped sea fortress. Symbol of Maratha persistence.",
+    history: "Known as Kasa Fort, it was built on a rock amidst many obstacles. It provided a base for Maratha ships to monitor and attack the Siddhi fleet of Janjira.",
+    reference: "Gazetteer"
   }
 ];
 
@@ -358,9 +260,9 @@ const typeIcons = {
 };
 
 const typeLabels = {
-  hill: "Hill",
-  sea: "Sea",
-  land: "Land",
+  hill: "Hill Fort",
+  sea: "Sea Fort",
+  land: "Land Fort",
 };
 
 const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
@@ -378,39 +280,39 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
       className="group h-full"
     >
       <div
-        className={`h-full bg-white rounded-lg border border-[#FBE8D3] shadow-sm hover:shadow-md transition-all duration-300 p-5 flex flex-col cursor-pointer ${expanded ? 'ring-1 ring-[#D95D1E]/30' : ''}`}
+        className={`h-full bg-white rounded-xl border border-[#FBE8D3] shadow-sm hover:shadow-xl transition-all duration-500 p-6 flex flex-col cursor-pointer ${expanded ? 'ring-2 ring-[#D95D1E]/20 bg-[#F7F6F3]/50' : ''}`}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex justify-between items-start mb-3">
+        <div className="flex justify-between items-start mb-4">
           <div>
-            <p className="text-[#D95D1E] font-sans font-bold text-[9px] uppercase tracking-widest mb-0.5">{fort.marathi}</p>
-            <h3 className="font-display font-black text-lg text-[#2C3E50] leading-tight">{fort.name}</h3>
+            <p className="text-[#D95D1E] font-sans font-black text-[10px] uppercase tracking-widest mb-1">{fort.marathi}</p>
+            <h3 className="font-display font-black text-xl text-[#2C3E50] leading-tight group-hover:text-[#D95D1E] transition-colors">{fort.name}</h3>
           </div>
-          <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-sans font-black uppercase tracking-widest ${fort.type === "sea"
-            ? "bg-[#2980B9]/10 text-[#2980B9]"
+          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-sans font-black uppercase tracking-widest ${fort.type === "sea"
+            ? "bg-[#2980B9] text-white"
             : fort.type === "hill"
-              ? "bg-[#27AE60]/10 text-[#27AE60]"
-              : "bg-[#D35400]/10 text-[#D35400]"
+              ? "bg-[#27AE60] text-white"
+              : "bg-[#D35400] text-white"
             }`}>
-            <TypeIcon size={10} />
+            <TypeIcon size={12} />
             {typeLabels[fort.type]}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <span className="inline-flex items-center gap-1 text-[#7F8C8D] text-[10px] font-bold uppercase tracking-tight">
-            <MapPin size={10} className="text-[#D95D1E]" />
+        <div className="flex items-center gap-4 mb-5">
+          <span className="inline-flex items-center gap-1.5 text-[#7F8C8D] text-[11px] font-bold uppercase tracking-tight">
+            <MapPin size={12} className="text-[#D95D1E]" />
             {fort.location}
           </span>
           {fort.elevation && (
-            <span className="inline-flex items-center gap-1 text-[#7F8C8D] text-[10px] font-bold uppercase tracking-tight">
-              <Mountain size={10} className="text-[#D95D1E]" />
+            <span className="inline-flex items-center gap-1.5 text-[#7F8C8D] text-[11px] font-bold uppercase tracking-tight">
+              <Mountain size={12} className="text-[#D95D1E]" />
               {fort.elevation}
             </span>
           )}
         </div>
 
-        <p className={`text-[#2C3E50]/80 text-[13px] leading-relaxed mb-4 ${expanded ? '' : 'line-clamp-2'}`}>
+        <p className={`text-[#2C3E50] text-[14px] leading-relaxed mb-6 font-medium ${expanded ? '' : 'line-clamp-2'}`}>
           {fort.description}
         </p>
 
@@ -418,19 +320,31 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            className="pt-4 mt-auto border-t border-[#FBE8D3]/50 space-y-3"
+            className="pt-6 border-t border-[#FBE8D3] space-y-6"
           >
             <div>
-              <h4 className="text-[#D95D1E] text-[9px] font-black uppercase tracking-widest mb-1">Significance</h4>
-              <p className="text-[#2C3E50] text-[12px] leading-relaxed">{fort.significance}</p>
-            </div>
-            <div className="flex items-center justify-between text-[10px]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#D95D1E] font-black uppercase tracking-tighter">Captured:</span>
-                <span className="text-[#2C3E50] font-bold">{fort.captured}</span>
+              <div className="flex items-center gap-2 mb-2">
+                <HistoryIcon size={14} className="text-[#D95D1E]" />
+                <h4 className="text-[#D95D1E] text-[10px] font-black uppercase tracking-[0.2em]">Historical Account</h4>
               </div>
-              <div className="flex items-center gap-1.5 opacity-60 italic">
-                <BookOpen size={10} className="text-[#D95D1E]" />
+              <p className="text-[#2C3E50] text-[13px] leading-relaxed italic border-l-2 border-[#D95D1E]/20 pl-4">{fort.history}</p>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Flag size={14} className="text-[#D95D1E]" />
+                <h4 className="text-[#D95D1E] text-[10px] font-black uppercase tracking-[0.2em]">Significance</h4>
+              </div>
+              <p className="text-[#2C3E50] text-[13px] leading-relaxed">{fort.significance}</p>
+            </div>
+
+            <div className="flex items-center justify-between pt-4 text-[11px] border-t border-[#FBE8D3]/50">
+              <div className="flex items-center gap-2">
+                <span className="bg-[#D95D1E]/10 text-[#D95D1E] px-2 py-0.5 rounded font-black uppercase">Captured:</span>
+                <span className="text-[#2C3E50] font-black">{fort.captured}</span>
+              </div>
+              <div className="flex items-center gap-1.5 opacity-50 font-bold">
+                <BookOpen size={12} />
                 <span>{fort.reference}</span>
               </div>
             </div>
@@ -438,8 +352,8 @@ const FortCard = ({ fort, index }: { fort: Fort; index: number }) => {
         )}
 
         {!expanded && (
-          <div className="mt-auto pt-2 flex items-center gap-1 text-[9px] font-black text-[#D95D1E] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">
-            Click to read details <ChevronDown size={10} />
+          <div className="mt-auto pt-4 flex items-center gap-2 text-[10px] font-black text-[#D95D1E] uppercase tracking-widest border-t border-[#FBE8D3]/30">
+            Discover History <ChevronDown size={12} />
           </div>
         )}
       </div>
@@ -461,69 +375,66 @@ const Forts = () => {
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Hero */}
-      <section className="relative pt-[140px] pb-24 px-6 md:px-12 overflow-hidden bg-[#FFFFFF] text-center">
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#D95D1E] to-transparent opacity-30" />
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-white">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#D95D1E]/20 to-transparent" />
 
-        <div className="relative z-10 max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center"
+            className="space-y-6"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full border border-[#D95D1E]/20 bg-[#FBE8D3]/30 text-[#D95D1E] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
-              Guardians of Swarajya
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FBE8D3]/50 border border-[#D95D1E]/20 text-[#D95D1E] text-[11px] font-black uppercase tracking-[0.2em]">
+              <Shield size={14} />
+              The Fortress Network
             </span>
-            <h1 className="text-5xl md:text-7xl font-display font-black text-[#2C3E50] tracking-tight mb-6 leading-[1.1]">
-              <span className="text-[#D95D1E]">350+</span> Forts of the <br />
-              <span className="text-[#2C3E50]">Maratha Empire</span>
+            <h1 className="text-5xl md:text-7xl font-display font-black text-[#2C3E50] tracking-tighter leading-[1.1]">
+              <span className="text-[#D95D1E]">350+</span> Guardians of <br />
+              <span className="relative">
+                Hindavi Swarajya
+                <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
+                  <path d="M0 5 Q25 0 50 5 T100 5" fill="none" stroke="#D95D1E" strokeWidth="2" opacity="0.3" />
+                </svg>
+              </span>
             </h1>
-            <p className="text-[#2C3E50]/70 text-lg md:text-xl font-sans font-light leading-relaxed max-w-2xl mx-auto mb-12">
-              Explore the majestic network of hill, sea, and land forts that formed the backbone of Chhatrapati Shivaji Maharaj's Hindavi Swarajya.
+            <p className="text-[#2C3E50]/70 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+              Explore the strategic network of hill, sea, and land forts that formed the backbone of Chhatrapati Shivaji Maharaj's legendary defense system.
             </p>
           </motion.div>
 
-          {/* Search & Filter Bar */}
+          {/* Search & Filter */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-4 max-w-2xl mx-auto"
+            className="mt-12 flex flex-col md:flex-row items-center gap-4 max-w-3xl mx-auto bg-white p-2 rounded-2xl shadow-xl border border-[#FBE8D3]"
           >
-            <div className="relative w-full md:w-[60%]">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D95D1E]" />
+            <div className="relative flex-grow w-full">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D95D1E]" />
               <input
                 type="text"
-                placeholder="Find a fort (e.g. 'Raigad', 'Sea Fort')..."
+                placeholder="Search forts, locations, or Marathi names..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white border border-[#FBE8D3] focus:border-[#D95D1E] rounded-[4px] py-4 pl-12 pr-4 text-[#2C3E50] placeholder:text-[#2C3E50]/40 outline-none transition-all shadow-sm focus:shadow-md"
+                className="w-full py-4 pl-12 pr-4 bg-transparent text-[#2C3E50] font-bold text-sm outline-none placeholder:text-[#2C3E50]/30"
               />
               {search && (
-                <button
-                  onClick={() => setSearch("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2C3E50]/40 hover:text-[#D95D1E]"
-                >
-                  <X size={16} />
+                <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2C3E50]/30 hover:text-[#D95D1E]">
+                  <X size={18} />
                 </button>
               )}
             </div>
-
-            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-              {[
-                { key: "all", label: "All" },
-                { key: "hill", label: "Hill" },
-                { key: "sea", label: "Sea" },
-              ].map((item) => (
+            <div className="flex gap-2 w-full md:w-auto">
+              {(['all', 'hill', 'sea', 'land'] as const).map((t) => (
                 <button
-                  key={item.key}
-                  onClick={() => setFilter(item.key as any)}
-                  className={`px-6 py-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all border min-w-fit ${filter === item.key
-                    ? "bg-[#D95D1E] text-white border-[#D95D1E] shadow-md"
-                    : "bg-white text-[#2C3E50] border-[#FBE8D3] hover:border-[#D95D1E] hover:text-[#D95D1E]"
-                    }`}
+                  key={t}
+                  onClick={() => setFilter(t)}
+                  className={`flex-grow md:flex-none px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === t
+                    ? 'bg-[#D95D1E] text-white shadow-lg shadow-[#D95D1E]/30'
+                    : 'bg-[#F7F6F3] text-[#2C3E50] hover:bg-[#FBE8D3]'}`}
                 >
-                  {item.label}
+                  {t}
                 </button>
               ))}
             </div>
@@ -531,92 +442,43 @@ const Forts = () => {
         </div>
       </section>
 
-      {/* Fort Grid */}
-      <section className="max-w-6xl mx-auto px-6 md:px-12 pb-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Forts Grid */}
+      <section className="max-w-7xl mx-auto px-6 pb-32">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredForts.map((fort, i) => (
             <FortCard key={fort.name} fort={fort} index={i} />
           ))}
         </div>
 
         {filteredForts.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-[#2C3E50]/30 text-sm">No forts found matching your search.</p>
+          <div className="text-center py-20 flex flex-col items-center">
+            <div className="w-16 h-16 bg-[#F7F6F3] rounded-full flex items-center justify-center mb-4">
+              <Search size={24} className="text-[#2C3E50]/20" />
+            </div>
+            <p className="text-[#2C3E50]/40 font-bold">No results found for your search.</p>
           </div>
         )}
 
-        {/* Bottom Note */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
+          className="mt-20 p-10 bg-[#2C3E50] rounded-[2rem] text-white relative overflow-hidden"
         >
-          <p className="text-[#2C3E50]/40 text-xs max-w-lg mx-auto leading-relaxed">
-            Chhatrapati Shivaji Maharaj's empire included over 350 forts. This page showcases the most historically
-            significant ones. Fort images are sourced from high-quality digital repositories and serve as historical representation.
-          </p>
+          <div className="absolute top-0 right-0 p-12 opacity-10">
+            <ScrollText size={200} />
+          </div>
+          <div className="relative z-10 text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl font-display font-black mb-6">"A Fort is the Wealth of the Kingdom"</h2>
+            <p className="text-white/70 text-sm leading-relaxed mb-8 italic">
+              "The forts are the soul of the kingdom. If the forts are strong, the kingdom is secure. If the forts are lost, the kingdom is lost. Every hill should be fortified, and every fort should be a symbol of resistance."
+            </p>
+            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D95D1E]">— Administrative Principles of Swarajya</div>
+          </div>
         </motion.div>
       </section>
 
-      <StrategicImportance />
       <Footer />
     </div>
-  );
-};
-
-const StrategicImportance = () => {
-  const stats = [
-    { label: "Giri-Durg", type: "Hill Forts", count: "250+", desc: "The strategic backbone, built on inaccessible Sahyadri peaks for absolute land control." },
-    { label: "Jala-Durg", type: "Sea Forts", count: "50+", desc: "Maritime bastions that established the Maratha Navy's dominance over the Arabian Sea." },
-    { label: "Bhumi-Durg", type: "Land Forts", count: "50+", desc: "Fortified city centers and strategic transit hubs across the Deccan plateau." }
-  ];
-
-  return (
-    <section className="py-24 bg-[#F7F6F3] border-t border-[#FBE8D3]">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-[#D95D1E] font-display font-black text-3xl md:text-4xl mb-4">The Science of Fortification</h2>
-          <p className="text-[#2C3E50]/60 max-w-2xl mx-auto uppercase tracking-widest text-[10px] font-black">
-            Chhatrapati Shivaji Maharaj's 3-Tier Defense System for Perpetual Sovereignty
-          </p>
-          <div className="w-12 h-1 bg-[#D95D1E] mx-auto mt-6" />
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {stats.map((s, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ y: -8 }}
-              className="bg-white p-8 rounded-2xl border border-[#FBE8D3] shadow-sm hover:shadow-xl transition-all duration-300"
-            >
-              <div className="text-[10px] font-black text-[#D95D1E] uppercase tracking-[0.2em] mb-2">{s.label}</div>
-              <h4 className="text-2xl font-display font-black text-[#2C3E50] mb-1">{s.type}</h4>
-              <div className="text-4xl font-display font-black text-[#D95D1E]/20 mb-6">{s.count}</div>
-              <p className="text-sm text-[#2C3E50]/70 leading-relaxed font-medium">{s.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="mt-20 p-8 bg-[#2C3E50] rounded-3xl text-white relative overflow-hidden group">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="max-w-xl">
-              <h3 className="text-2xl font-display font-black mb-4">"Gad aala pan Sinha gela"</h3>
-              <p className="text-white/70 text-sm leading-relaxed italic">
-                The capture of Kondana (Sinhagad) by Tanaji Malusare remains the ultimate symbol of the bravery associated with these guardian peaks. Every stone of these forts tells a story of blood, iron, and the indomitable spirit of Swarajya.
-              </p>
-            </div>
-            <Link
-              to="/history"
-              className="px-8 py-4 bg-[#D95D1E] text-white rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
-            >
-              Explore Timeline
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 };
 

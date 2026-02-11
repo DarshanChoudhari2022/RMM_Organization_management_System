@@ -32,8 +32,7 @@ const timelineData: TimelineEvent[] = [
     description: "Born on 19th February 1630 at the strategic Shivneri Fort.",
     details: "Born to Jijabai and Shahaji Bhosale, his upbringing at Shivneri under the guidance of Jijau shaped the vision of 'Hindavi Swarajya'. The fort's naturally fortified position inspired his lifelong mastery of mountain warfare.",
     reference: "Sarkar, 'Shivaji and His Times', p. 12",
-    image: "https://images.unsplash.com/photo-1627998672583-050f53198084?auto=format&fit=crop&q=80" // Shivneri like landscape / Sahyadri
-    // Prompt: "Cinematic illustration inspired by the birth of Chhatrapati Shivaji Maharaj at Shivneri Fort, showing the fort on a hill under a dawn sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, no modern elements, suitable as a history timeline card background for a Maratha history website."
+    image: "/images/BirthatShivneri.png"
   },
   {
     year: "1646",
@@ -42,8 +41,7 @@ const timelineData: TimelineEvent[] = [
     description: "At age 16, Chhatrapati Shivaji Maharaj captured his first fort, Torna.",
     details: "This pivotal event marked the beginning of the Maratha Empire. By capturing Torna, Chhatrapati Shivaji Maharaj sent a clear message of independence to the Bijapur Sultanate and began his legendary campaign of fort administration.",
     reference: "Sabhasad Bakhar, p. 8",
-    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80" // Torna like fort walls
-    // Prompt: "Cinematic illustration of Maratha warriors approaching Torna Fort on a hill in 1646, flags flying, fort silhouetted against the sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, suitable as a history timeline card background."
+    image: ""
   },
   {
     year: "1674",
@@ -52,8 +50,7 @@ const timelineData: TimelineEvent[] = [
     description: "Establishment of the independent Hindu Sovereignty.",
     details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya and establishing a separate legal identity for the Maratha people.",
     reference: "Sarkar, p. 195",
-    image: "https://images.unsplash.com/photo-1572948622722-1d54625b1285?auto=format&fit=crop&q=80" // Raigad structures
-    // Prompt: "Cinematic illustration of the coronation ceremony of Chhatrapati Shivaji Maharaj at Raigad Fort, royal court setting, saffron flags, traditional attire, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, suitable as a history timeline card background."
+    image: ""
   },
   {
     year: "1680",
@@ -62,8 +59,7 @@ const timelineData: TimelineEvent[] = [
     description: "A lifetime dedicated to sovereignty and mountain warfare.",
     details: "By the time of his passing, Chhatrapati Shivaji Maharaj had built and rebuilt a network of over 300 forts across the Sahyadri range and the Konkan coast, creating an impenetrable defense system that protected Swarajya for centuries.",
     reference: "Kincaid, 'History of Maratha People', p. 280",
-    image: "https://images.unsplash.com/photo-1598545279626-d62153573c05?auto=format&fit=crop&q=80" // Mountain range / Landscape
-    // Prompt: "Cinematic illustration of a vast landscape with multiple hill forts in the distance, dramatic sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, inspiring and majestic tone."
+    image: ""
   }
 ];
 
@@ -86,47 +82,53 @@ const TimelineCard = ({ event, index }: { event: TimelineEvent; index: number })
         {event.year}
       </div>
 
-      <div className={`w-full flex flex-col md:flex-row items-center ${isEven ? "md:flex-row-reverse" : ""}`}>
-        {/* Content Card */}
-        <div className={`w-full md:w-1/2 flex ${isEven ? "md:justify-start" : "md:justify-end"}`}>
+      <div className={`w-full flex flex-col md:flex-row items-center gap-8 ${isEven ? "md:flex-row-reverse" : ""}`}>
+        {/* Content Container */}
+        <div className={`w-full ${event.image ? "md:w-1/2" : "w-full"} flex justify-center`}>
           <motion.div
             initial={{ opacity: 0, x: isEven ? 50 : -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className={`max-w-full md:max-w-[450px] bg-white border border-[#FBE8D3] p-8 rounded-[8px] shadow-[0_4px_12px_rgba(230,126,34,0.06)] hover:shadow-[0_8px_24px_rgba(230,126,34,0.12)] transition-all duration-300 ${isEven ? "md:ml-16" : "md:mr-16"} cursor-pointer group`}
-            onClick={() => setIsExpanded(!isExpanded)}
+            transition={{ duration: 0.6 }}
+            className={`w-full ${event.image ? "max-w-[450px]" : "max-w-[800px]"} bg-white p-8 rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-[#FBE8D3] hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-all relative group h-full flex flex-col`}
           >
-            <div className="bg-[#F39C12] text-white text-[11px] font-sans font-bold uppercase tracking-[1px] px-3 py-1.5 rounded-[4px] w-fit mb-4">
+            <div className={`text-[#D95D1E] text-[11px] font-sans font-black uppercase tracking-[2px] mb-4 flex items-center gap-2`}>
+              <span className="w-8 h-[1px] bg-[#D95D1E]" />
               {event.category}
             </div>
-            <h3 className="text-[24px] font-display font-bold text-[#2C3E50] mb-3 leading-tight group-hover:text-[#D95D1E] transition-colors">{event.title}</h3>
-            <p className="text-[15px] text-[#2C3E50] leading-[1.6] mb-5">
+            <h3 className={`${event.image ? "text-[24px]" : "text-[32px]"} font-display font-black text-[#2C3E50] mb-4 leading-tight group-hover:text-[#D95D1E] transition-colors`}>{event.title}</h3>
+            <p className="text-[15px] md:text-[16px] text-[#2C3E50] leading-[1.7] mb-6 opacity-90 flex-grow">
               {isExpanded ? event.details : event.description}
             </p>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-[12px] italic text-[#7F8C8D]">
+            <div className="flex flex-col gap-4 mt-auto">
+              <div className="flex items-center gap-2 text-[12px] font-medium italic text-[#7F8C8D]">
                 <BookOpen size={14} className="text-[#D95D1E]" />
                 {event.reference}
               </div>
-              <div className="flex items-center gap-1 text-[13px] font-bold text-[#D95D1E] mt-2 group-hover:underline">
-                {isExpanded ? "Collapse" : "Expand"}
+              <div
+                className="flex items-center gap-2 text-[13px] font-black text-[#D95D1E] mt-2 group-hover:underline cursor-pointer"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? "Show Less" : "Read More"}
                 <ChevronDown size={16} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Image Container */}
-        <div className={`w-full md:w-1/2 flex ${isEven ? "md:justify-end" : "md:justify-start"}`}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className={`w-full md:max-w-[400px] aspect-[4/3] rounded-[8px] border-2 border-[#FBE8D3] overflow-hidden shadow-[0_6px_16px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-transform duration-300 ${isEven ? "md:mr-12" : "md:ml-12"}`}
-          >
-            <img src={event.image} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
-          </motion.div>
-        </div>
+        {/* Image Container (Conditional) */}
+        {event.image && (
+          <div className="w-full md:w-1/2 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className={`w-full md:max-w-[500px] aspect-[4/3] rounded-[12px] border-2 border-[#FBE8D3] overflow-hidden shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:scale-[1.02] transition-transform duration-300 relative`}
+            >
+              <img src={event.image} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );

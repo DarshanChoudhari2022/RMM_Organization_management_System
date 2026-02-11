@@ -28,46 +28,37 @@ const timelineData: TimelineEvent[] = [
   {
     year: "1630",
     category: "EARLY LIFE",
-    title: "Birth of a Legend",
-    description: "Born on 19th February 1630 at Shivneri Fort.",
-    details: "Born to Jijabai and Shahaji Bhosale, his upbringing was fueled by stories of Ramayana and Mahabharata, shaping his vision of 'Hindavi Swarajya'.",
+    title: "Birth of a Legend (Shivneri)",
+    description: "Born on 19th February 1630 at the strategic Shivneri Fort.",
+    details: "Born to Jijabai and Shahaji Bhosale, his upbringing at Shivneri under the guidance of Jijau shaped the vision of 'Hindavi Swarajya'. The fort's naturally fortified position inspired his lifelong mastery of mountain warfare.",
     reference: "Sarkar, 'Shivaji and His Times', p. 12",
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Shivneri01.JPG"
   },
   {
-    year: "1645",
-    category: "POLITICAL MILESTONE",
-    title: "The Oath of Swarajya",
-    description: "Young Shivaji took the oath at Raireshwar Temple.",
-    details: "At just 15, he gathered his Maval companions and cut his finger to perform a blood ritual, pledging to liberate Bharat from foreign rule.",
-    reference: "Sabhasad Bakhar, p. 8",
-    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
-  },
-  {
-    year: "1659",
+    year: "1646",
     category: "MILITARY CAMPAIGN",
-    title: "Battle of Pratapgad",
-    description: "The defeat of the mighty Afzal Khan.",
-    details: "Using the 'Wagh Nakh' (Tiger Claws), Maharaj outsmarted the giant Afzal Khan in a legendary encounter that shook the foundations of the Bijapur Sultanate.",
-    reference: "Sarkar, p. 78",
+    title: "The First Conquest: Torna Fort",
+    description: "At age 16, Maharaj captured his first fort, Torna.",
+    details: "This pivotal event marked the beginning of the Maratha Empire. By capturing Torna, Maharaj sent a clear message of independence to the Bijapur Sultanate and began his legendary campaign of fort administration.",
+    reference: "Sabhasad Bakhar, p. 8",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Pratapgad_from_distance.JPG/1280px-Pratapgad_from_distance.JPG"
-  },
-  {
-    year: "1666",
-    category: "POLITICAL MILESTONE",
-    title: "The Great Escape from Agra",
-    description: "Strategic escape from Aurangzeb's house arrest.",
-    details: "Imprisoned in Agra by Aurangzeb, Maharaj executed a brilliant escape inside large fruit baskets, a primary example of his 'Ganimi Kava' (Guerrilla Tactics).",
-    reference: "Kincaid, 'History of Maratha People', p. 210",
-    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
   },
   {
     year: "1674",
     category: "POLITICAL MILESTONE",
-    title: "The Coronation (Rajyabhishek)",
-    description: "Establishment of the independent Maratha Kingdom.",
-    details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya.",
+    title: "The Coronation at Raigad",
+    description: "Establishment of the independent Hindu Sovereignty.",
+    details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya and establishing a separate legal identity for the Maratha people.",
     reference: "Sarkar, p. 195",
+    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
+  },
+  {
+    year: "1680",
+    category: "LEGACY",
+    title: "Legacy of 300+ Forts",
+    description: "A lifetime dedicated to sovereignty and mountain warfare.",
+    details: "By the time of his passing, Chhatrapati Shivaji Maharaj had built and rebuilt a network of over 300 forts across the Sahyadri range and the Konkan coast, creating an impenetrable defense system that protected Swarajya for centuries.",
+    reference: "Kincaid, 'History of Maratha People', p. 280",
     image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
   }
 ];

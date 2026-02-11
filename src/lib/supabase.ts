@@ -48,7 +48,7 @@ export const getCurrentUser = async () => {
 // export const fetchApprovals = async (eventId?: string) => { ... }
 */
 
-// Fort data for Shivaji Maharaj biography section
+// Fort data for Chhatrapati Shivaji Maharaj biography section
 export const fetchForts = async (category?: string, region?: string) => {
     let query = supabase.from('forts').select('*');
     if (category) {

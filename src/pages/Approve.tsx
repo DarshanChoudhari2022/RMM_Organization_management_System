@@ -12,6 +12,7 @@ const Approve = () => {
   const [selectedAction, setSelectedAction] = useState<"approved" | "declined" | null>(null);
   const [comment, setComment] = useState("");
   const [selectedMemberName, setSelectedMemberName] = useState("");
+  const [isManualEntry, setIsManualEntry] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showComment, setShowComment] = useState(false);
 
@@ -165,22 +166,53 @@ const Approve = () => {
 
           {/* Member Selection */}
           <div className="mb-6">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Select Your Name</label>
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <select
-                value={selectedMemberName}
-                onChange={(e) => setSelectedMemberName(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-shiv-saffron/20 appearance-none"
+            <div className="flex justify-between items-baseline mb-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Your Name</label>
+              <button
+                onClick={() => {
+                  setIsManualEntry(!isManualEntry);
+                  setSelectedMemberName("");
+                }}
+                className="text-[10px] font-bold text-shiv-saffron hover:underline"
               >
-                <option value="">Select Name</option>
-                {members?.map((m: any) => (
-                  <option key={m.name} value={m.name}>{m.name}</option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
+                {isManualEntry ? "Select from List" : "Type Manually"}
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {isManualEntry ? (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <input
+                    type="text"
+                    value={selectedMemberName}
+                    onChange={(e) => setSelectedMemberName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 pl-4 text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-shiv-saffron/20 placeholder:font-normal"
+                    autoFocus
+                  />
+                  <p className="mt-1.5 text-[10px] text-gray-400 italic">Please enter your full name for the record.</p>
+                </motion.div>
+              ) : (
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <select
+                    value={selectedMemberName}
+                    onChange={(e) => setSelectedMemberName(e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-10 text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-shiv-saffron/20 appearance-none"
+                  >
+                    <option value="">Select Name</option>
+                    {members?.map((m: any) => (
+                      <option key={m.name} value={m.name}>{m.name}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

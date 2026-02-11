@@ -287,12 +287,25 @@ const MembersTab = () => {
 // --- Components ---
 
 const AttendanceList = ({ taskId }: { taskId: string }) => {
-  const { data: responses, isLoading } = useTaskResponses(taskId);
+  const { data: responses, isLoading, addResponse, deleteResponse } = useTaskResponses(taskId);
+  const { data: members } = useMembers();
+  const [manualName, setManualName] = useState("");
+  const [manualStatus, setManualStatus] = useState<'approved' | 'declined'>('approved');
+  const [manualComment, setManualComment] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
   if (isLoading) return <div className="p-4 text-xs text-center text-gray-400">Loading attendance...</div>;
 
   const approved = responses?.filter(r => r.status === 'approved') || [];
   const declined = responses?.filter(r => r.status === 'declined') || [];
+
+  const handleManualAdd = () => {
+    if (!manualName) return;
+    addResponse.mutate({ taskId, memberName: manualName, status: manualStatus, comment: manualComment });
+    setManualName("");
+    setManualComment("");
+    setIsAdding(false);
+  };
 
   return (
     <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-6">
@@ -306,8 +319,13 @@ const AttendanceList = ({ taskId }: { taskId: string }) => {
             <span className="text-[10px] text-gray-400">No one marked available yet.</span>
           ) : (
             approved.map(r => (
-              <div key={r.id} className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold group relative">
-                {r.memberName}
+              <div key={r.id} className="group relative">
+                <div className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold flex items-center gap-1">
+                  {r.memberName}
+                  <button onClick={() => deleteResponse.mutate(r.id)} className="opacity-0 group-hover:opacity-100 text-green-800 hover:text-red-500 transition-opacity">
+                    <X size={10} />
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -324,13 +342,81 @@ const AttendanceList = ({ taskId }: { taskId: string }) => {
             <span className="text-[10px] text-gray-400">No absences recorded.</span>
           ) : (
             declined.map(r => (
-              <div key={r.id} className="flex items-center justify-between gap-4 bg-red-50 p-2 rounded-lg border border-red-100">
-                <span className="text-[10px] font-bold text-red-700 whitespace-nowrap">{r.memberName}</span>
-                <span className="text-[9px] text-red-500/80 italic line-clamp-1">{r.comment || "No reason provided"}</span>
+              <div key={r.id} className="flex items-center justify-between gap-4 bg-red-50 p-2 rounded-lg border border-red-100 group">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-red-700 whitespace-nowrap">{r.memberName}</span>
+                  <span className="text-[9px] text-red-500/80 italic line-clamp-1">{r.comment || "No reason provided"}</span>
+                </div>
+                <button onClick={() => deleteResponse.mutate(r.id)} className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity">
+                  <X size={12} />
+                </button>
               </div>
             ))
           )}
         </div>
+      </div>
+
+      {/* Admin Manual Entry */}
+      <div className="pt-4 border-t border-gray-200">
+        {!isAdding ? (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="text-[9px] font-black uppercase tracking-widest text-[#D95D1E] hover:underline flex items-center gap-1"
+          >
+            <Plus size={10} /> Add Attendance Manually
+          </button>
+        ) : (
+          <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-3">
+            <div className="space-y-2">
+              <select
+                value={manualName}
+                onChange={e => setManualName(e.target.value)}
+                className="w-full text-[10px] font-bold p-2 bg-gray-50 border border-gray-100 rounded outline-none"
+              >
+                <option value="">Select Member...</option>
+                {members?.filter(m => !responses?.some(r => r.memberName === m.name)).map(m => (
+                  <option key={m.id} value={m.name}>{m.name}</option>
+                ))}
+                <option value="CUSTOM">-- Type Name --</option>
+              </select>
+              {manualName === "CUSTOM" && (
+                <input
+                  type="text"
+                  placeholder="Enter Name"
+                  className="w-full text-[10px] font-bold p-2 bg-gray-50 border border-gray-100 rounded outline-none"
+                  onChange={e => setManualName(e.target.value)}
+                />
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setManualStatus('approved')}
+                className={`flex-1 py-1 px-2 text-[9px] font-bold rounded ${manualStatus === 'approved' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'}`}
+              >
+                Present
+              </button>
+              <button
+                onClick={() => setManualStatus('declined')}
+                className={`flex-1 py-1 px-2 text-[9px] font-bold rounded ${manualStatus === 'declined' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-500'}`}
+              >
+                Absent
+              </button>
+            </div>
+            {manualStatus === 'declined' && (
+              <input
+                type="text"
+                placeholder="Reason (optional)"
+                className="w-full text-[10px] p-2 bg-gray-50 border border-gray-100 rounded outline-none"
+                value={manualComment}
+                onChange={e => setManualComment(e.target.value)}
+              />
+            )}
+            <div className="flex gap-2 pt-1">
+              <button onClick={handleManualAdd} className="flex-1 bg-[#D95D1E] text-white py-1 text-[9px] font-black rounded uppercase">Save</button>
+              <button onClick={() => setIsAdding(false)} className="flex-1 bg-gray-100 text-gray-500 py-1 text-[9px] font-black rounded uppercase">Cancel</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

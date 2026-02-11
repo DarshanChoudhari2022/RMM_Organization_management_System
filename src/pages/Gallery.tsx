@@ -47,7 +47,7 @@ const galleryData: GalleryItem[] = [
     id: 5,
     year: 2022,
     title: "Decoration & Stage Setup 2022",
-    description: "Elaborate stage setup with Shivaji Maharaj theme and traditional artwork.",
+    description: "Elaborate stage setup with Chhatrapati Shivaji Maharaj theme and traditional artwork.",
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000"
   },
   {

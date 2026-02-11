@@ -1,38 +1,80 @@
 [
   {
-    "id": "e1", "year": 2014, "titleMarathi": "शिवजयंती महोत्सव", "titleEnglish": "Shiv Jayanti Celebration",
-    "description": "Grand celebration of Shivaji Maharaj's birth anniversary with cultural programs and processions.",
-    "date": "2014-02-19", "location": "पुणे, महाराष्ट्र",
-    "images": ["/placeholder.svg", "/placeholder.svg"]
+    "id": "e1",
+    "year": 2014,
+    "titleMarathi": "शिवजयंती महोत्सव",
+    "titleEnglish": "Shiv Jayanti Celebration",
+    "description": "Grand celebration of Chhatrapati Shivaji Maharaj's birth anniversary with cultural programs and processions.",
+    "date": "2014-02-19",
+    "location": "पुणे, महाराष्ट्र",
+    "images": [
+      "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1614713568397-b30f78ccf76c?auto=format&fit=crop&q=80"
+    ]
   },
   {
-    "id": "e2", "year": 2016, "titleMarathi": "गड-किल्ले मोहीम", "titleEnglish": "Fort Trek Campaign",
+    "id": "e2",
+    "year": 2016,
+    "titleMarathi": "गड-किल्ले मोहीम",
+    "titleEnglish": "Fort Trek Campaign",
     "description": "Community trek to historic forts with educational sessions about Maratha history.",
-    "date": "2016-11-15", "location": "रायगड, महाराष्ट्र",
-    "images": ["/placeholder.svg", "/placeholder.svg"]
+    "date": "2016-11-15",
+    "location": "रायगड, महाराष्ट्र",
+    "images": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Raigad_Fort_structures.jpg/1280px-Raigad_Fort_structures.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Pratapgad_from_distance.JPG/1280px-Pratapgad_from_distance.JPG"
+    ]
   },
   {
-    "id": "e3", "year": 2018, "titleMarathi": "इतिहास परिषद", "titleEnglish": "History Conference",
+    "id": "e3",
+    "year": 2018,
+    "titleMarathi": "इतिहास परिषद",
+    "titleEnglish": "History Conference",
     "description": "Academic conference on Maratha military strategy and governance systems.",
-    "date": "2018-06-06", "location": "मुंबई, महाराष्ट्र",
-    "images": ["/placeholder.svg", "/placeholder.svg"]
+    "date": "2018-06-06",
+    "location": "मुंबई, महाराष्ट्र",
+    "images": [
+      "https://images.unsplash.com/photo-1577740263309-c12e52e4ba7b?auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1601666493922-38d5e94b1509?auto=format&fit=crop&q=80"
+    ]
   },
   {
-    "id": "e4", "year": 2020, "titleMarathi": "ऑनलाइन व्याख्यानमाला", "titleEnglish": "Online Lecture Series",
-    "description": "Virtual lecture series covering lesser-known aspects of Shivaji's administrative reforms.",
-    "date": "2020-08-10", "location": "ऑनलाइन",
-    "images": ["/placeholder.svg"]
+    "id": "e4",
+    "year": 2020,
+    "titleMarathi": "ऑनलाइन व्याख्यानमाला",
+    "titleEnglish": "Online Lecture Series",
+    "description": "Virtual lecture series covering lesser-known aspects of Chhatrapati Shivaji Maharaj's administrative reforms.",
+    "date": "2020-08-10",
+    "location": "ऑनलाइन",
+    "images": [
+      "https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&q=80"
+    ]
   },
   {
-    "id": "e5", "year": 2022, "titleMarathi": "शिवगर्जना रॅली", "titleEnglish": "Shivgarjana Rally",
+    "id": "e5",
+    "year": 2022,
+    "titleMarathi": "शिवगर्जना रॅली",
+    "titleEnglish": "Shivgarjana Rally",
     "description": "Cultural rally celebrating Maratha heritage with traditional music, dance, and martial arts.",
-    "date": "2022-03-15", "location": "सातारा, महाराष्ट्र",
-    "images": ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    "date": "2022-03-15",
+    "location": "सातारा, महाराष्ट्र",
+    "images": [
+      "https://images.unsplash.com/photo-1634211110098-90f9b319522d?auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1599824040974-9b57a55531b7?auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1610996884699-6380c55047b7?auto=format&fit=crop&q=80"
+    ]
   },
   {
-    "id": "e6", "year": 2024, "titleMarathi": "स्वराज्य दिन", "titleEnglish": "Swarajya Day",
+    "id": "e6",
+    "year": 2024,
+    "titleMarathi": "स्वराज्य दिन",
+    "titleEnglish": "Swarajya Day",
     "description": "Commemoration of the founding of Swarajya with youth engagement programs and exhibitions.",
-    "date": "2024-06-06", "location": "कोल्हापूर, महाराष्ट्र",
-    "images": ["/placeholder.svg", "/placeholder.svg"]
+    "date": "2024-06-06",
+    "location": "कोल्हापूर, महाराष्ट्र",
+    "images": [
+      "https://images.unsplash.com/photo-1631526685827-046646872589?auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1563852037748-0d0246a4897f?auto=format&fit=crop&q=80"
+    ]
   }
 ]

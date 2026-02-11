@@ -47,9 +47,12 @@ const AboutSection = () => {
                     >
                         <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 to-secondary/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         <div className="relative overflow-hidden rounded-2xl border border-primary/20 shadow-xl">
+                            {/* 
+                            Prompt for this image: "Classic realistic painting-style portrait of Chhatrapati Shivaji Maharaj in three-quarter view, wearing traditional Maratha armor and turban with decorative ornaments, dignified and calm expression, dark neutral background softly fading to light at the bottom, warm focused lighting from one side, subtle canvas texture, 16:9 horizontal crop, ultra high resolution, no text, designed to be used as a hero portrait image on a history portal webpage."
+                        */}
                             <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/9/9f/Shivaji_British_Museum.jpg"
-                                alt="Chhatrapati Shivaji Maharaj — Portrait from British Museum Collection"
+                                src="/images/Photo1.jpg"
+                                alt="Chhatrapati Shivaji Maharaj on the Golden Throne — Historical Portrait"
                                 className="w-full h-[500px] md:h-[600px] object-cover object-top transform group-hover:scale-[1.02] transition-transform duration-700"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
@@ -79,7 +82,7 @@ const AboutSection = () => {
                                 {
                                     icon: Calendar,
                                     title: "Born — 19 February 1630",
-                                    desc: "Born at Shivneri Fort, near Junnar, Pune. Named 'Shivaji' after the local deity Goddess Shivai.",
+                                    desc: "Born at Shivneri Fort, near Junnar, Pune. Named 'Chhatrapati Shivaji Maharaj' after the local deity Goddess Shivai.",
                                     ref: "Ref: Sarkar, Shivaji and His Times, p. 12"
                                 },
                                 {
@@ -91,7 +94,7 @@ const AboutSection = () => {
                                 {
                                     icon: Swords,
                                     title: "First Fort — Torna (1646)",
-                                    desc: "At age 16, Shivaji captured Torna Fort, his first military conquest. This marked the beginning of Swarajya. He then renamed it 'Prachandagad'.",
+                                    desc: "At age 16, Chhatrapati Shivaji Maharaj captured Torna Fort, his first military conquest. This marked the beginning of Swarajya. He then renamed it 'Prachandagad'.",
                                     ref: "Ref: Sarkar, Shivaji and His Times, p. 28"
                                 },
                                 {

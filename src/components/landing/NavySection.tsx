@@ -46,7 +46,7 @@ const NavySection = () => {
                             <span className="text-[#E67E22]">Indian Navy</span>
                         </h2>
                         <p className="text-[#2C3E50]/80 text-lg mb-10 leading-relaxed">
-                            Realizing that "He who has the Navy, has the Sea", Maharaj built India's first sovereign naval force.
+                            Realizing that "He who has the Navy, has the Sea", Chhatrapati Shivaji Maharaj built India's first sovereign naval force.
                             His vision of maritime security led to the protection of the Konkan coast from foreign invaders.
                         </p>
 

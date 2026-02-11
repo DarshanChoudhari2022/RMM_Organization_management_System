@@ -165,7 +165,9 @@ export const useTasks = () => {
 };
 
 export const useTaskResponses = (taskId?: string) => {
-    return useQuery({
+    const queryClient = useQueryClient();
+
+    const query = useQuery({
         queryKey: ["task-responses", taskId],
         queryFn: async () => {
             if (!taskId) return [];
@@ -187,6 +189,35 @@ export const useTaskResponses = (taskId?: string) => {
         },
         enabled: !!taskId
     });
+
+    const addResponse = useMutation({
+        mutationFn: async ({ taskId, memberName, status, comment }: { taskId: string, memberName: string, status: 'approved' | 'declined', comment?: string }) => {
+            const { data, error } = await supabase
+                .from('task_responses')
+                .insert([{
+                    task_id: taskId,
+                    member_name: memberName,
+                    status: status,
+                    comment: comment || "",
+                    responded_at: new Date().toISOString()
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["task-responses", taskId] }),
+    });
+
+    const deleteResponse = useMutation({
+        mutationFn: async (id: string) => {
+            const { error } = await supabase.from('task_responses').delete().eq('id', id);
+            if (error) throw error;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["task-responses", taskId] }),
+    });
+
+    return { ...query, addResponse, deleteResponse };
 };
 
 // --- Expenses ---

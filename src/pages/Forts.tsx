@@ -25,10 +25,11 @@ const forts: Fort[] = [
     location: "Raigad District, Maharashtra",
     captured: "1656 (from Chandrarao More)",
     elevation: "2,700 ft",
-    description: "The capital of the Maratha Empire. Originally known as 'Rairi', Shivaji captured it from Chandrarao More and renovated it extensively to serve as the royal capital. The coronation ceremony of 1674 took place here.",
-    significance: "Capital of Swarajya where Shivaji was crowned Chhatrapati in 1674. Contains the royal court (Rajsabha), Hirakani Bastion, Takmak Tok, and the Samadhi (memorial) of Shivaji Maharaj.",
+    description: "Known as the 'Gibraltar of the East', Raigad was the capital of the Maratha Empire. Chhatrapati Shivaji Maharaj seized it in 1656 from the More dynasty and extensively renovated it to be an impregnable capital. The fort complex covers approx. 1300 acres and includes the Queen's Chambers, the Public Durbar, and the famous Takmak Tok (execution point). It was chosen for its steep, inaccessible sides, making it naturally fortified. The grand coronation ceremony (Rajyabhishek) took place here on 6th June 1674.",
+    significance: "The heart of Swarajya. It houses the Jagdishwar Temple and the Samadhi of Chhatrapati Shivaji Maharaj. The layout of the market (Peth) and the Royal Court (Raj Sabha) demonstrates advanced town planning and acoustic engineering.",
     reference: "Sarkar, 'Shivaji and His Times', pp. 58-60, 198-220",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Raigad_Fort_structures.jpg/1280px-Raigad_Fort_structures.jpg"
+    // Prompt: "Realistic landscape photograph of Raigad Fort in Raigad District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Torna Fort",
@@ -37,10 +38,11 @@ const forts: Fort[] = [
     location: "Velhe, Pune District",
     captured: "1646 — First fort captured",
     elevation: "4,603 ft",
-    description: "The first fort captured by Shivaji at the age of 16, marking the beginning of Swarajya. It is the highest fort in the Pune district. Shivaji renamed it 'Prachandagad' (Fort of Immense Strength).",
-    significance: "The birthplace of Swarajya. Treasure found here funded the fortification of nearby Rajgad. It represents the very beginning of Shivaji's empire-building campaign.",
+    description: "Torna was the very first fort captured by Chhatrapati Shivaji Maharaj at the young age of 16, marking the dawn of the Maratha Empire. Recognizing its massive spread, he renamed it 'Prachandagad' (Huge Fort). It is the highest hill fort in the Pune district. The fort divides into two distinct machis (plateaus): the Zunjar Machi and the Budhla Machi, both offering strategic vantage points over the surrounding valleys.",
+    significance: "The cradle of Swarajya. A hidden treasure discovered during its repair was used to finance the construction of the Rajgad fort. Its capture sent a powerful message to the Bijapur Sultanate about the rising Maratha power.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. III, pp. 27-30",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/FortTorna3.JPG/1280px-FortTorna3.JPG"
+    // Prompt: "Realistic landscape photograph of Torna Fort in Pune District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Rajgad Fort",
@@ -49,10 +51,11 @@ const forts: Fort[] = [
     location: "Bhor, Pune District",
     captured: "1647",
     elevation: "4,514 ft",
-    description: "The first capital of the Maratha Empire before Raigad. Known as 'King of Forts', it served as the capital for 26 years (1648-1674). It has three machis (plateaus): Suvela, Padmavati, and Sanjivani.",
-    significance: "Capital for the longest period. Shivaji planned most of his campaigns from here. The fort witnessed the birth of Rajaram (Shivaji's younger son) and multiple sieges by Bijapuri and Mughal forces.",
+    description: "Rajgad (King of Forts) served as the first capital of the Maratha Empire for over 26 years before the capital moved to Raigad. It is famous for its unique construction, featuring three expansive machis: Padmavati, Suvela, and Sanjivani, and a central Balekilla (citadel). The Sanjivani Machi's double-curtain walls are a marvel of military architecture, designed to trap invaders.",
+    significance: "The political powerhouse of early Swarajya. Chhatrapati Shivaji Maharaj lived here for the longest period of his life. It witnessed the birth of his son Rajaram and the tragic death of Queen Saibai. Strategically, it was considered unconquerable due to its complex fortification.",
     reference: "Purandare, 'Raja Shivchhatrapati', Vol. 1, Ch. 5, pp. 48-60",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Rajgad_balekilla.JPG/1280px-Rajgad_balekilla.JPG"
+    // Prompt: "Realistic landscape photograph of Rajgad Fort in Pune District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Pratapgad Fort",
@@ -61,10 +64,11 @@ const forts: Fort[] = [
     location: "Satara District, Maharashtra",
     captured: "Built in 1656",
     elevation: "3,543 ft",
-    description: "Built by Shivaji in 1656 under the supervision of Moropant Pingle. This is the site of the legendary battle with Afzal Khan in November 1659.",
-    significance: "Site of the legendary killing of Afzal Khan. The Afzal Tower and a statue of Shivaji Maharaj stand here as memorials. The Battle of Pratapgad is one of the most celebrated events in Maratha history.",
+    description: "Strategically built by Chhatrapati Shivaji Maharaj to control the rebellious Jawali region and protect the Par pass. The fort is divided into a lower fort and an upper fort. It is most famous for the epic duel between Chhatrapati Shivaji Maharaj and the Bijapur general Afzal Khan in 1659, a turning point in Maratha history where a smaller force defeated a mighty army through guerrilla warfare.",
+    significance: "Symbol of Maratha valor and guerrilla tactics. It houses a temple of Goddess Bhawani, the family deity. The 'Afzal Buruj' stands as a testament to the decisive victory against the Adilshahi forces.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. VII, pp. 78-95",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Pratapgad_from_distance.JPG/1280px-Pratapgad_from_distance.JPG"
+    // Prompt: "Realistic landscape photograph of Pratapgad Fort in Satara District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Sinhagad Fort",
@@ -73,22 +77,24 @@ const forts: Fort[] = [
     location: "Haveli, Pune District",
     captured: "1647, Recaptured 1670",
     elevation: "4,300 ft",
-    description: "Originally called 'Kondana', this fort was captured early by Shivaji, lost to the Mughals in the Treaty of Purandar (1665), and dramatically recaptured by Tanaji Malusare in 1670.",
-    significance: "Renamed 'Sinhagad' (Lion's Fort) after Tanaji Malusare's heroic sacrifice during the night attack in 1670. Shivaji's famous words: 'Gad aala, pan Sinha gela' (The fort is won, but the Lion is lost).",
+    description: "Originally 'Kondana', this fort has seen many battles. The most legendary is the Battle of Sinhagad in 1670, where Subhedar Tanaji Malusare and his mawlas scaled the sheer 'Donaje' cliff at night using monitor lizards. Tanaji fought valiantly against Udaybhan Rathod and sacrificed his life to secure the fort for Swarajya.",
+    significance: "Renamed 'Sinhagad' (Lion's Fort) in honor of Tanaji Malusare. The memorial of Tanaji and the tomb of Rajaram Chhatrapati are located here. It served as a critical outpost for protecting Pune city.",
     reference: "Purandare, 'Raja Shivchhatrapati', Vol. 2, Ch. 28, pp. 302-320",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Sinhagad_Fort_Pune.jpg/1280px-Sinhagad_Fort_Pune.jpg"
+    // Prompt: "Realistic landscape photograph of Sinhagad Fort in Pune District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Shivneri Fort",
     marathi: "शिवनेरी",
     type: "hill",
     location: "Junnar, Pune District",
-    captured: "Ancestral — Birthplace of Shivaji",
+    captured: "Ancestral — Birthplace",
     elevation: "3,500 ft",
-    description: "The birthplace of Chhatrapati Shivaji Maharaj. Located near Junnar, this fort was in the Bhosale family's control. Jijabai gave birth to Shivaji here on 19th February 1630.",
-    significance: "Birthplace of Shivaji Maharaj. Contains the temple of Goddess Shivai after whom Shivaji was named. Also known for the Ambarkhana (granary) and the Shivkund water cisterns.",
+    description: "A triangular fort with seven defensive gates, Shivneri is the sacred birthplace of Chhatrapati Shivaji Maharaj. His father Shahaji entrusted the fort to his pregnant wife Jijabai for her safety during turbulent times. It was here, under the tutelage of Jijau and Dadaji Konddev, that the young Shivaji's character and vision for Swarajya were molded.",
+    significance: "The birthplace of the vision of Hindavi Swarajya. The room where he was born (Shiv Kunj) and the temple of Goddess Shivai are revered sites. The fort's water management system (Badami Talav) is a marvel of engineering.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. I, pp. 12-15",
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Shivneri01.JPG"
+    // Prompt: "Realistic landscape photograph of Shivneri Fort in Junnar, Pune District, Maharashtra, seen from slightly below the hill, showing stone walls and bastions, green hillsides and cloudy sky, no tourists visible, soft daylight, 16:9 horizontal, high resolution, no text, suitable as a website card background for a Maratha history project."
   },
   {
     name: "Sindhudurg Fort",
@@ -96,8 +102,8 @@ const forts: Fort[] = [
     type: "sea",
     location: "Malvan, Sindhudurg District",
     captured: "Built 1664-1667",
-    description: "A sea fort built by Shivaji on a rocky island off the coast of Malvan. Constructed by Hiroji Indulkar with 3,000 workers over 3 years. It covers an area of 48 acres and has walls 30 feet high.",
-    significance: "Masterpiece of Shivaji's naval architecture. Contains temples of Shivrajeshwar and imprint of Shivaji's palm and foot (the only physical imprints of Shivaji in existence). Demonstrates his vision of naval supremacy.",
+    description: "A marvel of naval engineering built on the rocky Kurte Island. Realizing the need for a strong navy to counter the Siddis, Portuguese, and British, Chhatrapati Shivaji Maharaj commissioned this fort. Its foundation was laid with molten lead to withstand the pounding waves. The zig-zag fortification walls were designed to hide Maratha troops and cannons from enemy ships.",
+    significance: "The headquarters of the Maratha Navy. It symbolizes Chhatrapati Shivaji Maharaj's foresight in understanding that 'He who has the Navy, owns the Sea'. It contains the only temple dedicated to Chhatrapati Shivaji Maharaj (Shivrajeshwar Temple) built by his son Rajaram.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. XX, pp. 240-248",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Sindhudurg_Fort.jpg/1280px-Sindhudurg_Fort.jpg"
   },
@@ -108,8 +114,8 @@ const forts: Fort[] = [
     location: "Kolhapur District, Maharashtra",
     captured: "1659 (from Bijapur)",
     elevation: "3,127 ft",
-    description: "One of the largest forts in the Deccan, Panhala was strategically important for controlling southern Maharashtra. Shivaji was besieged here in 1660 by Siddhi Johar, leading to the Battle of Pavan Khind.",
-    significance: "Site of the famous siege of 1660 from which Shivaji escaped, leading to Baji Prabhu Deshpande's legendary sacrifice at Pavan Khind. The Teen Darwaza (Three Gates) is an iconic structure.",
+    description: "A massive fort with a perimeter of 14 km, Panhala is famous for the 'Siege of Panhala' (1660). Trapped by Siddhi Johar's army for months, Chhatrapati Shivaji Maharaj made a daring escape on a rainy night to Vishalgad, while his loyal commander Baji Prabhu Deshpande held the pursuing army at Ghodkhind (later Pavan Khind) with a handful of soldiers.",
+    significance: "Site of one of the greatest escapes and sacrifices in history. The Ambarkhana (granary) here could store enough grain to withstand years of siege. It was also the capital of the Karveer (Kolhapur) branch of the Maratha Empire under Queen Tarabai.",
     reference: "Purandare, 'Raja Shivchhatrapati', Vol. 1, Ch. 18, pp. 198-212",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Panhala_fort.JPG/1280px-Panhala_fort.JPG"
   },
@@ -120,8 +126,8 @@ const forts: Fort[] = [
     location: "Maval, Pune District",
     captured: "1648",
     elevation: "3,400 ft",
-    description: "Located near Lonavala, Lohagad (Iron Fort) is named for its impregnable defenses. Connected to the nearby Visapur Fort, it controlled the trade routes between the Konkan and the Deccan plateau.",
-    significance: "Used as a treasury fort. The famous Vinchukata (Scorpion's tail) bastion is a unique defensive structure. Changed hands multiple times between Marathas, Mughals, and the British.",
+    description: "Overlooking the pivotal trade route of Bor Ghat, Lohagad (Iron Fort) was structurally reinforced to be one of the strongest forts. It was used primarily to store the Surat loot and other treasury. The distinct 'Vinchu Kata' (Scorpion's Tail) is a long, fortified spur jutting out from the main fort, providing a strategic defense line.",
+    significance: "A vital treasury and strategic outpost. Its proximity to Visapur Fort made it a formidable twin-fort complex. During the later Peshwa period, it was used to keep prisoners and treasury.",
     reference: "Kincaid & Parasnis, 'A History of the Maratha People', Vol. 1, pp. 50-52",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Lohagad-3.jpg/1280px-Lohagad-3.jpg"
   },
@@ -131,8 +137,8 @@ const forts: Fort[] = [
     type: "sea",
     location: "Devgad, Sindhudurg District",
     captured: "1653 (from Bijapur)",
-    description: "The oldest sea fort on the Maharashtra coast, originally built by the Shilahara dynasty. Shivaji captured it from the Bijapuris and made it a key naval base. It has triple fortification walls.",
-    significance: "Strongest sea fort on the Konkan coast. Served as the primary base for the Maratha Navy. Later, Admiral Kanhoji Angre made it his headquarters. The triple walls made it virtually impregnable from the sea.",
+    description: "Known as the 'Gibraltar of Asia', Vijaydurg was considered impregnable from the sea due to its triple line of fortifications and an underwater wall that trapped enemy ships. Captured from Bijapur, it became the main naval base of the Maratha Empire. Under Admiral Kanhoji Angre, it became a terror for European naval powers.",
+    significance: "The naval powerhouse of the Marathas. It witnessed the Helium discovery in 1868. Its strategic location at the mouth of the Vaghotan river made it a perfect dock for the Maratha warships.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. XX, pp. 250-255",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Vijaydurg_1.jpg/1280px-Vijaydurg_1.jpg"
   },
@@ -143,8 +149,8 @@ const forts: Fort[] = [
     location: "Saswad, Pune District",
     captured: "1648",
     elevation: "4,472 ft",
-    description: "A twin fort (Purandar and Vajragad) that played a crucial role in Maratha history. Birthplace of Sambhaji (eldest son of Shivaji). Site of the Treaty of Purandar in 1665.",
-    significance: "One of the strongest forts in the Pune region. Murarbaji Deshpande died defending it against Jai Singh's Mughal forces in 1665. Birthplace of Sambhaji Maharaj. Treaty of Purandar signed here.",
+    description: "A fort of immense strategic value, Purandar witnessed the heroic last stand of Murarbaji Deshpande against the Mughal commander Diler Khan. Though Murarbaji fell, his bravery is legendary. The 'Treaty of Purandar' (1665) was signed here between Chhatrapati Shivaji Maharaj and Jai Singh, where Shivaji Maharaj had to cede 23 forts to the Mughals.",
+    significance: "Birthplace of Chhatrapati Sambhaji Maharaj. It was the temporary capital during the conflict with the Mughals. The fort is actually a twin-fort system with Purandar and the smaller Vajragad.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. XII, pp. 142-158",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Purandar_Fort_view.jpg/1280px-Purandar_Fort_view.jpg"
   },
@@ -155,8 +161,8 @@ const forts: Fort[] = [
     location: "Tamil Nadu",
     captured: "1677 (Southern Campaign)",
     elevation: "800 ft",
-    description: "Captured during Shivaji's Dakshin Digvijay (Southern Campaign) in 1677. This massive fort complex with three hills served as a Maratha stronghold in South India for decades.",
-    significance: "Farthest southern conquest of Shivaji. Later served as capital for Rajaram (Shivaji's son) from 1689-1698 during the Mughal siege of Maharashtra. Demonstrates the vast extent of Shivaji's campaigns.",
+    description: "During his Southern Campaign (Dakshin Digvijay), Chhatrapati Shivaji Maharaj captured Jinji and fortified it to be an 'Eastern Troy'. It spans three hills: Rajagiri, Krishnagiri, and Chandrayandurg. He foresaw its need as a final refuge, which came true when his son Rajaram used it as the capital during the 27-year war against Aurangzeb.",
+    significance: "The ultimate safety vault of the Maratha Empire. It withstood a massive Mughal siege for 8 years (1690–1698), allowing the Maratha resistance to survive and eventually reclaim Swarajya.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. XXII, pp. 270-280",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Rajagiri-2.jpg/1280px-Rajagiri-2.jpg"
   },
@@ -167,8 +173,8 @@ const forts: Fort[] = [
     location: "Kolhapur District, Maharashtra",
     captured: "1659",
     elevation: "3,630 ft",
-    description: "Known as Khelna, captured by Shivaji after the Battle of Pratapgad. This is where he safely reached after escaping from the siege of Panhala, thanks to Baji Prabhu's sacrifice.",
-    significance: "Crucial for control over the Konkan region. The destination of Shivaji's escape from Panhala. Known for its difficult terrain and strategic location.",
+    description: "Anciently known as Khelna, this fort is surrounded by dense forests and difficult terrain. It became famous as the destination of Chhatrapati Shivaji Maharaj's escape from Panhala. While Shivaji Maharaj reached this fort safely, Baji Prabhu Deshpande and his men laid down their lives at Pavan Khind to stop the enemy pursuit.",
+    significance: "A symbol of loyalty and sacrifice. The tomb of reformist social leader Haji Hazrat Peer Malik Rehan is also located here. It served as a key watchtower over the Konkan trade routes.",
     reference: "Sarkar, 'Shivaji and His Times', Ch. VI, pp. 78-83",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Vishalgad_Fort.jpg/1280px-Vishalgad_Fort.jpg"
   },
@@ -178,8 +184,8 @@ const forts: Fort[] = [
     type: "sea",
     location: "Dapoli, Ratnagiri District",
     captured: "1660",
-    description: "The 'Golden Fort', captured from the Siddis of Janjira. It became a major shipbuilding center for the Maratha Navy.",
-    significance: "A key naval base and shipbuilding center. Helped challenge the naval supremacy of the Europeans and the Siddis on the Konkan coast.",
+    description: "The 'Golden Fort' is a sea fort located on a small island near Harnai. Chhatrapati Shivaji Maharaj captured it from the Siddis to counter their naval power. It was strengthened and used as a major shipbuilding facility for the Maratha Navy. It has a secret underwater tunnel connecting it to the land fort Kanakdurg.",
+    significance: "A cornerstone of Maratha naval power. It was the birthplace of the legendary Admiral Kanhoji Angre, who later became the Sarkhel (Grand Admiral) of the Maratha Navy and remained undefeated by European powers.",
     reference: "Kincaid, 'A History of the Maratha People', Vol. 1, p. 77",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Suvarnadurg_Fort.jpg/1280px-Suvarnadurg_Fort.jpg"
   }
@@ -407,7 +413,7 @@ const Forts = () => {
           className="mt-16 text-center"
         >
           <p className="text-[#2C3E50]/40 text-xs max-w-lg mx-auto leading-relaxed">
-            Shivaji Maharaj's empire included over 350 forts. This page showcases the most historically
+            Chhatrapati Shivaji Maharaj's empire included over 350 forts. This page showcases the most historically
             significant ones. Fort images are sourced from Wikimedia Commons (CC-BY-SA) and serve as historical records.
           </p>
         </motion.div>
@@ -432,7 +438,7 @@ const StrategicImportance = () => {
         <div className="text-center mb-16">
           <h2 className="text-[#E67E22] font-display font-black text-3xl md:text-4xl mb-4">The Science of Fortification</h2>
           <p className="text-[#2C3E50]/60 max-w-2xl mx-auto uppercase tracking-widest text-[10px] font-black">
-            Maharaj's 3-Tier Defense System for Perpetual Sovereignty
+            Chhatrapati Shivaji Maharaj's 3-Tier Defense System for Perpetual Sovereignty
           </p>
           <div className="w-12 h-1 bg-[#E67E22] mx-auto mt-6" />
         </div>

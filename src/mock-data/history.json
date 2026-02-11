@@ -6,18 +6,24 @@
     "titleEnglish": "Shivneri — The Birthplace",
     "description": "Chhatrapati Shivaji Maharaj was born at Shivneri Fort on February 19, 1630. This hill fort in Junnar became the cradle of the Maratha Empire.",
     "category": "fort",
-    "image": "/placeholder.svg",
-    "source": { "book": "Shivaji: The Great Maratha", "page": 12 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Shivneri01.JPG",
+    "source": {
+      "book": "Chhatrapati Shivaji Maharaj: The Great Maratha",
+      "page": 12
+    }
   },
   {
     "id": "h2",
     "year": 1645,
     "titleMarathi": "तोरणा किल्ला विजय",
     "titleEnglish": "Conquest of Torna Fort",
-    "description": "At the age of 15, Shivaji captured Torna Fort, marking the beginning of Swarajya. This was the first fort taken under his independent command.",
+    "description": "At the age of 15, Chhatrapati Shivaji Maharaj captured Torna Fort, marking the beginning of Swarajya. This was the first fort taken under his independent command.",
     "category": "fort",
-    "image": "/placeholder.svg",
-    "source": { "book": "Rise of the Maratha Power", "page": 45 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/FortTorna3.JPG/1280px-FortTorna3.JPG",
+    "source": {
+      "book": "Rise of the Maratha Power",
+      "page": 45
+    }
   },
   {
     "id": "h3",
@@ -26,37 +32,49 @@
     "titleEnglish": "Rajgad — The Capital",
     "description": "Rajgad served as the capital of the Maratha Empire for nearly 26 years. Its strategic location in the Sahyadri range made it nearly impregnable.",
     "category": "fort",
-    "image": "/placeholder.svg",
-    "source": { "book": "Forts of Maharashtra", "page": 78 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Rajgad_balekilla.JPG/1280px-Rajgad_balekilla.JPG",
+    "source": {
+      "book": "Forts of Maharashtra",
+      "page": 78
+    }
   },
   {
     "id": "h4",
     "year": 1659,
     "titleMarathi": "अफजलखान वध — प्रतापगड",
     "titleEnglish": "Battle of Pratapgad",
-    "description": "The legendary encounter between Shivaji Maharaj and Afzal Khan at Pratapgad Fort demonstrated unmatched courage and strategic brilliance.",
+    "description": "The legendary encounter between Chhatrapati Shivaji Maharaj and Afzal Khan at Pratapgad Fort demonstrated unmatched courage and strategic brilliance.",
     "category": "battle",
-    "image": "/placeholder.svg",
-    "source": { "book": "Battles of Shivaji", "page": 102 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Pratapgad_from_distance.JPG/1280px-Pratapgad_from_distance.JPG",
+    "source": {
+      "book": "Battles of Shivaji",
+      "page": 102
+    }
   },
   {
     "id": "h5",
     "year": 1665,
     "titleMarathi": "पुरंदरचा तह",
     "titleEnglish": "Treaty of Purandar",
-    "description": "The Treaty of Purandar was signed between Shivaji and Jai Singh I, representing Mughal Emperor Aurangzeb. It was a strategic diplomatic maneuver.",
+    "description": "The Treaty of Purandar was signed between Chhatrapati Shivaji Maharaj and Jai Singh I, representing Mughal Emperor Aurangzeb. It was a strategic diplomatic maneuver.",
     "category": "treaty",
-    "image": "/placeholder.svg",
-    "source": { "book": "Diplomatic History of Marathas", "page": 156 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Purandar_Fort_view.jpg/1280px-Purandar_Fort_view.jpg",
+    "source": {
+      "book": "Diplomatic History of Marathas",
+      "page": 156
+    }
   },
   {
     "id": "h6",
     "year": 1674,
     "titleMarathi": "राज्याभिषेक — रायगड",
     "titleEnglish": "Coronation at Raigad",
-    "description": "On June 6, 1674, Shivaji Maharaj was crowned at Raigad Fort, establishing an independent Hindu sovereignty after centuries of foreign rule.",
+    "description": "On June 6, 1674, Chhatrapati Shivaji Maharaj was crowned at Raigad Fort, establishing an independent Hindu sovereignty after centuries of foreign rule.",
     "category": "event",
-    "image": "/placeholder.svg",
-    "source": { "book": "Coronation of Shivaji", "page": 201 }
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Raigad_Fort_structures.jpg/1280px-Raigad_Fort_structures.jpg",
+    "source": {
+      "book": "Coronation of Shivaji",
+      "page": 201
+    }
   }
 ]

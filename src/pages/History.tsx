@@ -1,6 +1,6 @@
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
-import { ChevronDown, Mail, MapPin, BookOpen, Crown, Menu, X } from "lucide-react";
+import { motion, useInView, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { ChevronDown, Mail, MapPin, BookOpen, Crown, Menu, X, Landmark, Shield, Swords } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 // Colors (as per requirements)
@@ -347,9 +347,22 @@ const Footer = () => {
 };
 
 const History = () => {
+  const { scrollYProgress } = useScroll();
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   return (
     <div className="w-full bg-[#FFFFFF] font-sans text-[#2C3E50]">
       <Navbar />
+
+      {/* Progress Bar (Sticky) */}
+      <motion.div
+        className="fixed top-[70px] left-0 right-0 h-1 bg-[#E67E22] origin-left z-[90]"
+        style={{ scaleX: scrollYProgress }}
+      />
 
       {/* Hero Section */}
       <header className="w-full pt-[150px] pb-[80px] px-6 text-center flex flex-col items-center">
@@ -383,7 +396,10 @@ const History = () => {
 
       {/* Timeline Section */}
       <section className="max-w-[1100px] mx-auto px-6 md:px-12 py-[60px] relative">
-        <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-[#FBE8D3] md:-translate-x-1/2" />
+        <motion.div
+          className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-[#FBE8D3] md:-translate-x-1/2 origin-top"
+          style={{ scaleY }}
+        />
         <div className="flex flex-col">
           {timelineData.map((event, i) => (
             <TimelineCard key={i} event={event} index={i} />

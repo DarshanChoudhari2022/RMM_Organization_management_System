@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { MapPin, Mountain, Calendar, Shield, Anchor, ChevronDown, BookOpen, Search, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import Footer from "@/components/landing/Footer";
 
 interface Fort {
@@ -394,7 +395,7 @@ const Forts = () => {
 
         {filteredForts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-white/30 text-sm">No forts found matching your search.</p>
+            <p className="text-[#2C3E50]/30 text-sm">No forts found matching your search.</p>
           </div>
         )}
 
@@ -405,15 +406,71 @@ const Forts = () => {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <p className="text-foreground/40 text-xs max-w-lg mx-auto leading-relaxed">
+          <p className="text-[#2C3E50]/40 text-xs max-w-lg mx-auto leading-relaxed">
             Shivaji Maharaj's empire included over 350 forts. This page showcases the most historically
             significant ones. Fort images are sourced from Wikimedia Commons (CC-BY-SA) and serve as historical records.
           </p>
         </motion.div>
       </section>
 
+      <StrategicImportance />
       <Footer />
     </div>
+  );
+};
+
+const StrategicImportance = () => {
+  const stats = [
+    { label: "Giri-Durg", type: "Hill Forts", count: "250+", desc: "The strategic backbone, built on inaccessible Sahyadri peaks for absolute land control." },
+    { label: "Jala-Durg", type: "Sea Forts", count: "50+", desc: "Maritime bastions that established the Maratha Navy's dominance over the Arabian Sea." },
+    { label: "Bhumi-Durg", type: "Land Forts", count: "50+", desc: "Fortified city centers and strategic transit hubs across the Deccan plateau." }
+  ];
+
+  return (
+    <section className="py-24 bg-[#F7F6F3] border-t border-[#FBE8D3]">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-[#E67E22] font-display font-black text-3xl md:text-4xl mb-4">The Science of Fortification</h2>
+          <p className="text-[#2C3E50]/60 max-w-2xl mx-auto uppercase tracking-widest text-[10px] font-black">
+            Maharaj's 3-Tier Defense System for Perpetual Sovereignty
+          </p>
+          <div className="w-12 h-1 bg-[#E67E22] mx-auto mt-6" />
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {stats.map((s, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ y: -8 }}
+              className="bg-white p-8 rounded-2xl border border-[#FBE8D3] shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div className="text-[10px] font-black text-[#E67E22] uppercase tracking-[0.2em] mb-2">{s.label}</div>
+              <h4 className="text-2xl font-display font-black text-[#2C3E50] mb-1">{s.type}</h4>
+              <div className="text-4xl font-display font-black text-[#E67E22]/20 mb-6">{s.count}</div>
+              <p className="text-sm text-[#2C3E50]/70 leading-relaxed font-medium">{s.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-20 p-8 bg-[#2C3E50] rounded-3xl text-white relative overflow-hidden group">
+          <div className="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="max-w-xl">
+              <h3 className="text-2xl font-display font-black mb-4">"Gad aala pan Sinha gela"</h3>
+              <p className="text-white/70 text-sm leading-relaxed italic">
+                The capture of Kondana (Sinhagad) by Tanaji Malusare remains the ultimate symbol of the bravery associated with these guardian peaks. Every stone of these forts tells a story of blood, iron, and the indomitable spirit of Swarajya.
+              </p>
+            </div>
+            <Link
+              to="/history"
+              className="px-8 py-4 bg-[#E67E22] text-white rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
+            >
+              Explore Timeline
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

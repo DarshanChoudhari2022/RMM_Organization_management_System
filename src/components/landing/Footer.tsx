@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Crown, MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
+import { Crown, MapPin, Phone, Mail, ArrowUpRight, Instagram, Facebook, Youtube } from "lucide-react";
 
 const Footer = () => {
     return (
@@ -17,6 +17,17 @@ const Footer = () => {
                     <p className="text-[13px] text-[#2C3E50] leading-[1.6] max-w-[280px]">
                         Celebrating the legacy of Chhatrapati Shivaji Maharaj through education, culture, and community engagement at Wanowrie, Pune.
                     </p>
+                    <div className="flex gap-4 mt-2">
+                        <a href="https://instagram.com/shivgarjana_wanowrie" className="w-9 h-9 bg-white border border-[#FBE8D3] rounded-full flex items-center justify-center text-[#E67E22] hover:bg-[#E67E22] hover:text-white transition-all shadow-sm">
+                            <Instagram size={18} />
+                        </a>
+                        <a href="https://facebook.com/shivgarjana.wanowrie" className="w-9 h-9 bg-white border border-[#FBE8D3] rounded-full flex items-center justify-center text-[#E67E22] hover:bg-[#E67E22] hover:text-white transition-all shadow-sm">
+                            <Facebook size={18} />
+                        </a>
+                        <a href="https://youtube.com/@shivgarjani" className="w-9 h-9 bg-white border border-[#FBE8D3] rounded-full flex items-center justify-center text-[#E67E22] hover:bg-[#E67E22] hover:text-white transition-all shadow-sm">
+                            <Youtube size={18} />
+                        </a>
+                    </div>
                 </div>
 
                 {/* Navigate */}

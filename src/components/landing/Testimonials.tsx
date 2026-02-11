@@ -6,19 +6,19 @@ const testimonials = [
         name: "Vijay Deshpande",
         role: "Wanowrie Resident",
         content: "The Shivgarjana Mandal has transformed our neighborhood's spirit. Their discipline during the grand procession is unmatched, and their social work is truly inspiring.",
-        image: "https://i.pravatar.cc/150?u=vijay"
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?bg=202020&fit=crop&h=150&q=80&w=150"
     },
     {
         name: "Anjali Kadam",
         role: "Youth Volunteer",
         content: "Being part of the Youth Wing has taught me so much about our heritage. It's not just about the celebrations; it's about the core values Chhatrapati Shivaji Maharaj stood for.",
-        image: "https://i.pravatar.cc/150?u=anjali"
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?bg=202020&fit=crop&h=150&q=80&w=150"
     },
     {
         name: "Suresh Kedari",
         role: "Social Activist",
         content: "I've seen many Mandals, but Shivgarjana's commitment to clean and purposeful celebrations is remarkable. Their blood donation drives are a lifesaver for the community.",
-        image: "https://i.pravatar.cc/150?u=suresh"
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?bg=202020&fit=crop&h=150&q=80&w=150"
     }
 ];
 

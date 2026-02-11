@@ -32,7 +32,7 @@ const timelineData: TimelineEvent[] = [
     description: "Born on 19th February 1630 at the strategic Shivneri Fort.",
     details: "Born to Jijabai and Shahaji Bhosale, his upbringing at Shivneri under the guidance of Jijau shaped the vision of 'Hindavi Swarajya'. The fort's naturally fortified position inspired his lifelong mastery of mountain warfare.",
     reference: "Sarkar, 'Shivaji and His Times', p. 12",
-    image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Shivneri01.JPG"
+    image: "https://images.unsplash.com/photo-1627998672583-050f53198084?auto=format&fit=crop&q=80" // Shivneri like landscape / Sahyadri
     // Prompt: "Cinematic illustration inspired by the birth of Chhatrapati Shivaji Maharaj at Shivneri Fort, showing the fort on a hill under a dawn sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, no modern elements, suitable as a history timeline card background for a Maratha history website."
   },
   {
@@ -42,7 +42,7 @@ const timelineData: TimelineEvent[] = [
     description: "At age 16, Chhatrapati Shivaji Maharaj captured his first fort, Torna.",
     details: "This pivotal event marked the beginning of the Maratha Empire. By capturing Torna, Chhatrapati Shivaji Maharaj sent a clear message of independence to the Bijapur Sultanate and began his legendary campaign of fort administration.",
     reference: "Sabhasad Bakhar, p. 8",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/FortTorna3.JPG/1280px-FortTorna3.JPG"
+    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80" // Torna like fort walls
     // Prompt: "Cinematic illustration of Maratha warriors approaching Torna Fort on a hill in 1646, flags flying, fort silhouetted against the sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, suitable as a history timeline card background."
   },
   {
@@ -52,7 +52,7 @@ const timelineData: TimelineEvent[] = [
     description: "Establishment of the independent Hindu Sovereignty.",
     details: "On June 6, 1674, Raigad witnessed the birth of a Sovereign Power. He was crowned Chhatrapati, symbolizing the formal rebirth of Hindavi Swarajya and establishing a separate legal identity for the Maratha people.",
     reference: "Sarkar, p. 195",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Raigad_Fort_structures.jpg/1280px-Raigad_Fort_structures.jpg"
+    image: "https://images.unsplash.com/photo-1572948622722-1d54625b1285?auto=format&fit=crop&q=80" // Raigad structures
     // Prompt: "Cinematic illustration of the coronation ceremony of Chhatrapati Shivaji Maharaj at Raigad Fort, royal court setting, saffron flags, traditional attire, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, suitable as a history timeline card background."
   },
   {
@@ -62,7 +62,7 @@ const timelineData: TimelineEvent[] = [
     description: "A lifetime dedicated to sovereignty and mountain warfare.",
     details: "By the time of his passing, Chhatrapati Shivaji Maharaj had built and rebuilt a network of over 300 forts across the Sahyadri range and the Konkan coast, creating an impenetrable defense system that protected Swarajya for centuries.",
     reference: "Kincaid, 'History of Maratha People', p. 280",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Rajgad_balekilla.JPG/1280px-Rajgad_balekilla.JPG"
+    image: "https://images.unsplash.com/photo-1598545279626-d62153573c05?auto=format&fit=crop&q=80" // Mountain range / Landscape
     // Prompt: "Cinematic illustration of a vast landscape with multiple hill forts in the distance, dramatic sky, warm earthy color palette, subtle texture like an old painted scroll, gentle vignette, 16:9 horizontal, no text, inspiring and majestic tone."
   }
 ];

@@ -76,8 +76,8 @@ const NavySection = () => {
 
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-[#FBE8D3] transform -rotate-2 hover:rotate-0 transition-transform duration-500">
                             <img
-                                src="https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80"
-                                alt="Maratha Ships"
+                                src="https://images.unsplash.com/photo-1588416936097-4188d9b2e04e?auto=format&fit=crop&q=80"
+                                alt="Sindhudurg Fort - Maratha Navy Base"
                                 className="w-full h-[500px] object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

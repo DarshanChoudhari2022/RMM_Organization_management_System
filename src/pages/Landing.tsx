@@ -1,7 +1,6 @@
 import Hero from "@/components/landing/Hero";
 import AboutSection from "@/components/landing/AboutSection";
 import NavySection from "@/components/landing/NavySection";
-import VideoSection from "@/components/landing/VideoSection";
 import Footer from "@/components/landing/Footer";
 
 const Landing = () => {
@@ -10,7 +9,6 @@ const Landing = () => {
       <Hero />
       <AboutSection />
       <NavySection />
-      <VideoSection />
       <Footer />
     </div>
   );

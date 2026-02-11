@@ -51,20 +51,20 @@ const AboutSection = () => {
                             Prompt for this image: "Classic realistic painting-style portrait of Chhatrapati Shivaji Maharaj in three-quarter view, wearing traditional Maratha armor and turban with decorative ornaments, dignified and calm expression, dark neutral background softly fading to light at the bottom, warm focused lighting from one side, subtle canvas texture, 16:9 horizontal crop, ultra high resolution, no text, designed to be used as a hero portrait image on a history portal webpage."
                         */}
                             <img
-                                src="https://images.unsplash.com/photo-1572948622722-1d54625b1285?auto=format&fit=crop&q=80"
-                                alt="Raigad Fort — The Capital of Swarajya"
+                                src="/images/Photo1.jpg"
+                                alt="Chhatrapati Shivaji Maharaj on the Golden Throne — Historical Portrait"
                                 className="w-full h-[500px] md:h-[600px] object-cover object-top transform group-hover:scale-[1.02] transition-transform duration-700"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
                             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                                 <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold mb-1">
-                                    Capital of Swarajya
+                                    Historical Portrait
                                 </p>
                                 <p className="text-white font-display font-bold text-lg">
-                                    Raigad Fort
+                                    Chhatrapati Shivaji Maharaj
                                 </p>
                                 <p className="text-white/50 text-xs mt-1">
-                                    Coronation Site of Chhatrapati Shivaji Maharaj
+                                    Source: British Museum Collection, London
                                 </p>
                             </div>
                         </div>

@@ -762,7 +762,7 @@ const InvitationsTab = () => {
 // --- Main Layout ---
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("members");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -792,30 +792,6 @@ const Dashboard = () => {
     setIsMobileOpen(false);
   };
 
-  // Content Management Tab
-  const ContentManagementTab = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {[
-        { title: "Historical Timeline", icon: Calendar, color: "bg-orange-50 text-[#D95D1E]", desc: "Manage 1630-1680 timeline events and educational citations." },
-        { title: "Photo Gallery", icon: LayoutDashboard, color: "bg-maroon-50 text-[#8B0000]", desc: "Upload and curate images for the heritage gallery and events." },
-        { title: "Landing Page", icon: LayoutDashboard, color: "bg-yellow-50 text-yellow-700", desc: "Redesign hero sections and update homepage announcements." },
-        { title: "Fort Database", icon: Shield, color: "bg-orange-50 text-[#D95D1E]", desc: "Update strategic details for Raigad, Torna and other forts." },
-        { title: "Navy Records", icon: Shield, color: "bg-blue-50 text-blue-700", desc: "Manage Maratha naval history and fleet composition data." }
-      ].map((item, idx) => (
-        <div key={idx} className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group">
-          <div className={`w-14 h-14 ${item.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-            <item.icon size={28} />
-          </div>
-          <h3 className="text-lg font-display font-black text-[#2C1810] mb-2">{item.title}</h3>
-          <p className="text-sm text-gray-500 leading-relaxed mb-6">{item.desc}</p>
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#D95D1E]">
-            Open Editor <Plus size={14} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col md:flex-row font-sans overflow-hidden">
       {/* Mobile Header */}
@@ -823,8 +799,8 @@ const Dashboard = () => {
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
-            <span className="font-display font-black text-xs tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
-            <span className="text-[7px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
+            <span className="font-display font-black text-sm tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
+            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
           </div>
         </div>
         <button
@@ -854,27 +830,28 @@ const Dashboard = () => {
                 md:relative md:translate-x-0
                 ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
-        <div className="p-10 border-b border-gray-50 bg-white">
+        <div className="p-8 border-b border-gray-50 bg-white flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img src="/images/logo.png" className="w-14 h-14 object-contain drop-shadow-lg" alt="Logo" />
+            <img src="/images/logo.png" className="w-12 h-12 object-contain drop-shadow-lg" alt="Logo" />
             <div>
-              <span className="font-display font-black text-xl tracking-tight text-[#2C1810] block leading-none">PORTAL</span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#D95D1E]">Shiv Garjana</span>
+              <span className="font-display font-black text-lg tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
             </div>
           </div>
+          <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#2C1810]/60 hover:text-red-500 transition-colors">
+            <X size={20} />
+          </button>
         </div>
 
-        <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
-          <label className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#2C1810]/30 mb-4 block">Main Navigation</label>
-          <SidebarItem id="overview" label="Overview" icon={LayoutDashboard} active={activeTab === "overview"} onClick={handleTabChange} />
-          <SidebarItem id="content" label="Content Management" icon={LayoutDashboard} active={activeTab === "content"} onClick={handleTabChange} />
-          <SidebarItem id="events" label="Event Scheduling" icon={Calendar} active={activeTab === "events"} onClick={handleTabChange} />
-          <SidebarItem id="members" label="Member Portal" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
-          <SidebarItem id="financials" label="Financials" icon={Wallet} active={activeTab === "financials"} onClick={handleTabChange} />
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
+          <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
+          <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
+          <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
         </nav>
 
-        <div className="p-6 border-t border-gray-50 bg-[#FDFBF7]">
-          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-4 text-red-500 hover:bg-red-50 rounded-2xl transition-colors font-bold text-[11px] uppercase tracking-widest group bg-white border border-gray-200 shadow-sm hover:border-red-200">
+        <div className="p-4 border-t border-gray-50 bg-[#FDFBF7]">
+          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-4 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-xs uppercase tracking-wider group bg-white border border-gray-200 shadow-sm hover:border-red-200">
             <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
             Logout
           </button>
@@ -883,97 +860,18 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] md:h-screen">
-        <div className="flex-1 overflow-y-auto p-6 md:p-12 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-4 md:p-12 scrollbar-hide">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="max-w-7xl mx-auto space-y-8 pb-20"
+            className="max-w-6xl mx-auto space-y-6 md:space-y-8 pb-20"
           >
-            {activeTab === "overview" && (
-              <div className="space-y-12">
-                <div className="flex flex-col gap-2">
-                  <h1 className="text-4xl font-display font-black text-[#2C1810]">Admin Dashboard</h1>
-                  <p className="text-gray-400 font-medium">Welcome back, Administrator. Managing the legacy of Swarajya.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="bg-[#8B0000] p-8 rounded-[40px] text-white shadow-2xl shadow-red-950/20 flex flex-col justify-between aspect-[1.4/1]">
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center"><Wallet size={20} /></div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Total Vargani</div>
-                      <div className="text-3xl font-black">₹45,200</div>
-                    </div>
-                  </div>
-                  <div className="bg-[#D95D1E] p-8 rounded-[40px] text-white shadow-2xl shadow-orange-950/20 flex flex-col justify-between aspect-[1.4/1]">
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center"><Calendar size={20} /></div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Active Tasks</div>
-                      <div className="text-3xl font-black">08</div>
-                    </div>
-                  </div>
-                  <div className="bg-[#2C1810] p-8 rounded-[40px] text-white shadow-2xl shadow-black/20 flex flex-col justify-between aspect-[1.4/1]">
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center"><Users size={20} /></div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Total Members</div>
-                      <div className="text-3xl font-black">124</div>
-                    </div>
-                  </div>
-                  <div className="bg-white p-8 rounded-[40px] text-[#2C1810] border border-gray-100 shadow-sm flex flex-col justify-between aspect-[1.4/1]">
-                    <div className="w-10 h-10 bg-orange-50 text-[#D95D1E] rounded-xl flex items-center justify-center"><Plus size={20} /></div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-1">Expenses</div>
-                      <div className="text-3xl font-black">₹12,450</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-white p-10 rounded-[48px] border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-display font-black text-[#2C1810] mb-8">Recent Activities</h3>
-                    <div className="space-y-6">
-                      {[
-                        { title: "Vargani Paid", desc: "Yash Patil confirmed payment for 2026", time: "2h ago", color: "text-green-600 bg-green-50" },
-                        { title: "New Task Assigned", desc: "Shiv Jayanti decoration planning", time: "5h ago", color: "text-blue-600 bg-blue-50" },
-                        { title: "Expense Added", desc: "Digital promotion assets", time: "1d ago", color: "text-[#D95D1E] bg-orange-50" }
-                      ].map((act, i) => (
-                        <div key={i} className="flex items-center gap-6">
-                          <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center font-black ${act.color}`}>
-                            {act.title[0]}
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-sm font-black text-[#2C1810]">{act.title}</div>
-                            <div className="text-[12px] text-gray-500">{act.desc}</div>
-                          </div>
-                          <div className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{act.time}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-[#2C1810] p-10 rounded-[48px] text-white flex flex-col justify-center text-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-maroon-900/50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <Shield size={64} className="mx-auto mb-6 text-[#D95D1E] opacity-50" />
-                    <h3 className="text-2xl font-display font-black mb-4">Protect the Legacy</h3>
-                    <p className="text-sm opacity-60 leading-relaxed mb-8">Maintain the historical accuracy and digital presence of Shiv Garjana Mandal with care.</p>
-                    <button onClick={() => setActiveTab("content")} className="bg-[#D95D1E] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-[#B94A15] transition-all w-fit mx-auto shadow-xl shadow-orange-950/20">
-                      Manage Content
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-            {activeTab === "content" && <ContentManagementTab />}
-            {activeTab === "events" && (
-              <div className="space-y-16">
-                <TasksTab />
-                <div className="pt-16 border-t border-gray-100">
-                  <InvitationsTab />
-                </div>
-              </div>
-            )}
             {activeTab === "members" && <MembersTab />}
-            {activeTab === "financials" && <ExpensesTab />}
+            {activeTab === "tasks" && <TasksTab />}
+            {activeTab === "expenses" && <ExpensesTab />}
+            {activeTab === "invitations" && <InvitationsTab />}
           </motion.div>
         </div>
       </main>

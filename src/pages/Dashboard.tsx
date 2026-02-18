@@ -480,11 +480,11 @@ const TasksTab = ({ year }: { year: number }) => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <h2 className="text-xl font-display font-black text-[#2C1810]">Task Manager ({year})</h2>
         <button
           onClick={() => setIsAddOpen(true)}
-          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
         >
           <Plus size={16} /> Assign Task
         </button>
@@ -697,10 +697,10 @@ const ExpensesTab = ({ year }: { year: number }) => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-display font-black text-[#2C1810]">Expenses ({year})</h2>
-          <p className="text-xs text-[#2C1810]/60 font-bold uppercase tracking-wider ml-4 border-l pl-4 border-gray-100">
+          <p className="text-xs text-[#2C1810]/60 font-bold uppercase tracking-wider ml-4 border-l pl-4 border-gray-100 hidden sm:block">
             Total for {year}: <span className="text-[#D95D1E] text-lg ml-1">₹{totalSpent.toLocaleString()}</span>
           </p>
         </div>
@@ -709,7 +709,7 @@ const ExpensesTab = ({ year }: { year: number }) => {
             setEditingEx(null);
             setIsAddOpen(true);
           }}
-          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
         >
           <Plus size={16} /> Add Expense
         </button>
@@ -851,7 +851,7 @@ const ExpensesTab = ({ year }: { year: number }) => {
           >
             <motion.div
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-sm p-8 shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-sm p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
             >
               <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">{editingEx ? "Edit Expense" : "Log Expense"}</h3>
               <div className="space-y-4">
@@ -1192,7 +1192,7 @@ const SuppliersTab = () => {
           >
             <motion.div
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
             >
               <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">{editingSup ? "Edit Supplier" : "Add Supplier"}</h3>
               <div className="space-y-4">

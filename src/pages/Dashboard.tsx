@@ -1400,45 +1400,51 @@ const LetterheadTab = () => {
     }
 
     try {
-      // Create a canvas with specific dimensions for A4
-      // 210mm x 297mm at 2x scale = 1587.4px x 2245.1px
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 3, // Higher scale for professional print quality
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        width: 793.7, // exactly 210mm at 96dpi
-        height: 1122.5, // exactly 297mm at 96dpi
-        windowWidth: 793.7,
+        // Use a standard desktop window size to avoid responsive shifts
+        windowWidth: 1200,
+        windowHeight: 1600,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
           if (el) {
+            // Force the letter to be an exact A4 page in the clone
             el.style.transform = 'none';
-            el.style.position = 'relative';
+            el.style.position = 'fixed'; // Position precisely for capture
+            el.style.top = '0';
+            el.style.left = '0';
             el.style.width = '210mm';
             el.style.height = '297mm';
             el.style.minHeight = '297mm';
             el.style.margin = '0';
             el.style.padding = '0';
+            el.style.boxShadow = 'none';
 
-            // Remove parent scaling that affects capture
-            let parent = el.parentElement;
-            while (parent) {
-              parent.style.transform = 'none';
-              parent.style.scale = 'none';
-              parent.style.padding = '0';
-              parent.style.margin = '0';
-              parent.style.width = 'auto';
-              parent.style.height = 'auto';
-              parent.style.maxWidth = 'none';
-              parent = parent.parentElement;
+            // Clean up all parent containers to ensure they don't clip the capture
+            let p = el.parentElement;
+            while (p) {
+              p.style.transform = 'none';
+              p.style.scale = 'none';
+              p.style.margin = '0';
+              p.style.padding = '0';
+              p.style.width = '100vw';
+              p.style.height = '100vh';
+              p.style.overflow = 'visible';
+              p.style.position = 'static';
+              p = p.parentElement;
             }
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      // Use higher quality for the JPEG
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
@@ -1449,9 +1455,9 @@ const LetterheadTab = () => {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      // Explicitly specify size to avoid zooming/distortion
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
+      // Ensure the image covers the entire A4 page with FAST compression
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {
       console.error("PDF Generation Error:", error);

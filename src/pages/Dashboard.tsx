@@ -139,8 +139,8 @@ const MembersTab = ({ year }: { year: number }) => {
         </div>
       </div>
 
-      {/* List - Desktop View */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
+      {/* List - Scrollable Table for all screens */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
         <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
           <div className="col-span-4">Name & Role</div>
           <div className="col-span-3">Contact</div>
@@ -224,89 +224,6 @@ const MembersTab = ({ year }: { year: number }) => {
                     title="Delete Member"
                   >
                     <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* List - Mobile View */}
-      <div className="md:hidden space-y-4">
-        {members?.length === 0 ? (
-          <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#2C1810]/60 text-sm">No members found.</div>
-        ) : (
-          members?.map((member) => {
-            const vargani = member.varganiHistory.find(v => v.year === year);
-            const isPaid = vargani?.paid;
-            const amount = vargani?.amount || 1500;
-            const isEditing = editingVargani?.id === member.id;
-
-            return (
-              <div key={member.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-bold text-[#2C1810] text-lg">{member.name}</div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-[#D95D1E]">{member.role}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
-                        window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                      }}
-                      className="p-2 bg-green-50 text-green-600 rounded-xl"
-                    >
-                      <MessageSquare size={18} />
-                    </button>
-                    <button
-                      onClick={() => { if (window.confirm("Are you sure?")) deleteMember.mutate(member.id); }}
-                      className="p-2 bg-red-50 text-red-400 rounded-xl"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                  <div className="flex items-center gap-2 text-sm text-[#2C1810]/60 font-mono">
-                    <Phone size={14} className="text-[#D95D1E]" />
-                    {member.phone}
-                  </div>
-                </div>
-
-                <div className="bg-[#FDFBF7] p-4 rounded-xl space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/40">Vargani ({year})</span>
-                    {isEditing ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          className="w-24 px-3 py-1.5 border border-[#D95D1E] rounded-lg text-sm font-bold bg-white"
-                          value={editingVargani.amount}
-                          onChange={(e) => setEditingVargani({ ...editingVargani, amount: parseInt(e.target.value) || 0 })}
-                        />
-                        <button onClick={() => saveVarganiAmount(member.id, editingVargani.amount)} className="p-2 bg-green-500 text-white rounded-lg">
-                          <CheckCircle2 size={16} />
-                        </button>
-                        <button onClick={() => setEditingVargani(null)} className="p-2 bg-gray-200 text-gray-600 rounded-lg">
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-[#2C1810]">₹{amount}</span>
-                        <button onClick={() => setEditingVargani({ id: member.id, amount })} className="p-1 px-2 border border-[#D95D1E]/20 rounded text-[#D95D1E] text-[10px] font-bold">Edit</button>
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })}
-                    className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${isPaid ? "bg-green-100 text-green-700" : "bg-red-500 text-white shadow-lg shadow-red-200"}`}
-                  >
-                    {isPaid ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
-                    {isPaid ? "Paid" : "Mark as Paid"}
                   </button>
                 </div>
               </div>
@@ -706,9 +623,9 @@ const ExpensesTab = ({ year }: { year: number }) => {
 
   // Filter by year
   const filteredExpenses = useMemo(() => {
-    return expenses?.filter(e => {
-      return e.year === year;
-    }) || [];
+    return (expenses || [])
+      .filter(e => e.year === year)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [expenses, year]);
 
   const totalSpent = filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -1299,33 +1216,46 @@ const LetterheadTab = () => {
     const element = document.getElementById('letter-preview');
     if (!element) return;
 
+    // Ensure preview is visible for capture even on mobile
+    const originalStyle = element.style.display;
+    const parent = element.parentElement;
+    const isMobileHidden = window.getComputedStyle(parent?.parentElement as Element).display === 'none';
+
+    // Temporarily force show all parents if hidden
+    if (activeMode === 'edit') {
+      setActiveMode('preview');
+      // Give React a tiny moment to render the preview
+      await new Promise(r => setTimeout(r, 100));
+    }
+
     // Save scroll position
     const scrollPos = window.scrollY;
     window.scrollTo(0, 0);
 
     try {
       const canvas = await html2canvas(element, {
-        scale: 4, // High quality
+        scale: 2, // 4 might be too slow/heavy for some mobile browsers, 2 is enough for print
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        width: element.offsetWidth,
-        height: element.offsetHeight
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowWidth: 210 * 3.77, // Force A4 width in px for consistent capture
+        windowHeight: 297 * 3.77
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
-        format: 'a4',
-        compress: true
+        format: 'a4'
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
       console.error("PDF Generation Error:", error);
@@ -1508,101 +1438,108 @@ const LetterheadTab = () => {
           </div>
         </div>
 
-        {/* Preview */}
-        <div className={`lg:col-span-8 ${activeMode === 'edit' ? 'hidden lg:block' : ''}`}>
-          <div className="bg-gray-300 p-8 rounded-xl overflow-auto flex justify-center custom-scrollbar">
-            {/* A4 Frame (Capture Target) */}
-            <div
-              id="letter-preview"
-              className="bg-white w-[210mm] min-h-[297mm] shadow-2xl relative flex flex-col font-serif select-none"
-              style={{ minWidth: '210mm' }}
-            >
-              {/* Professional Header */}
-              <div className="pt-8 px-12 pb-4">
-                <div className="flex justify-between items-start relative z-10">
-                  <div className="flex gap-6 items-center">
-                    <div className="relative">
-                      <div className="absolute -inset-2 bg-[#D95D1E]/10 rounded-full blur-lg"></div>
-                      <img src="/images/logo.png" className="w-28 h-28 object-contain relative transition-transform hover:scale-105" alt="Logo" />
+        {/* Preview Container - Improved Mobile Handling */}
+        <div className={`lg:col-span-8 ${activeMode === 'edit' ? 'invisible absolute' : 'relative block'}`}>
+          <div className="bg-gray-300 p-4 lg:p-8 rounded-xl overflow-x-auto flex flex-col items-center custom-scrollbar">
+            <div className="lg:hidden bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-[10px] font-bold mb-4 flex items-center gap-2">
+              <Activity size={12} /> Pinch to zoom or scroll horizontally to see full letter
+            </div>
+
+            {/* Scale Wrapper for Mobile Viewport */}
+            <div className="origin-top scale-[0.4] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 transition-transform bg-white shadow-2xl">
+              {/* A4 Frame (Capture Target) */}
+              <div
+                id="letter-preview"
+                className="bg-white w-[210mm] min-h-[297mm] relative flex flex-col font-serif select-none text-black"
+                style={{ width: '210mm', minWidth: '210mm' }}
+              >
+                {/* Professional Header */}
+                <div className="pt-8 px-12 pb-4">
+                  <div className="flex justify-between items-start relative z-10">
+                    <div className="flex gap-6 items-center">
+                      <div className="relative">
+                        <div className="absolute -inset-2 bg-[#D95D1E]/10 rounded-full blur-lg"></div>
+                        <img src="/images/logo.png" className="w-28 h-28 object-contain relative transition-transform hover:scale-105" alt="Logo" />
+                      </div>
+                      <div>
+                        <h1 className="text-4xl font-black text-[#D95D1E] tracking-tight leading-none mb-1" style={{ textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+                          श्रीमंत शिवगर्जना प्रतिष्ठान
+                        </h1>
+                        <p className="text-2xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
+                        <p className="text-sm font-bold text-[#D95D1E] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                      </div>
                     </div>
-                    <div>
-                      <h1 className="text-4xl font-black text-[#D95D1E] tracking-tight leading-none mb-1" style={{ textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
-                        श्रीमंत शिवगर्जना प्रतिष्ठान
-                      </h1>
-                      <p className="text-2xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
-                      <p className="text-sm font-bold text-[#D95D1E] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                    <div className="text-right space-y-1">
+                      <p className="font-black text-sm text-gray-800">{data.establishmentLabel}</p>
+                      <div className="h-0.5 w-full bg-[#D95D1E] rounded-full"></div>
                     </div>
                   </div>
-                  <div className="text-right space-y-1">
-                    <p className="font-black text-sm text-gray-800">{data.establishmentLabel}</p>
-                    <div className="h-0.5 w-full bg-[#D95D1E] rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Zigzag Header Border */}
-              <div className="w-full h-8 bg-[#D95D1E] flex items-center mb-8 relative">
-                <div className="absolute inset-x-0 -bottom-4 h-4" style={{ backgroundImage: 'radial-gradient(circle at 10px 0px, transparent 10px, #D95D1E 11px)', backgroundSize: '20px 20px' }}></div>
-              </div>
-
-              {/* Content Area */}
-              <div className="px-16 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mt-4">
-                  <div className="space-y-1">
-                    <span className="block font-bold text-lg">{data.toLabel}</span>
-                    <p className="font-bold text-lg">{data.toName}</p>
-                    <p className="font-bold text-lg">{data.toDept}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="font-bold text-lg">{data.dateLabel} {data.date}</span>
-                  </div>
                 </div>
 
-                <div className="mt-12 flex justify-end">
-                  <div className="text-right space-y-1 border-r-4 border-[#D95D1E] pr-4 bg-gray-50/50 p-2 rounded-l-lg">
-                    <span className="block font-bold italic text-sm text-gray-600">{data.applicantLabel}</span>
-                    <p className="font-bold text-lg">{data.applicant}</p>
-                    <p className="text-[12px] font-bold text-gray-700 max-w-[200px] leading-snug">{data.address}</p>
+                {/* Zigzag Header Border */}
+                <div className="w-full h-8 bg-[#D95D1E] flex items-center mb-8 relative">
+                  <div className="absolute inset-x-0 -bottom-4 h-4" style={{ backgroundImage: 'radial-gradient(circle at 10px 0px, transparent 10px, #D95D1E 11px)', backgroundSize: '20px 20px' }}></div>
+                </div>
+
+                {/* Content Area */}
+                <div className="px-16 flex-1 flex flex-col">
+                  <div className="flex justify-between items-start mt-4">
+                    <div className="space-y-1">
+                      <span className="block font-bold text-lg">{data.toLabel}</span>
+                      <p className="font-bold text-lg">{data.toName}</p>
+                      <p className="font-bold text-lg">{data.toDept}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-lg">{data.dateLabel} {data.date}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-16 text-center">
-                  <div className="inline-block relative">
-                    <h2 className="text-2xl font-black text-[#2C1810] px-4 py-1 relative z-10">
-                      {data.subjectLabel} {data.subject}
-                    </h2>
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D95D1E] rounded-full"></div>
+                  <div className="mt-12 flex justify-end">
+                    <div className="text-right space-y-1 border-r-4 border-[#D95D1E] pr-4 bg-gray-50/50 p-2 rounded-l-lg">
+                      <span className="block font-bold italic text-sm text-gray-600">{data.applicantLabel}</span>
+                      <p className="font-bold text-lg">{data.applicant}</p>
+                      <p className="text-[12px] font-bold text-gray-700 max-w-[200px] leading-snug">{data.address}</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-16 space-y-8">
-                  <p className="font-bold text-xl">महोदय,</p>
-                  <p className="text-xl leading-[1.8] text-justify font-medium text-gray-800 indent-16">
-                    {data.content}
-                  </p>
-                </div>
+                  <div className="mt-16 text-center">
+                    <div className="inline-block relative">
+                      <h2 className="text-2xl font-black text-[#2C1810] px-4 py-1 relative z-10">
+                        {data.subjectLabel} {data.subject}
+                      </h2>
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D95D1E] rounded-full"></div>
+                    </div>
+                  </div>
 
-                <div className="flex-1 mt-20 flex flex-col justify-end pb-20">
-                  <div className="flex justify-end pr-8">
-                    <div className="text-center space-y-12">
-                      <p className="font-bold text-xl">{data.closingLabel}</p>
-                      <div className="space-y-2">
-                        <p className="font-bold text-xl border-t border-gray-200 pt-2">{data.signLabel}</p>
-                        <p className="font-black text-2xl text-[#D95D1E]">{data.applicant}</p>
-                        <p className="font-bold text-lg">{data.phoneLabel} {data.phone}</p>
+                  <div className="mt-16 space-y-8">
+                    <p className="font-bold text-xl">महोदय,</p>
+                    <p className="text-xl leading-[1.8] text-justify font-medium text-gray-800 indent-16">
+                      {data.content}
+                    </p>
+                  </div>
+
+                  <div className="flex-1 mt-20 flex flex-col justify-end pb-20">
+                    <div className="flex justify-end pr-8">
+                      <div className="text-center space-y-12">
+                        <p className="font-bold text-xl">{data.closingLabel}</p>
+                        <div className="space-y-2">
+                          <p className="font-bold text-xl border-t border-gray-200 pt-2">{data.signLabel}</p>
+                          <p className="font-black text-2xl text-[#D95D1E]">{data.applicant}</p>
+                          <p className="font-bold text-lg">{data.phoneLabel} {data.phone}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Professional Footer Bar */}
-              <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-8 relative overflow-hidden">
-                {/* Pattern overlay for footer */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '10px 10px' }}></div>
-                <p className="text-white font-black text-sm tracking-widest relative z-10 uppercase text-center leading-tight">
-                  {data.footerText}
-                </p>
+                {/* Professional Footer Bar */}
+                <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-8 relative overflow-hidden">
+                  {/* Pattern overlay for footer */}
+                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '10px 10px' }}></div>
+                  <p className="text-white font-black text-sm tracking-widest relative z-10 uppercase text-center leading-tight">
+                    {data.footerText}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

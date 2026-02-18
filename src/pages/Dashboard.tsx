@@ -1393,78 +1393,70 @@ const LetterheadTab = () => {
 
     // Store switch back if needed
     const wasEdit = activeMode === 'edit';
-    if (wasEdit) {
-      setActiveMode('preview');
-      // Give more time for the layout to settle on mobile
-      await new Promise(r => setTimeout(r, 500));
-    }
-
     try {
+      // Force preview mode and wait for layout to stabilize
+      setActiveMode('preview');
+      await new Promise(r => setTimeout(r, 1000));
+
       const canvas = await html2canvas(element, {
-        scale: 3, // Higher scale for professional print quality
+        scale: 4, // Ultra-high resolution for printing
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        // Use a standard desktop window size to avoid responsive shifts
-        windowWidth: 1200,
-        windowHeight: 1600,
-        scrollX: 0,
-        scrollY: 0,
+        // Pixel dimensions for A4 at 96 DPI (Standard for web capture)
+        width: 794,
+        height: 1123,
+        windowWidth: 794,
+        windowHeight: 1123,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
           if (el) {
-            // Force the letter to be an exact A4 page in the clone
+            // Absolute isolation in the clone
             el.style.transform = 'none';
-            el.style.position = 'fixed'; // Position precisely for capture
+            el.style.position = 'absolute';
             el.style.top = '0';
             el.style.left = '0';
-            el.style.width = '210mm';
-            el.style.height = '297mm';
-            el.style.minHeight = '297mm';
+            el.style.width = '794px';
+            el.style.height = '1123px';
             el.style.margin = '0';
             el.style.padding = '0';
             el.style.boxShadow = 'none';
 
-            // Clean up all parent containers to ensure they don't clip the capture
+            // Ensure no parent clipping or transforms
             let p = el.parentElement;
             while (p) {
               p.style.transform = 'none';
-              p.style.scale = 'none';
               p.style.margin = '0';
               p.style.padding = '0';
-              p.style.width = '100vw';
-              p.style.height = '100vh';
               p.style.overflow = 'visible';
-              p.style.position = 'static';
+              p.style.width = '794px';
+              p.style.height = '1123px';
               p = p.parentElement;
             }
           }
         }
       });
 
-      // Use higher quality for the JPEG
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const imgData = canvas.toDataURL('image/png'); // PNG for best text clarity
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
         format: 'a4',
-        compress: true
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      // Ensure the image covers the entire A4 page with FAST compression
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
-      pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`);
+      // Place image exactly at the edges
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'SLOW');
+      pdf.save(`Shivgarjana_Letter_${new Date().getTime()}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {
       console.error("PDF Generation Error:", error);
       toast.error(`त्रुटी: ${error.message || "PDF तयार करताना अडचण आली"}`, { id: toastId });
     } finally {
       if (wasEdit) {
-        // Switch back only after capture is done
         setActiveMode('edit');
       }
     }

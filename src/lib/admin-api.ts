@@ -363,7 +363,10 @@ export const useSuppliers = () => {
                     category: newSup.category,
                     contact: newSup.contact,
                     address: newSup.address,
-                    notes: newSup.notes
+                    notes: newSup.notes,
+                    total_amount: newSup.total_amount || 0,
+                    paid_amount: newSup.paid_amount || 0,
+                    terms: newSup.terms
                 }])
                 .select()
                 .single();
@@ -383,7 +386,12 @@ export const useSuppliers = () => {
                     category: sup.category,
                     contact: sup.contact,
                     address: sup.address,
-                    notes: sup.notes
+                    notes: sup.notes,
+                    total_amount: sup.total_amount,
+                    paid_amount: sup.paid_amount,
+                    terms: sup.terms,
+                    is_confirmed: sup.is_confirmed,
+                    confirmed_at: sup.confirmed_at
                 })
                 .eq('id', sup.id)
                 .select()
@@ -404,7 +412,25 @@ export const useSuppliers = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
     });
 
-    return { ...query, addSupplier, updateSupplier, deleteSupplier };
+    const confirmSupplier = useMutation({
+        mutationFn: async (id: string) => {
+            const { data, error } = await supabase
+                .from('suppliers')
+                .update({
+                    is_confirmed: true,
+                    confirmed_at: new Date().toISOString()
+                })
+                .eq('id', id)
+                .select()
+                .single();
+            if (error) throw error;
+            await createLog("Supplier Confirmed", `Supplier ${data.name} confirmed the agreement`);
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
+    });
+
+    return { ...query, addSupplier, updateSupplier, deleteSupplier, confirmSupplier };
 };
 
 // --- Invitations ---

@@ -910,9 +910,19 @@ const SuppliersTab = () => {
   const { data: suppliers, addSupplier, deleteSupplier, updateSupplier } = useSuppliers();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingSup, setEditingSup] = useState<Supplier | null>(null);
-  const [newSup, setNewSup] = useState<{ name: string; category: Supplier['category']; contact: string; address: string; notes: string }>({
-    name: "", category: "Other", contact: "", address: "", notes: ""
+  const [newSup, setNewSup] = useState({
+    name: "", category: "Other" as Supplier['category'], contact: "", address: "", notes: "", total_amount: 0, paid_amount: 0, terms: ""
   });
+
+  const generateConfirmationLink = (sup: Supplier) => {
+    return `${window.location.origin}/confirm-supplier/${sup.id}`;
+  };
+
+  const shareConfirmation = (sup: Supplier) => {
+    const link = generateConfirmationLink(sup);
+    const msg = `🚩 *शिवगर्जना मंडळ - पुरवठादार करार*\n\nनमस्कार ${sup.name},\n\nआपल्याशी ठरल्याप्रमाणे खालील तपशील तपासा:\n💰 एकूण रक्कम: ₹${sup.total_amount || 0}\n💵 जमा रक्कम: ₹${sup.paid_amount || 0}\n📝 अटी: ${sup.terms || 'नेहमीप्रमाणे'}\n\nकृपया खालील लिंकवर क्लिक करून आपली संमती कळवा:\n${link}`;
+    window.open(`https://wa.me/91${sup.contact}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
 
   const handleSave = async () => {
     try {
@@ -932,7 +942,7 @@ const SuppliersTab = () => {
         }
         await addSupplier.mutateAsync(newSup);
         toast.success("नवीन पुरवठादार जोडला गेला");
-        setNewSup({ name: "", category: "Other", contact: "", address: "", notes: "" });
+        setNewSup({ name: "", category: "Other", contact: "", address: "", notes: "", total_amount: 0, paid_amount: 0, terms: "" });
         setIsAddOpen(false);
       }
     } catch (error: any) {
@@ -963,46 +973,77 @@ const SuppliersTab = () => {
 
       {/* List - Desktop View */}
       <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
-        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
-          <div className="col-span-3">Supplier Name</div>
-          <div className="col-span-2">Category</div>
+        <div className="min-w-[1000px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+          <div className="col-span-2">Supplier</div>
           <div className="col-span-2">Contact</div>
-          <div className="col-span-3">Address/Notes</div>
+          <div className="col-span-2">Payment Status</div>
+          <div className="col-span-1">Confirmed?</div>
+          <div className="col-span-3">Terms & Notes</div>
           <div className="col-span-2 text-right">Actions</div>
         </div>
         {suppliers?.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No suppliers found.</div>
         ) : (
-          suppliers?.map((sup) => (
-            <div key={sup.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-              <div className="col-span-3 font-bold text-[#2C1810]">{sup.name}</div>
-              <div className="col-span-2">
-                <span className="bg-orange-50 text-[#D95D1E] px-2 py-1 rounded-md text-xs font-bold">{sup.category}</span>
+          suppliers?.map((sup) => {
+            const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
+            return (
+              <div key={sup.id} className="min-w-[1000px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                <div className="col-span-2">
+                  <div className="font-bold text-[#2C1810]">{sup.name}</div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E]/60">{sup.category}</span>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-sm text-[#2C1810]/80 font-mono mb-1">{sup.contact}</div>
+                  <a href={`tel:${sup.contact}`} className="text-[#D95D1E] inline-flex items-center gap-1 text-[10px] font-bold"><Phone size={10} /> Call</a>
+                </div>
+                <div className="col-span-2">
+                  <div className="flex justify-between text-[10px] font-black mb-1">
+                    <span className="text-[#D95D1E]">₹{sup.paid_amount?.toLocaleString() || 0}</span>
+                    <span className="text-gray-400">/ ₹{sup.total_amount?.toLocaleString() || 0}</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#D95D1E]" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+                  </div>
+                </div>
+                <div className="col-span-1">
+                  {sup.is_confirmed ? (
+                    <div className="flex flex-col items-center">
+                      <span className="text-green-600 font-bold text-[10px] flex items-center gap-1"><CheckCircle2 size={12} /> Yes</span>
+                      <span className="text-[8px] text-gray-400 font-mono">{sup.confirmed_at ? new Date(sup.confirmed_at).toLocaleDateString('mr-IN') : ''}</span>
+                    </div>
+                  ) : (
+                    <span className="text-yellow-600 font-bold text-[10px] flex items-center gap-1"><Clock size={12} /> Pending</span>
+                  )}
+                </div>
+                <div className="col-span-3 text-xs text-[#2C1810]/60 space-y-1">
+                  {sup.terms && <div className="italic line-clamp-1">"Terms: {sup.terms}"</div>}
+                  {sup.notes && <div className="line-clamp-1">{sup.notes}</div>}
+                  {sup.address && <div className="text-[10px] flex items-center gap-1 text-gray-400"><MapPin size={10} /> {sup.address}</div>}
+                </div>
+                <div className="col-span-2 flex justify-end gap-2">
+                  <button
+                    onClick={() => shareConfirmation(sup)}
+                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                    title="Share Confirmation Link"
+                  >
+                    <Share2 size={16} />
+                  </button>
+                  <button
+                    onClick={() => openEdit(sup)}
+                    className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
+                  >
+                    <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                  </button>
+                  <button
+                    onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-              <div className="col-span-2 text-sm text-[#2C1810]/80 font-mono">
-                {sup.contact}
-                <a href={`tel:${sup.contact}`} className="ml-2 text-[#D95D1E] inline-block"><Phone size={12} /></a>
-              </div>
-              <div className="col-span-3 text-xs text-[#2C1810]/60">
-                {sup.address && <div className="flex gap-1 items-center"><MapPin size={10} /> {sup.address}</div>}
-                {sup.notes && <div className="italic mt-1">"{sup.notes}"</div>}
-              </div>
-              <div className="col-span-2 flex justify-end gap-2">
-                <button
-                  onClick={() => openEdit(sup)}
-                  className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-100"
-                >
-                  <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
-                </button>
-                <button
-                  onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }}
-                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -1011,44 +1052,71 @@ const SuppliersTab = () => {
         {suppliers?.length === 0 ? (
           <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#2C1810]/60 text-sm">No suppliers found.</div>
         ) : (
-          suppliers?.map((sup) => (
-            <div key={sup.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="font-bold text-[#2C1810] text-lg leading-tight mb-1">{sup.name}</div>
-                  <span className="bg-orange-50 text-[#D95D1E] px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">{sup.category}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => openEdit(sup)} className="p-2 bg-orange-50 text-[#D95D1E] rounded-xl"><div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div></button>
-                  <button onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }} className="p-2 bg-red-50 text-red-400 rounded-xl"><Trash2 size={18} /></button>
-                </div>
-              </div>
-
-              <div className="space-y-2 py-2">
-                <a href={`tel:${sup.contact}`} className="flex items-center gap-3 p-3 bg-green-50 text-green-700 rounded-xl font-mono text-sm font-bold">
-                  <Phone size={16} />
-                  {sup.contact}
-                  <span className="ml-auto text-[9px] font-black uppercase tracking-[0.1em] bg-green-200/50 px-2 py-1 rounded">Call Now</span>
-                </a>
-              </div>
-
-              {(sup.address || sup.notes) && (
-                <div className="bg-[#FDFBF7] p-4 rounded-xl space-y-2">
-                  {sup.address && (
-                    <div className="flex gap-2 items-start text-xs text-[#2C1810]/70">
-                      <MapPin size={14} className="text-[#D95D1E] shrink-0 mt-0.5" />
-                      {sup.address}
+          suppliers?.map((sup) => {
+            const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
+            return (
+              <div key={sup.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-bold text-[#2C1810] text-lg leading-tight mb-1">{sup.name}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="bg-orange-50 text-[#D95D1E] px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">{sup.category}</span>
+                      {sup.is_confirmed ? (
+                        <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest flex items-center gap-1"><CheckCircle2 size={10} /> Confirmed</span>
+                      ) : (
+                        <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest flex items-center gap-1"><Clock size={10} /> Pending</span>
+                      )}
                     </div>
-                  )}
-                  {sup.notes && (
-                    <div className="text-xs text-[#2C1810]/60 italic border-l-2 border-[#D95D1E]/20 pl-3 mt-2">
-                      "{sup.notes}"
-                    </div>
-                  )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => shareConfirmation(sup)} className="p-2 bg-green-50 text-green-600 rounded-xl"><Share2 size={18} /></button>
+                    <button onClick={() => openEdit(sup)} className="p-2 bg-orange-50 text-[#D95D1E] rounded-xl"><div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div></button>
+                    <button onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }} className="p-2 bg-red-50 text-red-400 rounded-xl"><Trash2 size={18} /></button>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))
+
+                <div className="space-y-3 py-2">
+                  <div className="bg-gray-50 p-3 rounded-xl">
+                    <div className="flex justify-between text-[11px] font-black mb-1">
+                      <span className="text-[#2C1810]/60 uppercase tracking-widest">Payment Status</span>
+                      <span className="text-[#D95D1E]">₹{sup.paid_amount || 0} / ₹{sup.total_amount || 0}</span>
+                    </div>
+                    <div className="h-2 w-full bg-white rounded-full overflow-hidden border border-gray-100">
+                      <div className="h-full bg-[#D95D1E]" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+                    </div>
+                  </div>
+
+                  <a href={`tel:${sup.contact}`} className="flex items-center gap-3 p-3 bg-green-50 text-green-700 rounded-xl font-mono text-sm font-bold">
+                    <Phone size={16} />
+                    {sup.contact}
+                    <span className="ml-auto text-[9px] font-black uppercase tracking-[0.1em] bg-green-200/50 px-2 py-1 rounded">Call Now</span>
+                  </a>
+                </div>
+
+                {(sup.address || sup.notes || sup.terms) && (
+                  <div className="bg-[#FDFBF7] p-4 rounded-xl space-y-3">
+                    {sup.terms && (
+                      <div className="text-xs text-[#2C1810]/70">
+                        <span className="font-black text-[9px] uppercase tracking-widest block mb-1 text-[#D95D1E]">Agreed Terms:</span>
+                        "{sup.terms}"
+                      </div>
+                    )}
+                    {sup.address && (
+                      <div className="flex gap-2 items-start text-xs text-[#2C1810]/70">
+                        <MapPin size={14} className="text-[#D95D1E] shrink-0 mt-0.5" />
+                        {sup.address}
+                      </div>
+                    )}
+                    {sup.notes && (
+                      <div className="text-xs text-[#2C1810]/60 italic border-l-2 border-[#D95D1E]/20 pl-3">
+                        "{sup.notes}"
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
 
@@ -1096,8 +1164,39 @@ const SuppliersTab = () => {
                     placeholder="Phone Number"
                   />
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Total Amount (₹)</label>
+                    <input
+                      type="number"
+                      value={editingSup ? editingSup.total_amount : newSup.total_amount}
+                      onChange={e => editingSup ? setEditingSup({ ...editingSup, total_amount: parseFloat(e.target.value) || 0 }) : setNewSup({ ...newSup, total_amount: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                      placeholder="Agreed Amount"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Paid Amount (₹)</label>
+                    <input
+                      type="number"
+                      value={editingSup ? editingSup.paid_amount : newSup.paid_amount}
+                      onChange={e => editingSup ? setEditingSup({ ...editingSup, paid_amount: parseFloat(e.target.value) || 0 }) : setNewSup({ ...newSup, paid_amount: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                      placeholder="Amount Paid"
+                    />
+                  </div>
+                </div>
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Address</label>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Terms Agreed</label>
+                  <input
+                    value={editingSup ? editingSup.terms : newSup.terms}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, terms: e.target.value }) : setNewSup({ ...newSup, terms: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="e.g. 50% advance, full after event"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Shop Address</label>
                   <input
                     value={editingSup ? editingSup.address : newSup.address}
                     onChange={e => editingSup ? setEditingSup({ ...editingSup, address: e.target.value }) : setNewSup({ ...newSup, address: e.target.value })}
@@ -1106,12 +1205,12 @@ const SuppliersTab = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Notes</label>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Internal Notes</label>
                   <textarea
                     value={editingSup ? editingSup.notes : newSup.notes}
                     onChange={e => editingSup ? setEditingSup({ ...editingSup, notes: e.target.value }) : setNewSup({ ...newSup, notes: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[60px]"
-                    placeholder="Additional details..."
+                    placeholder="Additional internal details..."
                   />
                 </div>
               </div>
@@ -1216,51 +1315,69 @@ const LetterheadTab = () => {
     const element = document.getElementById('letter-preview');
     if (!element) return;
 
-    // Ensure preview is visible for capture even on mobile
-    const originalStyle = element.style.display;
-    const parent = element.parentElement;
-    const isMobileHidden = window.getComputedStyle(parent?.parentElement as Element).display === 'none';
+    const toastId = toast.loading("PDF तयार होत आहे, कृपया थांबा...");
 
-    // Temporarily force show all parents if hidden
-    if (activeMode === 'edit') {
+    // Store switch back if needed
+    const wasEdit = activeMode === 'edit';
+    if (wasEdit) {
       setActiveMode('preview');
-      // Give React a tiny moment to render the preview
-      await new Promise(r => setTimeout(r, 100));
+      // Give more time for the layout to settle on mobile
+      await new Promise(r => setTimeout(r, 500));
     }
 
-    // Save scroll position
-    const scrollPos = window.scrollY;
-    window.scrollTo(0, 0);
-
     try {
+      // Create a canvas with high scale for printing
       const canvas = await html2canvas(element, {
-        scale: 2, // 4 might be too slow/heavy for some mobile browsers, 2 is enough for print
+        scale: 2, // 4 might be too much for mobile memory, 2 is plenty for A4
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        windowWidth: 210 * 3.77, // Force A4 width in px for consistent capture
-        windowHeight: 297 * 3.77
+        // Set a fixed viewport width for capture to ensure desktop-like layout
+        windowWidth: 1200,
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.getElementById('letter-preview');
+          if (el) {
+            el.style.transform = 'none';
+            el.style.position = 'relative';
+            el.style.width = '210mm';
+            el.style.minHeight = '297mm';
+
+            // Remove parent scaling that affects capture
+            let parent = el.parentElement;
+            while (parent) {
+              parent.style.transform = 'none';
+              parent.style.scale = 'none';
+              parent.style.padding = '0';
+              parent.style.margin = '0';
+              parent = parent.parentElement;
+            }
+          }
+        }
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
+        compress: true
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
       pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
-    } catch (error) {
+      toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
+    } catch (error: any) {
       console.error("PDF Generation Error:", error);
+      toast.error(`त्रुटी: ${error.message || "PDF तयार करताना अडचण आली"}`, { id: toastId });
     } finally {
-      window.scrollTo(0, scrollPos);
+      if (wasEdit) {
+        // Switch back only after capture is done
+        setActiveMode('edit');
+      }
     }
   };
 
@@ -1462,7 +1579,7 @@ const LetterheadTab = () => {
                         <img src="/images/logo.png" className="w-28 h-28 object-contain relative transition-transform hover:scale-105" alt="Logo" />
                       </div>
                       <div>
-                        <h1 className="text-4xl font-black text-[#D95D1E] tracking-tight leading-none mb-1" style={{ textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+                        <h1 className="text-5xl font-black text-[#D95D1E] tracking-tighter leading-none mb-1">
                           श्रीमंत शिवगर्जना प्रतिष्ठान
                         </h1>
                         <p className="text-2xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
@@ -1476,9 +1593,13 @@ const LetterheadTab = () => {
                   </div>
                 </div>
 
-                {/* Zigzag Header Border */}
-                <div className="w-full h-8 bg-[#D95D1E] flex items-center mb-8 relative">
-                  <div className="absolute inset-x-0 -bottom-4 h-4" style={{ backgroundImage: 'radial-gradient(circle at 10px 0px, transparent 10px, #D95D1E 11px)', backgroundSize: '20px 20px' }}></div>
+                {/* Zigzag Header Border - Replaced problematic gradient with robust DOM circles */}
+                <div className="w-full h-10 bg-[#D95D1E] flex items-center mb-10 relative">
+                  <div className="absolute inset-x-0 -bottom-5 flex overflow-hidden">
+                    {[...Array(25)].map((_, i) => (
+                      <div key={i} className="w-10 h-10 bg-[#D95D1E] rounded-full shrink-0 -mt-5" />
+                    ))}
+                  </div>
                 </div>
 
                 {/* Content Area */}
@@ -1494,11 +1615,11 @@ const LetterheadTab = () => {
                     </div>
                   </div>
 
-                  <div className="mt-12 flex justify-end">
-                    <div className="text-right space-y-1 border-r-4 border-[#D95D1E] pr-4 bg-gray-50/50 p-2 rounded-l-lg">
-                      <span className="block font-bold italic text-sm text-gray-600">{data.applicantLabel}</span>
-                      <p className="font-bold text-lg">{data.applicant}</p>
-                      <p className="text-[12px] font-bold text-gray-700 max-w-[200px] leading-snug">{data.address}</p>
+                  <div className="mt-12 flex justify-end pr-4">
+                    <div className="text-right space-y-1 border-r-8 border-[#D95D1E] pr-6 bg-gray-50 p-4 rounded-l-2xl shadow-sm">
+                      <span className="block font-black italic text-[10px] text-[#D95D1E] uppercase tracking-[0.2em] mb-1">{data.applicantLabel}</span>
+                      <p className="font-black text-2xl text-[#2C1810] leading-none">{data.applicant}</p>
+                      <p className="text-[12px] font-bold text-gray-600 max-w-[250px] leading-relaxed mt-2">{data.address}</p>
                     </div>
                   </div>
 
@@ -1533,10 +1654,8 @@ const LetterheadTab = () => {
                 </div>
 
                 {/* Professional Footer Bar */}
-                <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-8 relative overflow-hidden">
-                  {/* Pattern overlay for footer */}
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '10px 10px' }}></div>
-                  <p className="text-white font-black text-sm tracking-widest relative z-10 uppercase text-center leading-tight">
+                <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-12 relative overflow-hidden mt-auto">
+                  <p className="text-white font-black text-xs tracking-[0.2em] relative z-10 uppercase text-center leading-relaxed">
                     {data.footerText}
                   </p>
                 </div>

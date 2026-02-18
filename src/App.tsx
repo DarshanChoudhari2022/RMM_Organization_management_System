@@ -11,6 +11,7 @@ import Gallery from "@/pages/Gallery";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import Approve from "@/pages/Approve";
+import ConfirmSupplier from "@/pages/ConfirmSupplier";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,7 +21,8 @@ const MainContent = () => {
   const isDashboard = location.pathname.startsWith("/dashboard");
   const isLogin = location.pathname === "/login";
   const isApprove = location.pathname.startsWith("/approve");
-  const shouldHideNavbar = isDashboard || isLogin || isApprove;
+  const isConfirmSupplier = location.pathname.startsWith("/confirm-supplier");
+  const shouldHideNavbar = isDashboard || isLogin || isApprove || isConfirmSupplier;
 
   return (
     <>
@@ -33,6 +35,7 @@ const MainContent = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/approve/:token" element={<Approve />} />
+        <Route path="/confirm-supplier/:id" element={<ConfirmSupplier />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

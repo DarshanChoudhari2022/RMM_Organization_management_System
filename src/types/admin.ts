@@ -64,6 +64,11 @@ export interface Supplier {
     contact: string;
     address?: string;
     notes?: string;
+    total_amount?: number;
+    paid_amount?: number;
+    terms?: string;
+    is_confirmed?: boolean;
+    confirmed_at?: string;
 }
 
 export interface SystemLog {

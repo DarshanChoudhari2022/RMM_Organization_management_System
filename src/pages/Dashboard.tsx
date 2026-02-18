@@ -1351,6 +1351,7 @@ const InvitationsTab = () => {
 }
 
 const LetterheadTab = () => {
+  const [activeMode, setActiveMode] = useState<'edit' | 'preview'>('edit');
   const [data, setData] = useState({
     dateLabel: "दिनांक :",
     date: new Date().toLocaleDateString('mr-IN'),
@@ -1443,7 +1444,7 @@ const LetterheadTab = () => {
     }
   };
 
-  const [activeMode, setActiveMode] = useState<'edit' | 'preview'>('edit');
+
 
   return (
     <div className="space-y-6">
@@ -1626,7 +1627,7 @@ const LetterheadTab = () => {
             {/* Download Button - Desktop only */}
             <div className="hidden lg:flex w-full justify-end mb-6">
               <button
-                onClick={handleDownload}
+                onClick={downloadPDF}
                 className="flex items-center gap-2 bg-[#D95D1E] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#B84D19] transition-all shadow-lg hover:shadow-orange-200/50 active:scale-95 group"
               >
                 <Download size={18} className="group-hover:-translate-y-1 transition-transform" />
@@ -1762,9 +1763,9 @@ const LogsTab = () => {
         {/* Desktop Header */}
         <div className="hidden lg:grid grid-cols-12 gap-4 p-5 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 border-b border-gray-100">
           <div className="col-span-2">Time & Date</div>
-          <div className="col-span-2">User</div>
+          <div className="col-span-3">User</div>
           <div className="col-span-2">Action</div>
-          <div className="col-span-6">Details</div>
+          <div className="col-span-5">Details</div>
         </div>
 
         {/* List */}
@@ -1775,7 +1776,7 @@ const LogsTab = () => {
             logs?.map((log) => (
               <div key={log.id} className="lg:grid lg:grid-cols-12 gap-4 p-4 lg:p-5 items-center hover:bg-gray-50/50 transition-colors bg-white group">
                 {/* Time Section */}
-                <div className="lg:col-span-2 mb-2 lg:mb-0 flex lg:flex-col justify-between lg:justify-center">
+                <div className="lg:col-span-2 mb-2 lg:mb-0 flex lg:flex-col justify-between lg:justify-center whitespace-nowrap">
                   <div className="text-[11px] lg:text-xs font-bold text-[#2C1810]">
                     {new Date(log.created_at).toLocaleDateString('mr-IN')}
                   </div>
@@ -1785,21 +1786,21 @@ const LogsTab = () => {
                 </div>
 
                 {/* User Section */}
-                <div className="lg:col-span-2 mb-2 lg:mb-0">
-                  <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 lg:bg-[#D95D1E]/10 px-2 py-1 rounded w-fit border border-[#D95D1E]/10">
+                <div className="lg:col-span-3 mb-2 lg:mb-0">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 lg:bg-[#D95D1E]/10 px-2 py-1 rounded border border-[#D95D1E]/10 truncate max-w-full inline-block align-middle" title={log.user_name || "System"}>
                     {log.user_name || "System"}
                   </div>
                 </div>
 
                 {/* Action Section */}
                 <div className="lg:col-span-2 mb-1 lg:mb-0">
-                  <div className="text-[10px] lg:text-xs font-black uppercase tracking-wider text-[#2C1810]">
+                  <div className="text-[10px] lg:text-xs font-black uppercase tracking-wider text-[#2C1810] whitespace-nowrap">
                     {log.action}
                   </div>
                 </div>
 
                 {/* Details Section */}
-                <div className="lg:col-span-6">
+                <div className="lg:col-span-5">
                   <p className="text-[11px] lg:text-xs text-[#2C1810]/70 leading-relaxed bg-gray-50 lg:bg-transparent p-2 lg:p-0 rounded-lg lg:rounded-none">
                     <span className="lg:hidden font-black text-[9px] uppercase tracking-widest text-[#2C1810]/40 block mb-1">Details:</span>
                     {log.details || "No details"}

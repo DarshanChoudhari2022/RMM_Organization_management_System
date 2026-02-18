@@ -64,3 +64,12 @@ export interface Supplier {
     address?: string;
     notes?: string;
 }
+
+export interface SystemLog {
+    id: string;
+    created_at: string;
+    action: string;
+    details: string;
+    user_id?: string;
+    user_name?: string;
+}

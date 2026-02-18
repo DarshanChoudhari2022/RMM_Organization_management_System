@@ -26,13 +26,16 @@ import {
   Menu,
   X,
   FileText,
-  Download
+  Download,
+  ClipboardList,
+  Activity
 } from "lucide-react";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers } from "@/lib/admin-api";
+import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers, useLogs } from "@/lib/admin-api";
 import { supabase } from "@/lib/supabase";
-import { Task, Expense, Invitation, Member, TaskCategory, Supplier } from "@/types/admin";
+import { Task, Expense, Invitation, Member, TaskCategory, Supplier, SystemLog } from "@/types/admin";
+import { toast } from "sonner";
 
 // --- Components ---
 
@@ -827,17 +830,30 @@ const SuppliersTab = () => {
     name: "", category: "Other", contact: "", address: "", notes: ""
   });
 
-  const handleSave = () => {
-    if (editingSup) {
-      if (!editingSup.name || !editingSup.contact) return;
-      updateSupplier.mutate(editingSup);
-      setEditingSup(null);
-      setIsAddOpen(false);
-    } else {
-      if (!newSup.name || !newSup.contact) return;
-      addSupplier.mutate(newSup);
-      setNewSup({ name: "", category: "Other", contact: "", address: "", notes: "" });
-      setIsAddOpen(false);
+  const handleSave = async () => {
+    try {
+      if (editingSup) {
+        if (!editingSup.name || !editingSup.contact) {
+          toast.error("नाव आणि संपर्क आवश्यक आहे");
+          return;
+        }
+        await updateSupplier.mutateAsync(editingSup);
+        toast.success("पुरवठादार यशस्वीरित्या अपडेट झाला");
+        setEditingSup(null);
+        setIsAddOpen(false);
+      } else {
+        if (!newSup.name || !newSup.contact) {
+          toast.error("नाव आणि संपर्क आवश्यक आहे");
+          return;
+        }
+        await addSupplier.mutateAsync(newSup);
+        toast.success("नवीन पुरवठादार जोडला गेला");
+        setNewSup({ name: "", category: "Other", contact: "", address: "", notes: "" });
+        setIsAddOpen(false);
+      }
+    } catch (error: any) {
+      toast.error(`त्रुटी: ${error.message || "काहीतरी चूक झाली"}`);
+      console.error("Supplier Save Error:", error);
     }
   };
 
@@ -1044,40 +1060,63 @@ const InvitationsTab = () => {
 
 const LetterheadTab = () => {
   const [data, setData] = useState({
+    dateLabel: "दिनांक :",
     date: new Date().toLocaleDateString('mr-IN'),
+    toLabel: "प्रति,",
     toName: "मा. पोलीस निरीक्षक साहेब, वानवडी",
     toDept: "पोलीस स्टेशन, वानवडी विभाग, पुणे शहर.",
+    applicantLabel: "अर्जदार:",
     applicant: "हांडे योगेश राजेंद्र",
-    address: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४१११८४०",
+    address: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४११०४०",
     festival: "श्री. छत्रपती शिवाजी महाराज जयंती",
     festDate: "१९ फेब्रुवारी २०२६",
+    phoneLabel: "फोन:",
     phone: "८२३७१८९९७७",
+    subjectLabel: "विषय :-",
     subject: "ध्वनीक्षेपक परवाना मिळण्याबाबत.",
-    content: "आम्ही श्रीमंत शिवगर्जना प्रतिष्ठान केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो."
+    content: "आम्ही श्रीमंत शिवगर्जना प्रतिष्ठान केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो.",
+    closingLabel: "कळावे,",
+    signLabel: "आपला विश्वासू",
+    footerText: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४११०४०",
+    establishmentLabel: "स्थापना :- २०१५"
   });
 
   const downloadPDF = async () => {
     const element = document.getElementById('letter-preview');
     if (!element) return;
 
+    // Save scroll position
+    const scrollPos = window.scrollY;
+    window.scrollTo(0, 0);
+
     try {
       const canvas = await html2canvas(element, {
-        scale: 3,
+        scale: 4, // High quality
         useCORS: true,
         logging: false,
-        backgroundColor: "#ffffff"
+        backgroundColor: "#ffffff",
+        allowTaint: true,
+        width: element.offsetWidth,
+        height: element.offsetHeight
       });
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
 
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
       pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
       console.error("PDF Generation Error:", error);
+    } finally {
+      window.scrollTo(0, scrollPos);
     }
   };
 
@@ -1093,18 +1132,7 @@ const LetterheadTab = () => {
             <input
               value={data.festival}
               onChange={e => setData({ ...data, festival: e.target.value })}
-              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
-              placeholder="e.g. गणेशोत्सव"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Festival Date</label>
-            <input
-              value={data.festDate}
-              onChange={e => setData({ ...data, festDate: e.target.value })}
-              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
-              placeholder="e.g. १९ फेब्रुवारी"
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 font-bold"
             />
           </div>
 
@@ -1127,8 +1155,46 @@ const LetterheadTab = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To Label</label>
+              <input
+                value={data.toLabel}
+                onChange={e => setData({ ...data, toLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Date Label</label>
+              <input
+                value={data.dateLabel}
+                onChange={e => setData({ ...data, dateLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Applicant Label</label>
+              <input
+                value={data.applicantLabel}
+                onChange={e => setData({ ...data, applicantLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Subject Label</label>
+              <input
+                value={data.subjectLabel}
+                onChange={e => setData({ ...data, subjectLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To (Name/Title)</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To Name</label>
             <input
               value={data.toName}
               onChange={e => setData({ ...data, toName: e.target.value })}
@@ -1137,7 +1203,7 @@ const LetterheadTab = () => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To (Department)</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To Dept</label>
             <input
               value={data.toDept}
               onChange={e => setData({ ...data, toDept: e.target.value })}
@@ -1146,25 +1212,44 @@ const LetterheadTab = () => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Applicant Name</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Address & Pincode</label>
             <input
-              value={data.applicant}
-              onChange={e => setData({ ...data, applicant: e.target.value })}
+              value={data.address}
+              onChange={e => setData({ ...data, address: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Closing Label</label>
+              <input
+                value={data.closingLabel}
+                onChange={e => setData({ ...data, closingLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Sign Label</label>
+              <input
+                value={data.signLabel}
+                onChange={e => setData({ ...data, signLabel: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Footer Text</label>
+            <input
+              value={data.footerText}
+              onChange={e => setData({ ...data, footerText: e.target.value })}
               className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Applicant Address</label>
-            <textarea
-              value={data.address}
-              onChange={e => setData({ ...data, address: e.target.value })}
-              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[60px]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Subject</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Subject Text</label>
             <input
               value={data.subject}
               onChange={e => setData({ ...data, subject: e.target.value })}
@@ -1177,7 +1262,7 @@ const LetterheadTab = () => {
             <textarea
               value={data.content}
               onChange={e => setData({ ...data, content: e.target.value })}
-              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[150px]"
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[200px]"
             />
           </div>
 
@@ -1185,69 +1270,163 @@ const LetterheadTab = () => {
             onClick={downloadPDF}
             className="w-full flex items-center justify-center gap-2 bg-[#D95D1E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20 mt-4"
           >
-            <Download size={18} /> Download Permission PDF
+            <Download size={18} /> Download Full A4 PDF
           </button>
         </div>
       </div>
 
       {/* Preview */}
       <div className="lg:col-span-8">
-        <div className="bg-gray-200 p-8 rounded-xl overflow-auto flex justify-center">
-          {/* The actual A4 Letter */}
+        <div className="bg-gray-300 p-8 rounded-xl overflow-auto flex justify-center custom-scrollbar">
+          {/* A4 Frame (Capture Target) */}
           <div
             id="letter-preview"
-            className="bg-white w-[210mm] min-h-[297mm] shadow-2xl relative flex flex-col pt-40 pb-20 px-16"
-            style={{
-              backgroundImage: 'url("/images/letterhead.png")',
-              backgroundSize: '100% 100%',
-              backgroundRepeat: 'no-repeat'
-            }}
+            className="bg-white w-[210mm] min-h-[297mm] shadow-2xl relative flex flex-col font-serif select-none"
+            style={{ minWidth: '210mm' }}
           >
-            {/* Overlay Watermark if needed, but it's usually in the image */}
-
-            <div className="mt-8 flex justify-end">
-              <span className="text-sm font-bold">दिनांक. {data.date}</span>
-            </div>
-
-            <div className="mt-8 space-y-1">
-              <div className="font-bold text-sm">प्रति.</div>
-              <div className="font-bold text-sm">{data.toName}</div>
-              <div className="font-bold text-sm">{data.toDept}</div>
-            </div>
-
-            <div className="mt-12 flex justify-end text-right">
-              <div className="max-w-xs space-y-1">
-                <div className="font-bold text-sm">अर्जदार:- {data.applicant}</div>
-                <div className="font-bold text-[10px] leading-tight text-gray-700 whitespace-pre-wrap">{data.address}</div>
-              </div>
-            </div>
-
-            <div className="mt-12 text-center">
-              <div className="font-bold text-lg border-b-2 border-black inline-block pb-1 whitespace-pre-wrap">
-                विषय :- {data.subject}
-              </div>
-            </div>
-
-            <div className="mt-12 space-y-6">
-              <div className="font-bold">महोदय,</div>
-              <p className="font-bold text-lg leading-relaxed text-justify indent-12 whitespace-pre-wrap">
-                {data.content}
-              </p>
-            </div>
-
-            <div className="flex-1"></div>
-
-            <div className="flex justify-end mt-20">
-              <div className="text-center space-y-4">
-                <div className="font-bold">कळावे,</div>
-                <div className="pt-8">
-                  <div className="font-bold">आपला विश्वासू</div>
-                  <div className="font-bold mt-2">{data.applicant}</div>
-                  <div className="text-sm font-bold">फोन:- {data.phone}</div>
+            {/* Professional Header */}
+            <div className="pt-8 px-12 pb-4">
+              <div className="flex justify-between items-start relative z-10">
+                <div className="flex gap-6 items-center">
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-[#D95D1E]/10 rounded-full blur-lg"></div>
+                    <img src="/images/logo.png" className="w-28 h-28 object-contain relative transition-transform hover:scale-105" alt="Logo" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-black text-[#D95D1E] tracking-tight leading-none mb-1" style={{ textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+                      श्रीमंत शिवगर्जना प्रतिष्ठान
+                    </h1>
+                    <p className="text-2xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
+                    <p className="text-sm font-bold text-[#D95D1E] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                  </div>
+                </div>
+                <div className="text-right space-y-1">
+                  <p className="font-black text-sm text-gray-800">{data.establishmentLabel}</p>
+                  <div className="h-0.5 w-full bg-[#D95D1E] rounded-full"></div>
                 </div>
               </div>
             </div>
+
+            {/* Zigzag Header Border */}
+            <div className="w-full h-8 bg-[#D95D1E] flex items-center mb-8 relative">
+              <div className="absolute inset-x-0 -bottom-4 h-4" style={{ backgroundImage: 'radial-gradient(circle at 10px 0px, transparent 10px, #D95D1E 11px)', backgroundSize: '20px 20px' }}></div>
+            </div>
+
+            {/* Content Area */}
+            <div className="px-16 flex-1 flex flex-col">
+              <div className="flex justify-between items-start mt-4">
+                <div className="space-y-1">
+                  <span className="block font-bold text-lg">{data.toLabel}</span>
+                  <p className="font-bold text-lg">{data.toName}</p>
+                  <p className="font-bold text-lg">{data.toDept}</p>
+                </div>
+                <div className="text-right">
+                  <span className="font-bold text-lg">{data.dateLabel} {data.date}</span>
+                </div>
+              </div>
+
+              <div className="mt-12 flex justify-end">
+                <div className="text-right space-y-1 border-r-4 border-[#D95D1E] pr-4 bg-gray-50/50 p-2 rounded-l-lg">
+                  <span className="block font-bold italic text-sm text-gray-600">{data.applicantLabel}</span>
+                  <p className="font-bold text-lg">{data.applicant}</p>
+                  <p className="text-[12px] font-bold text-gray-700 max-w-[200px] leading-snug">{data.address}</p>
+                </div>
+              </div>
+
+              <div className="mt-16 text-center">
+                <div className="inline-block relative">
+                  <h2 className="text-2xl font-black text-[#2C1810] px-4 py-1 relative z-10">
+                    {data.subjectLabel} {data.subject}
+                  </h2>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D95D1E] rounded-full"></div>
+                </div>
+              </div>
+
+              <div className="mt-16 space-y-8">
+                <p className="font-bold text-xl">महोदय,</p>
+                <p className="text-xl leading-[1.8] text-justify font-medium text-gray-800 indent-16">
+                  {data.content}
+                </p>
+              </div>
+
+              <div className="flex-1 mt-20 flex flex-col justify-end pb-20">
+                <div className="flex justify-end pr-8">
+                  <div className="text-center space-y-12">
+                    <p className="font-bold text-xl">{data.closingLabel}</p>
+                    <div className="space-y-2">
+                      <p className="font-bold text-xl border-t border-gray-200 pt-2">{data.signLabel}</p>
+                      <p className="font-black text-2xl text-[#D95D1E]">{data.applicant}</p>
+                      <p className="font-bold text-lg">{data.phoneLabel} {data.phone}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Professional Footer Bar */}
+            <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-8 relative overflow-hidden">
+              {/* Pattern overlay for footer */}
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '10px 10px' }}></div>
+              <p className="text-white font-black text-sm tracking-widest relative z-10 uppercase text-center leading-tight">
+                {data.footerText}
+              </p>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LogsTab = () => {
+  const { data: logs, isLoading } = useLogs();
+
+  if (isLoading) return <div className="p-20 text-center text-gray-400">Loading system logs...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-display font-black text-[#2C1810]">Activity History</h2>
+        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#2C1810]/40">
+          <Activity size={14} /> Real-time System Logs
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
+        <div className="grid grid-cols-12 gap-4 p-5 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 border-b border-gray-100">
+          <div className="col-span-3">Time & Date</div>
+          <div className="col-span-2">User</div>
+          <div className="col-span-2">Action</div>
+          <div className="col-span-5">Details</div>
+        </div>
+        <div className="divide-y divide-gray-50 max-h-[70vh] overflow-y-auto">
+          {logs?.length === 0 ? (
+            <div className="p-10 text-center text-gray-400 text-sm">No logs found. Actions will appear here.</div>
+          ) : (
+            logs?.map((log) => (
+              <div key={log.id} className="grid grid-cols-12 gap-4 p-5 items-center hover:bg-gray-50/50 transition-colors">
+                <div className="col-span-3">
+                  <div className="text-xs font-bold text-[#2C1810]">
+                    {new Date(log.created_at).toLocaleDateString('mr-IN')}
+                  </div>
+                  <div className="text-[10px] text-[#2C1810]/50 font-mono">
+                    {new Date(log.created_at).toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 px-2 py-1 rounded w-fit">
+                    {log.user_name || "Unknown"}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-xs font-bold text-[#2C1810]">{log.action}</div>
+                </div>
+                <div className="col-span-5">
+                  <p className="text-xs text-[#2C1810]/70 leading-relaxed italic">"{log.details}"</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -1359,6 +1538,7 @@ const Dashboard = () => {
           <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
           <SidebarItem id="letterhead" label="Letterhead" icon={FileText} active={activeTab === "letterhead"} onClick={handleTabChange} />
           <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
+          <SidebarItem id="logs" label="System Logs" icon={ClipboardList} active={activeTab === "logs"} onClick={handleTabChange} />
         </nav>
 
         <div className="p-4 border-t border-gray-50 bg-[#FDFBF7]">
@@ -1394,6 +1574,7 @@ const Dashboard = () => {
             {activeTab === "invitations" && <InvitationsTab />}
             {activeTab === "suppliers" && <SuppliersTab />}
             {activeTab === "letterhead" && <LetterheadTab />}
+            {activeTab === "logs" && <LogsTab />}
           </motion.div>
         </div>
       </main>

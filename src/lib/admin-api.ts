@@ -1,4 +1,4 @@
-import { Member, Task, Expense, Invitation, TaskResponse, Supplier } from "@/types/admin";
+import { Member, Task, Expense, Invitation, TaskResponse, Supplier, SystemLog } from "@/types/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase as supabaseClient } from "@/lib/supabase";
 
@@ -64,6 +64,8 @@ export const useMembers = () => {
 
             if (varganiError) console.error("Failed to init vargani", varganiError); // Non-critical
 
+            await createLog("Member Added", `Added member ${newMember.name} with role ${newMember.role}`);
+
             return memberData;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
@@ -83,6 +85,7 @@ export const useMembers = () => {
                 }, { onConflict: 'member_id, year' });
 
             if (error) throw error;
+            await createLog("Vargani Updated", `Updated vargani for member ID ${id} (Year: ${year}, Amount: ₹${amount})`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
     });
@@ -91,6 +94,7 @@ export const useMembers = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('members').delete().eq('id', id);
             if (error) throw error;
+            await createLog("Member Deleted", `Deleted member with ID ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
     });
@@ -133,6 +137,7 @@ export const useTasks = () => {
                 .select()
                 .single();
             if (error) throw error;
+            await createLog("Task Added", `Added task: ${newTask.title}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
@@ -154,6 +159,7 @@ export const useTasks = () => {
                 .select()
                 .single();
             if (error) throw error;
+            await createLog("Task Updated", `Updated task: ${task.title || task.id}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
@@ -163,6 +169,7 @@ export const useTasks = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('tasks').delete().eq('id', id);
             if (error) throw error;
+            await createLog("Task Deleted", `Deleted task ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
     });
@@ -272,6 +279,7 @@ export const useExpenses = () => {
                 .select()
                 .single();
             if (error) throw error;
+            await createLog("Expense Added", `Added expense: ${newExpense.description} (Amount: ₹${newExpense.amount})`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
@@ -292,6 +300,7 @@ export const useExpenses = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('expenses').delete().eq('id', id);
             if (error) throw error;
+            await createLog("Expense Deleted", `Deleted expense ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
     });
@@ -356,6 +365,7 @@ export const useSuppliers = () => {
                 .select()
                 .single();
             if (error) throw error;
+            await createLog("Supplier Added", `Added supplier: ${newSup.name}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
@@ -376,6 +386,7 @@ export const useSuppliers = () => {
                 .select()
                 .single();
             if (error) throw error;
+            await createLog("Supplier Updated", `Updated supplier: ${sup.name || sup.id}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
@@ -385,6 +396,7 @@ export const useSuppliers = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('suppliers').delete().eq('id', id);
             if (error) throw error;
+            await createLog("Supplier Deleted", `Deleted supplier ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
     });
@@ -437,4 +449,53 @@ export const useInvitations = () => {
     });
 
     return { ...query, addInvitation, deleteInvitation };
+};
+// --- System Logs ---
+
+export const useLogs = () => {
+    return useQuery({
+        queryKey: ["system-logs"],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('audit_logs')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(100);
+            if (error) {
+                if (error.code === '42P01') return [];
+                throw error;
+            }
+            return data.map((l: any) => ({
+                id: l.id,
+                created_at: l.created_at,
+                action: l.action,
+                details: l.details,
+                user_id: l.user_id,
+                user_name: l.user_name
+            })) as SystemLog[];
+        },
+    });
+};
+
+export const createLog = async (action: string, details: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+
+    // Get member name if available
+    let userName = user?.email;
+    if (user) {
+        const { data: member } = await supabase
+            .from('members')
+            .select('name')
+            .eq('auth_user_id', user.id)
+            .single();
+        if (member) userName = member.name;
+    }
+
+    await supabase.from('audit_logs').insert([{
+        action,
+        details,
+        user_id: user?.id,
+        user_name: userName
+    }]);
 };

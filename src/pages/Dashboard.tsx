@@ -96,7 +96,9 @@ const MembersTab = ({ year }: { year: number }) => {
       .filter(e => e.year === year && e.paidBy === 'Mandal')
       .reduce((sum, e) => sum + e.amount, 0);
 
-    return { total, paid, collected, pending, mandalExpenses };
+    const remainingBalance = collected - mandalExpenses;
+
+    return { total, paid, collected, pending, mandalExpenses, remainingBalance };
   }, [members, year, expenses]);
 
   const handleAdd = () => {
@@ -128,7 +130,7 @@ const MembersTab = ({ year }: { year: number }) => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1 md:mb-2">Total Members</div>
           <div className="text-xl md:text-3xl font-black text-[#2C1810]">{stats.total}</div>
@@ -147,6 +149,11 @@ const MembersTab = ({ year }: { year: number }) => {
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#D95D1E] mb-1 md:mb-2">Mandal Expenses</div>
           <div className="text-xl md:text-3xl font-black text-[#D95D1E]">₹{stats.mandalExpenses.toLocaleString()}</div>
           <div className="text-[10px] text-[#D95D1E]/60 mt-1 hidden md:block">Paid by Mandal</div>
+        </div>
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm bg-blue-50/30 border-blue-100">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1 md:mb-2">Remaining Balance</div>
+          <div className="text-xl md:text-3xl font-black text-blue-600">₹{stats.remainingBalance.toLocaleString()}</div>
+          <div className="text-[10px] text-blue-600/60 mt-1 hidden md:block">Available Funds</div>
         </div>
       </div>
 

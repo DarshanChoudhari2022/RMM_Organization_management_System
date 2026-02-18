@@ -366,7 +366,8 @@ export const useSuppliers = () => {
                     notes: newSup.notes,
                     total_amount: newSup.total_amount || 0,
                     paid_amount: newSup.paid_amount || 0,
-                    terms: newSup.terms
+                    terms: newSup.terms,
+                    supplier_comment: newSup.supplier_comment
                 }])
                 .select()
                 .single();
@@ -391,7 +392,8 @@ export const useSuppliers = () => {
                     paid_amount: sup.paid_amount,
                     terms: sup.terms,
                     is_confirmed: sup.is_confirmed,
-                    confirmed_at: sup.confirmed_at
+                    confirmed_at: sup.confirmed_at,
+                    supplier_comment: sup.supplier_comment
                 })
                 .eq('id', sup.id)
                 .select()

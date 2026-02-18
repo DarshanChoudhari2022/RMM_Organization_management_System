@@ -11,6 +11,7 @@ const supabase = supabaseClient as any;
 const ConfirmSupplier = () => {
     const { id } = useParams<{ id: string }>();
     const [submitted, setSubmitted] = useState(false);
+    const [comment, setComment] = useState("");
 
     // Fetch Supplier Details
     const { data: supplier, isLoading } = useQuery({
@@ -37,7 +38,8 @@ const ConfirmSupplier = () => {
                 .from('suppliers')
                 .update({
                     is_confirmed: true,
-                    confirmed_at: new Date().toISOString()
+                    confirmed_at: new Date().toISOString(),
+                    supplier_comment: comment
                 })
                 .eq('id', id);
 
@@ -155,6 +157,17 @@ const ConfirmSupplier = () => {
                                 "{supplier.terms || "Standard terms as per discussion."}"
                             </p>
                         </div>
+                    </div>
+
+                    {/* Comment Box */}
+                    <div className="mb-6">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">अभिप्राय / मेसेज (Optional Feedback)</label>
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="पुढील माहितीसाठी काही सांगायचे असल्यास इथे लिहा..."
+                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[100px] text-[#2C1810]"
+                        />
                     </div>
 
                     {/* Action */}

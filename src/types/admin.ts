@@ -69,6 +69,7 @@ export interface Supplier {
     terms?: string;
     is_confirmed?: boolean;
     confirmed_at?: string;
+    supplier_comment?: string;
 }
 
 export interface SystemLog {

@@ -55,3 +55,12 @@ export interface Invitation {
 }
 
 export type TaskCategory = "flag_hosting" | "sound_dj" | "stage_construction" | "decoration" | "murti_installation" | "other";
+
+export interface Supplier {
+    id: string;
+    name: string;
+    category: 'Sound' | 'Decoration' | 'Stage' | 'Banner' | 'Other';
+    contact: string;
+    address?: string;
+    notes?: string;
+}

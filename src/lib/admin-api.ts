@@ -1,4 +1,4 @@
-import { Member, Task, Expense, Invitation, TaskResponse } from "@/types/admin";
+import { Member, Task, Expense, Invitation, TaskResponse, Supplier } from "@/types/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
@@ -281,7 +281,108 @@ export const useExpenses = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
     });
 
-    return { ...query, addExpense, updateRefundStatus };
+    const deleteExpense = useMutation({
+        mutationFn: async (id: string) => {
+            const { error } = await supabase.from('expenses').delete().eq('id', id);
+            if (error) throw error;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
+    });
+
+    const updateExpense = useMutation({
+        mutationFn: async (expense: Partial<Expense> & { id: string }) => {
+            const { data, error } = await supabase
+                .from('expenses')
+                .update({
+                    description: expense.description,
+                    amount: expense.amount,
+                    category: expense.category,
+                    date: expense.date,
+                    // status: expense.status, // Keep existing status unless explicitly changed? Or allow update.
+                    paid_by: expense.paidBy,
+                    // is_refunded: expense.isRefunded // handled by specific mutation usually, but can be here
+                })
+                .eq('id', expense.id)
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
+    });
+
+    return { ...query, addExpense, updateRefundStatus, deleteExpense, updateExpense };
+};
+
+// --- Suppliers ---
+
+export const useSuppliers = () => {
+    const queryClient = useQueryClient();
+
+    const query = useQuery({
+        queryKey: ["suppliers"],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('suppliers')
+                .select('*')
+                .order('category', { ascending: true }); // Group by category roughly
+            if (error) {
+                // Return empty if table doesn't exist yet to avoid crashing app completely
+                if (error.code === '42P01') return [];
+                throw error;
+            }
+            return data as Supplier[];
+        },
+    });
+
+    const addSupplier = useMutation({
+        mutationFn: async (newSup: Omit<Supplier, "id">) => {
+            const { data, error } = await supabase
+                .from('suppliers')
+                .insert([{
+                    name: newSup.name,
+                    category: newSup.category,
+                    contact: newSup.contact,
+                    address: newSup.address,
+                    notes: newSup.notes
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
+    });
+
+    const updateSupplier = useMutation({
+        mutationFn: async (sup: Partial<Supplier> & { id: string }) => {
+            const { data, error } = await supabase
+                .from('suppliers')
+                .update({
+                    name: sup.name,
+                    category: sup.category,
+                    contact: sup.contact,
+                    address: sup.address,
+                    notes: sup.notes
+                })
+                .eq('id', sup.id)
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
+    });
+
+    const deleteSupplier = useMutation({
+        mutationFn: async (id: string) => {
+            const { error } = await supabase.from('suppliers').delete().eq('id', id);
+            if (error) throw error;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
+    });
+
+    return { ...query, addSupplier, updateSupplier, deleteSupplier };
 };
 
 // --- Invitations ---

@@ -26,9 +26,9 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses } from "@/lib/admin-api";
+import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers } from "@/lib/admin-api";
 import { supabase } from "@/lib/supabase";
-import { Task, Expense, Invitation, Member, TaskCategory } from "@/types/admin";
+import { Task, Expense, Invitation, Member, TaskCategory, Supplier } from "@/types/admin";
 
 // --- Components ---
 
@@ -610,8 +610,9 @@ const TasksTab = () => {
 }
 
 const ExpensesTab = () => {
-  const { data: expenses, addExpense, updateRefundStatus } = useExpenses();
+  const { data: expenses, addExpense, updateRefundStatus, deleteExpense, updateExpense } = useExpenses();
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingEx, setEditingEx] = useState<Expense | null>(null);
   const [newEx, setNewEx] = useState({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -625,20 +626,32 @@ const ExpensesTab = () => {
 
   const totalSpent = filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0);
 
-  const handleAdd = () => {
-    if (!newEx.description || !newEx.amount) return;
-    addExpense.mutate({
-      description: newEx.description,
-      amount: parseFloat(newEx.amount),
-      category: newEx.category,
-      date: newEx.date,
-      status: "approved",
-      year: parseInt(newEx.date.split("-")[0]),
-      paidBy: newEx.paidBy,
-      isRefunded: false
-    });
-    setNewEx({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
-    setIsAddOpen(false);
+  const handleSave = () => {
+    if (editingEx) {
+      if (!editingEx.description || !editingEx.amount) return;
+      updateExpense.mutate(editingEx);
+      setEditingEx(null);
+      setIsAddOpen(false);
+    } else {
+      if (!newEx.description || !newEx.amount) return;
+      addExpense.mutate({
+        description: newEx.description,
+        amount: parseFloat(newEx.amount),
+        category: newEx.category,
+        date: newEx.date,
+        status: "approved",
+        year: parseInt(newEx.date.split("-")[0]),
+        paidBy: newEx.paidBy,
+        isRefunded: false
+      });
+      setNewEx({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
+      setIsAddOpen(false);
+    }
+  };
+
+  const openEdit = (ex: Expense) => {
+    setEditingEx(ex);
+    setIsAddOpen(true);
   };
 
   const toggleRefund = (id: string, currentStatus: boolean) => {
@@ -656,7 +669,10 @@ const ExpensesTab = () => {
           </p>
         </div>
         <button
-          onClick={() => setIsAddOpen(true)}
+          onClick={() => {
+            setEditingEx(null);
+            setIsAddOpen(true);
+          }}
           className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
         >
           <Plus size={16} /> Add Expense
@@ -664,20 +680,22 @@ const ExpensesTab = () => {
       </div>
 
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
-        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
-          <div className="col-span-4">Description</div>
+        <div className="min-w-[900px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+          <div className="col-span-3">Description</div>
           <div className="col-span-2">Paid By</div>
           <div className="col-span-2">Category</div>
-          <div className="col-span-2">Date</div>
-          <div className="col-span-2 text-right">Amount & Status</div>
+          <div className="col-span-1">Date</div>
+          <div className="col-span-1 text-right">Amount</div>
+          <div className="col-span-2 text-center">Mandal Refund?</div>
+          <div className="col-span-1 text-right">Actions</div>
         </div>
         {filteredExpenses.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No expenses recorded for {selectedYear}.</div>
         ) : (
           filteredExpenses.map((ex) => (
-            <div key={ex.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-              <div className="col-span-4">
-                <div className="font-bold text-[#2C1810]">{ex.description}</div>
+            <div key={ex.id} className="min-w-[900px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+              <div className="col-span-3">
+                <div className="font-bold text-[#2C1810] line-clamp-2" title={ex.description}>{ex.description}</div>
               </div>
               <div className="col-span-2">
                 <span className={`text-xs font-bold px-2 py-1 rounded-md ${ex.paidBy === 'Mandal' ? 'bg-[#D95D1E]/10 text-[#D95D1E]' : 'bg-purple-100 text-purple-700'}`}>
@@ -687,26 +705,44 @@ const ExpensesTab = () => {
               <div className="col-span-2">
                 <span className="bg-gray-100 text-[#2C1810]/80 px-2 py-1 rounded-md text-xs font-medium">{ex.category}</span>
               </div>
-              <div className="col-span-2 text-sm text-[#2C1810]/70 font-mono">{ex.date}</div>
-              <div className="col-span-2 text-right">
-                <div className="font-black text-[#D95D1E] mb-1">₹{ex.amount.toLocaleString()}</div>
-                {ex.paidBy !== 'Mandal' && (
+              <div className="col-span-1 text-sm text-[#2C1810]/70 font-mono">{ex.date}</div>
+              <div className="col-span-1 text-right">
+                <div className="font-black text-[#D95D1E]">₹{ex.amount.toLocaleString()}</div>
+              </div>
+              <div className="col-span-2 text-center">
+                {ex.paidBy !== 'Mandal' ? (
                   <button
                     onClick={() => toggleRefund(ex.id, ex.isRefunded)}
                     className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full border transition-all ${ex.isRefunded
                       ? "bg-green-100 text-green-700 border-green-200"
                       : "bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"}`}
                   >
-                    {ex.isRefunded ? "Refunded ✅" : "Pending Refund ⚠️"}
+                    {ex.isRefunded ? "Yes ✅" : "No ⚠️"}
                   </button>
+                ) : (
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">-</span>
                 )}
+              </div>
+              <div className="col-span-1 flex justify-end gap-2">
+                <button
+                  onClick={() => openEdit(ex)}
+                  className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
+                >
+                  <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                </button>
+                <button
+                  onClick={() => deleteExpense.mutate(ex.id)}
+                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Add Modal */}
+      {/* Add/Edit Modal */}
       <AnimatePresence>
         {isAddOpen && (
           <motion.div
@@ -717,13 +753,13 @@ const ExpensesTab = () => {
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
               className="bg-white rounded-2xl w-full max-w-sm p-8 shadow-2xl"
             >
-              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">Log Expense</h3>
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">{editingEx ? "Edit Expense" : "Log Expense"}</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Description</label>
                   <input
-                    value={newEx.description}
-                    onChange={e => setNewEx({ ...newEx, description: e.target.value })}
+                    value={editingEx ? editingEx.description : newEx.description}
+                    onChange={e => editingEx ? setEditingEx({ ...editingEx, description: e.target.value }) : setNewEx({ ...newEx, description: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     placeholder="Item name"
                   />
@@ -732,8 +768,8 @@ const ExpensesTab = () => {
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Amount (₹)</label>
                   <input
                     type="number"
-                    value={newEx.amount}
-                    onChange={e => setNewEx({ ...newEx, amount: e.target.value })}
+                    value={editingEx ? editingEx.amount : newEx.amount}
+                    onChange={e => editingEx ? setEditingEx({ ...editingEx, amount: parseFloat(e.target.value) || 0 }) : setNewEx({ ...newEx, amount: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     placeholder="0"
                   />
@@ -741,8 +777,8 @@ const ExpensesTab = () => {
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Paid By</label>
                   <input
-                    value={newEx.paidBy}
-                    onChange={e => setNewEx({ ...newEx, paidBy: e.target.value })}
+                    value={editingEx ? editingEx.paidBy : newEx.paidBy}
+                    onChange={e => editingEx ? setEditingEx({ ...editingEx, paidBy: e.target.value }) : setNewEx({ ...newEx, paidBy: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                     placeholder="e.g. Mandal, Yash, Rahul"
                   />
@@ -751,16 +787,16 @@ const ExpensesTab = () => {
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Date</label>
                   <input
                     type="date"
-                    value={newEx.date}
-                    onChange={e => setNewEx({ ...newEx, date: e.target.value })}
+                    value={editingEx ? editingEx.date : newEx.date}
+                    onChange={e => editingEx ? setEditingEx({ ...editingEx, date: e.target.value }) : setNewEx({ ...newEx, date: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Category</label>
                   <select
-                    value={newEx.category}
-                    onChange={e => setNewEx({ ...newEx, category: e.target.value })}
+                    value={editingEx ? editingEx.category : newEx.category}
+                    onChange={e => editingEx ? setEditingEx({ ...editingEx, category: e.target.value }) : setNewEx({ ...newEx, category: e.target.value })}
                     className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                   >
                     <option>Decoration</option>
@@ -773,7 +809,168 @@ const ExpensesTab = () => {
               </div>
               <div className="flex gap-3 mt-8">
                 <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
-                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">Add</button>
+                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">{editingEx ? "Update" : "Add"}</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+const SuppliersTab = () => {
+  const { data: suppliers, addSupplier, deleteSupplier, updateSupplier } = useSuppliers();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingSup, setEditingSup] = useState<Supplier | null>(null);
+  const [newSup, setNewSup] = useState<{ name: string; category: Supplier['category']; contact: string; address: string; notes: string }>({
+    name: "", category: "Other", contact: "", address: "", notes: ""
+  });
+
+  const handleSave = () => {
+    if (editingSup) {
+      if (!editingSup.name || !editingSup.contact) return;
+      updateSupplier.mutate(editingSup);
+      setEditingSup(null);
+      setIsAddOpen(false);
+    } else {
+      if (!newSup.name || !newSup.contact) return;
+      addSupplier.mutate(newSup);
+      setNewSup({ name: "", category: "Other", contact: "", address: "", notes: "" });
+      setIsAddOpen(false);
+    }
+  };
+
+  const openEdit = (sup: Supplier) => {
+    setEditingSup(sup);
+    setIsAddOpen(true);
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-display font-black text-[#2C1810]">Supplier Contacts</h2>
+        <button
+          onClick={() => {
+            setEditingSup(null);
+            setIsAddOpen(true);
+          }}
+          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+        >
+          <Plus size={16} /> Add Supplier
+        </button>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
+        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+          <div className="col-span-3">Supplier Name</div>
+          <div className="col-span-2">Category</div>
+          <div className="col-span-2">Contact</div>
+          <div className="col-span-3">Address/Notes</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+        {suppliers?.length === 0 ? (
+          <div className="p-10 text-center text-[#2C1810]/60 text-sm">No suppliers found.</div>
+        ) : (
+          suppliers?.map((sup) => (
+            <div key={sup.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+              <div className="col-span-3 font-bold text-[#2C1810]">{sup.name}</div>
+              <div className="col-span-2">
+                <span className="bg-orange-50 text-[#D95D1E] px-2 py-1 rounded-md text-xs font-bold">{sup.category}</span>
+              </div>
+              <div className="col-span-2 text-sm text-[#2C1810]/80 font-mono">
+                {sup.contact}
+                <a href={`tel:${sup.contact}`} className="ml-2 text-[#D95D1E] inline-block"><Phone size={12} /></a>
+              </div>
+              <div className="col-span-3 text-xs text-[#2C1810]/60">
+                {sup.address && <div className="flex gap-1 items-center"><MapPin size={10} /> {sup.address}</div>}
+                {sup.notes && <div className="italic mt-1">"{sup.notes}"</div>}
+              </div>
+              <div className="col-span-2 flex justify-end gap-2">
+                <button
+                  onClick={() => openEdit(sup)}
+                  className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
+                >
+                  <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                </button>
+                <button
+                  onClick={() => deleteSupplier.mutate(sup.id)}
+                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <AnimatePresence>
+        {isAddOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl"
+            >
+              <h3 className="text-xl font-display font-black text-[#2C1810] mb-6">{editingSup ? "Edit Supplier" : "Add Supplier"}</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Name</label>
+                  <input
+                    value={editingSup ? editingSup.name : newSup.name}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, name: e.target.value }) : setNewSup({ ...newSup, name: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Supplier Name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Category</label>
+                  <select
+                    value={editingSup ? editingSup.category : newSup.category}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, category: e.target.value as any }) : setNewSup({ ...newSup, category: e.target.value as any })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                  >
+                    <option value="Sound">Sound</option>
+                    <option value="Decoration">Decoration</option>
+                    <option value="Stage">Stage</option>
+                    <option value="Banner">Banner</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Contact No</label>
+                  <input
+                    value={editingSup ? editingSup.contact : newSup.contact}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, contact: e.target.value }) : setNewSup({ ...newSup, contact: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Phone Number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Address</label>
+                  <input
+                    value={editingSup ? editingSup.address : newSup.address}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, address: e.target.value }) : setNewSup({ ...newSup, address: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                    placeholder="Shop/Office Address"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Notes</label>
+                  <textarea
+                    value={editingSup ? editingSup.notes : newSup.notes}
+                    onChange={e => editingSup ? setEditingSup({ ...editingSup, notes: e.target.value }) : setNewSup({ ...newSup, notes: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[60px]"
+                    placeholder="Additional details..."
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#D95D1E] rounded-xl hover:bg-[#D95D1E]/90">{editingSup ? "Update" : "Add"}</button>
               </div>
             </motion.div>
           </motion.div>
@@ -933,6 +1130,7 @@ const Dashboard = () => {
           <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
           <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
           <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
+          <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
           <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
         </nav>
 
@@ -958,6 +1156,7 @@ const Dashboard = () => {
             {activeTab === "tasks" && <TasksTab />}
             {activeTab === "expenses" && <ExpensesTab />}
             {activeTab === "invitations" && <InvitationsTab />}
+            {activeTab === "suppliers" && <SuppliersTab />}
           </motion.div>
         </div>
       </main>

@@ -1,6 +1,8 @@
 import { Member, Task, Expense, Invitation, TaskResponse, Supplier } from "@/types/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase as supabaseClient } from "@/lib/supabase";
+
+const supabase = supabaseClient as any;
 
 // --- Members & Vargani ---
 
@@ -48,15 +50,14 @@ export const useMembers = () => {
                 .select()
                 .single();
 
-            if (memberError) throw memberError;
+            if (memberError || !memberData) throw memberError || new Error("Member creation failed");
 
             // 2. Initialize Vargani record for current year
-            const currentYear = new Date().getFullYear();
             const { error: varganiError } = await supabase
                 .from('vargani_payments')
                 .insert([{
                     member_id: memberData.id,
-                    year: currentYear,
+                    year: newMember.joinedYear,
                     amount: 1500,
                     paid: false
                 }]);
@@ -108,14 +109,17 @@ export const useTasks = () => {
             const { data, error } = await supabase
                 .from('tasks')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('date', { ascending: false });
             if (error) throw error;
-            return data as Task[];
+            return data.map((t: any) => ({
+                ...t,
+                year: t.year || parseInt(t.date.split('-')[0])
+            })) as (Task & { year: number })[];
         },
     });
 
     const addTask = useMutation({
-        mutationFn: async (newTask: Omit<Task, "id" | "assignedMembers">) => {
+        mutationFn: async (newTask: Omit<Task, "id" | "assignedMembers"> & { year: number }) => {
             const { data, error } = await supabase
                 .from('tasks')
                 .insert([{
@@ -123,7 +127,8 @@ export const useTasks = () => {
                     description: newTask.description,
                     date: newTask.date,
                     time: newTask.time,
-                    location: newTask.location
+                    location: newTask.location,
+                    year: newTask.year
                 }])
                 .select()
                 .single();
@@ -134,7 +139,7 @@ export const useTasks = () => {
     });
 
     const updateTask = useMutation({
-        mutationFn: async (task: Partial<Task> & { id: string }) => {
+        mutationFn: async (task: Partial<Task> & { id: string, year?: number }) => {
             const { data, error } = await supabase
                 .from('tasks')
                 .update({
@@ -142,7 +147,8 @@ export const useTasks = () => {
                     description: task.description,
                     date: task.date,
                     time: task.time,
-                    location: task.location
+                    location: task.location,
+                    year: task.year || (task.date ? parseInt(task.date.split('-')[0]) : undefined)
                 })
                 .eq('id', task.id)
                 .select()
@@ -250,7 +256,7 @@ export const useExpenses = () => {
     });
 
     const addExpense = useMutation({
-        mutationFn: async (newExpense: any) => {
+        mutationFn: async (newExpense: Omit<Expense, "id" | "year"> & { year: number }) => {
             const { data, error } = await supabase
                 .from('expenses')
                 .insert([{
@@ -259,6 +265,7 @@ export const useExpenses = () => {
                     category: newExpense.category,
                     date: newExpense.date,
                     status: newExpense.status,
+                    year: newExpense.year,
                     paid_by: newExpense.paidBy,
                     is_refunded: newExpense.isRefunded
                 }])
@@ -290,7 +297,7 @@ export const useExpenses = () => {
     });
 
     const updateExpense = useMutation({
-        mutationFn: async (expense: Partial<Expense> & { id: string }) => {
+        mutationFn: async (expense: Partial<Expense> & { id: string, year?: number }) => {
             const { data, error } = await supabase
                 .from('expenses')
                 .update({
@@ -298,9 +305,9 @@ export const useExpenses = () => {
                     amount: expense.amount,
                     category: expense.category,
                     date: expense.date,
-                    // status: expense.status, // Keep existing status unless explicitly changed? Or allow update.
+                    year: expense.year,
                     paid_by: expense.paidBy,
-                    // is_refunded: expense.isRefunded // handled by specific mutation usually, but can be here
+                    is_refunded: expense.isRefunded
                 })
                 .eq('id', expense.id)
                 .select()

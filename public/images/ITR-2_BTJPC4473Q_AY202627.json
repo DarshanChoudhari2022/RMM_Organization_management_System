@@ -1,0 +1,105 @@
+{
+  "Form": "ITR2",
+  "Schema": "ITR2_2024",
+  "AssessmentYear": "2026-27",
+  "FilingType": "ORIGINAL",
+  "TaxRegime": "NEW",
+  "PersonalInfo": {
+    "PAN": "BTJPC4473Q",
+    "FirstName": "Darshan",
+    "MiddleName": "",
+    "LastName": "Choudhari",
+    "DOB": "2000-01-05",
+    "Gender": "M",
+    "FatherName": "",
+    "Address": {
+      "FlatNo": "",
+      "Building": "",
+      "Street": "",
+      "Locality": "",
+      "City": "",
+      "State": "",
+      "Pincode": "",
+      "Country": "India"
+    },
+    "Mobile": "",
+    "Email": "",
+    "ResidentStatus": "RES"
+  },
+  "Salary": {
+    "GrossSalary": 0,
+    "AllowancesExempt": 0,
+    "NetSalary": 0,
+    "StandardDeduction": 75000,
+    "ProfessionalTax": 0,
+    "IncomeFromSalary": -75000
+  },
+  "HouseProperty": null,
+  "OtherSources": {
+    "SavingsInterest": 0,
+    "FDInterest": 0,
+    "DividendIncome": 0,
+    "OtherIncome": 0,
+    "TotalOtherSources": 0
+  },
+  "GrossTotalIncome": 0,
+  "Deductions": {
+    "TotalDeductions": 0
+  },
+  "TotalTaxableIncome": 0,
+  "TaxComputation": {
+    "TaxOnIncome": 0,
+    "Rebate87A": 0,
+    "TaxAfterRebate": 0,
+    "Surcharge": 0,
+    "HealthEducationCess": 0,
+    "TotalTaxLiability": 0,
+    "Slabs": []
+  },
+  "TaxesPaid": {
+    "TDSDetails": {
+      "TDSSalary": 0,
+      "TDSInterest": 0,
+      "TDSDividend": 0,
+      "TDSOther": 0
+    },
+    "TCS": 0,
+    "AdvanceTax": 0,
+    "SelfAssessmentTax": 0,
+    "TotalTaxesPaid": 0
+  },
+  "BankDetails": [
+    {
+      "AccountNumber": "",
+      "IFSC": "",
+      "BankName": "",
+      "AccountType": "SB",
+      "PrimaryAccount": true
+    }
+  ],
+  "Verification": {
+    "Place": "",
+    "Date": "2026-02-12",
+    "Capacity": "SELF"
+  },
+  "CapitalGains": {
+    "ShortTermCapitalGains": {
+      "STCG15Percent": 0,
+      "STCGSlabRate": 0,
+      "TotalSTCG": 0
+    },
+    "LongTermCapitalGains": {
+      "LTCG10Percent": 0,
+      "LTCG20Percent": 0,
+      "TotalLTCG": 0
+    }
+  },
+  "ScheduleVDA": {
+    "TotalVDAIncome": 0,
+    "TDSOnVDA": 0,
+    "TaxOnVDA": 0,
+    "Transactions": []
+  },
+  "ScheduleFA": null,
+  "ScheduleAL": null
+}

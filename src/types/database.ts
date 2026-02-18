@@ -72,6 +72,7 @@ export interface Database {
                     date: string
                     time: string
                     location: string
+                    year: number
                     created_at: string
                 }
                 Insert: {
@@ -81,6 +82,7 @@ export interface Database {
                     date: string
                     time: string
                     location?: string
+                    year: number
                     created_at?: string
                 }
                 Update: {
@@ -90,6 +92,7 @@ export interface Database {
                     date?: string
                     time?: string
                     location?: string
+                    year?: number
                     created_at?: string
                 }
             }
@@ -127,6 +130,9 @@ export interface Database {
                     category: string
                     date: string
                     status: string // 'pending' | 'approved' | 'rejected'
+                    year: number
+                    paid_by: string
+                    is_refunded: boolean
                     created_at: string
                 }
                 Insert: {
@@ -136,6 +142,9 @@ export interface Database {
                     category: string
                     date: string
                     status?: string
+                    year: number
+                    paid_by?: string
+                    is_refunded?: boolean
                     created_at?: string
                 }
                 Update: {
@@ -145,6 +154,38 @@ export interface Database {
                     category?: string
                     date?: string
                     status?: string
+                    year?: number
+                    paid_by?: string
+                    is_refunded?: boolean
+                    created_at?: string
+                }
+            }
+            suppliers: {
+                Row: {
+                    id: string
+                    name: string
+                    category: string // 'Sound' | 'Decoration' | 'Stage' | 'Banner' | 'Other'
+                    contact: string
+                    address: string | null
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    name: string
+                    category: string
+                    contact: string
+                    address?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    name?: string
+                    category?: string
+                    contact?: string
+                    address?: string | null
+                    notes?: string | null
                     created_at?: string
                 }
             }
@@ -177,21 +218,6 @@ export interface Database {
                     created_at?: string
                 }
             }
-            // Legacy tables kept for potential compatibility if code exists
-            forts: {
-                Row: { id: string; name_english: string;[key: string]: any }
-                Insert: { [key: string]: any }
-                Update: { [key: string]: any }
-            }
-        }
-        Views: {
-            [_ in never]: never
-        }
-        Functions: {
-            [_ in never]: never
-        }
-        Enums: {
-            [_ in never]: never
         }
     }
 }

@@ -24,8 +24,12 @@ import {
   MessageSquare,
   MoreHorizontal,
   Menu,
-  X
+  X,
+  FileText,
+  Download
 } from "lucide-react";
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers } from "@/lib/admin-api";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory, Supplier } from "@/types/admin";
@@ -69,35 +73,33 @@ const YearSelector = ({ selected, onChange }: { selected: number, onChange: (y: 
 
 // --- Tabs ---
 
-const MembersTab = () => {
+const MembersTab = ({ year }: { year: number }) => {
   const { data: members, addMember, deleteMember, updateVargani } = useMembers();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newMember, setNewMember] = useState({ name: "", phone: "", role: "Member" });
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [editingVargani, setEditingVargani] = useState<{ id: string, amount: number } | null>(null);
 
   const stats = useMemo(() => {
     const total = members?.length || 0;
-    const yearPayments = members?.map(m => m.varganiHistory.find(v => v.year === selectedYear)).filter(Boolean);
+    const yearPayments = members?.map(m => m.varganiHistory.find(v => v.year === year)).filter(Boolean);
     const paid = yearPayments?.filter(v => v?.paid).length || 0;
     const collected = yearPayments?.reduce((sum, v) => sum + (v?.paid ? (v?.amount || 0) : 0), 0) || 0;
     const pending = yearPayments?.reduce((sum, v) => sum + (!v?.paid ? (v?.amount || 0) : 0), 0) || 0;
     return { total, paid, collected, pending };
-  }, [members, selectedYear]);
+  }, [members, year]);
 
   const handleAdd = () => {
     if (!newMember.name || !newMember.phone) return;
-    addMember.mutate({ ...newMember, joinedYear: selectedYear, role: newMember.role });
+    addMember.mutate({ ...newMember, joinedYear: year, role: newMember.role });
     setNewMember({ name: "", phone: "", role: "Member" });
     setIsAddOpen(false);
   };
 
   const saveVarganiAmount = (id: string, amount: number) => {
-    // Keep paid status same, just update amount
     const member = members?.find(m => m.id === id);
-    const vargani = member?.varganiHistory.find(v => v.year === selectedYear);
+    const vargani = member?.varganiHistory.find(v => v.year === year);
     const isPaid = vargani?.paid || false;
-    updateVargani.mutate({ id, paid: isPaid, year: selectedYear, amount });
+    updateVargani.mutate({ id, paid: isPaid, year: year, amount });
     setEditingVargani(null);
   };
 
@@ -106,8 +108,7 @@ const MembersTab = () => {
       {/* Toolbar */}
       <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-display font-black text-[#2C1810]">Member Directory</h2>
-          <YearSelector selected={selectedYear} onChange={setSelectedYear} />
+          <h2 className="text-xl font-display font-black text-[#2C1810]">Member Directory ({year})</h2>
         </div>
         <button
           onClick={() => setIsAddOpen(true)}
@@ -140,14 +141,14 @@ const MembersTab = () => {
         <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
           <div className="col-span-4">Name & Role</div>
           <div className="col-span-3">Contact</div>
-          <div className="col-span-3">Vargani ({selectedYear})</div>
+          <div className="col-span-3">Vargani ({year})</div>
           <div className="col-span-2 text-right">Actions</div>
         </div>
         {members?.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No members found. Add one to get started.</div>
         ) : (
           members?.map((member) => {
-            const vargani = member.varganiHistory.find(v => v.year === selectedYear);
+            const vargani = member.varganiHistory.find(v => v.year === year);
             const isPaid = vargani?.paid;
             const amount = vargani?.amount || 1500;
             const isEditing = editingVargani?.id === member.id;
@@ -192,7 +193,7 @@ const MembersTab = () => {
                         <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
                       </button>
                       <button
-                        onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: selectedYear, amount })}
+                        onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })}
                         disabled={updateVargani.isPending}
                         className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 w-fit transition-all ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500 hover:bg-red-100"
                           } disabled:opacity-50`}
@@ -206,7 +207,7 @@ const MembersTab = () => {
                 <div className="col-span-2 flex justify-end gap-2">
                   <button
                     onClick={() => {
-                      const msg = `नमस्कार ${member.name}, कृपया ${selectedYear} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
+                      const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
                       window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
                     }}
                     className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
@@ -422,22 +423,24 @@ const AttendanceList = ({ taskId }: { taskId: string }) => {
   );
 };
 
-const TasksTab = () => {
+const TasksTab = ({ year }: { year: number }) => {
   const { data: tasks, addTask, updateTask, deleteTask } = useTasks();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
   const [showAttendees, setShowAttendees] = useState<string | null>(null);
 
+  const filteredTasks = tasks?.filter(t => t.year === year) || [];
+
   const handleSave = () => {
     if (editingTask) {
       if (!editingTask.title || !editingTask.date) return;
-      updateTask.mutate(editingTask);
+      updateTask.mutate({ ...editingTask, year });
       setEditingTask(null);
       setIsAddOpen(false);
     } else {
       if (!newTask.title || !newTask.date) return;
-      addTask.mutate(newTask as any);
+      addTask.mutate({ ...(newTask as any), year });
       setNewTask({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
       setIsAddOpen(false);
     }
@@ -456,7 +459,7 @@ const TasksTab = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-display font-black text-[#2C1810]">Task Manager</h2>
+        <h2 className="text-xl font-display font-black text-[#2C1810]">Task Manager ({year})</h2>
         <button
           onClick={() => setIsAddOpen(true)}
           className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
@@ -466,13 +469,13 @@ const TasksTab = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks?.length === 0 ? (
+        {filteredTasks.length === 0 ? (
           <div className="col-span-full py-20 text-center bg-[#F5F5F0] rounded-3xl border border-dashed border-gray-200">
             <div className="text-[#2C1810]/60 font-medium">No tasks scheduled yet.</div>
             <button onClick={() => setIsAddOpen(true)} className="mt-4 text-[#D95D1E] font-bold text-sm hover:underline">Create your first task</button>
           </div>
         ) : (
-          tasks?.map(task => (
+          filteredTasks.map(task => (
             <div key={task.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-orange-50 text-[#D95D1E] rounded-xl">
@@ -609,20 +612,18 @@ const TasksTab = () => {
   )
 }
 
-const ExpensesTab = () => {
+const ExpensesTab = ({ year }: { year: number }) => {
   const { data: expenses, addExpense, updateRefundStatus, deleteExpense, updateExpense } = useExpenses();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingEx, setEditingEx] = useState<Expense | null>(null);
   const [newEx, setNewEx] = useState({ description: "", amount: "", category: "Other", date: new Date().toISOString().split("T")[0], paidBy: "Mandal" });
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   // Filter by year
   const filteredExpenses = useMemo(() => {
     return expenses?.filter(e => {
-      const year = parseInt(e.date.split("-")[0]);
-      return year === selectedYear;
+      return e.year === year;
     }) || [];
-  }, [expenses, selectedYear]);
+  }, [expenses, year]);
 
   const totalSpent = filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0);
 
@@ -640,7 +641,7 @@ const ExpensesTab = () => {
         category: newEx.category,
         date: newEx.date,
         status: "approved",
-        year: parseInt(newEx.date.split("-")[0]),
+        year: year,
         paidBy: newEx.paidBy,
         isRefunded: false
       });
@@ -662,10 +663,9 @@ const ExpensesTab = () => {
     <div className="space-y-8">
       <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-display font-black text-[#2C1810]">Expenses</h2>
-          <YearSelector selected={selectedYear} onChange={setSelectedYear} />
+          <h2 className="text-xl font-display font-black text-[#2C1810]">Expenses ({year})</h2>
           <p className="text-xs text-[#2C1810]/60 font-bold uppercase tracking-wider ml-4 border-l pl-4 border-gray-100">
-            Total for {selectedYear}: <span className="text-[#D95D1E] text-lg ml-1">₹{totalSpent.toLocaleString()}</span>
+            Total for {year}: <span className="text-[#D95D1E] text-lg ml-1">₹{totalSpent.toLocaleString()}</span>
           </p>
         </div>
         <button
@@ -690,7 +690,7 @@ const ExpensesTab = () => {
           <div className="col-span-1 text-right">Actions</div>
         </div>
         {filteredExpenses.length === 0 ? (
-          <div className="p-10 text-center text-[#2C1810]/60 text-sm">No expenses recorded for {selectedYear}.</div>
+          <div className="p-10 text-center text-[#2C1810]/60 text-sm">No expenses recorded for {year}.</div>
         ) : (
           filteredExpenses.map((ex) => (
             <div key={ex.id} className="min-w-[900px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
@@ -1042,10 +1042,223 @@ const InvitationsTab = () => {
   )
 }
 
+const LetterheadTab = () => {
+  const [data, setData] = useState({
+    date: new Date().toLocaleDateString('mr-IN'),
+    toName: "मा. पोलीस निरीक्षक साहेब, वानवडी",
+    toDept: "पोलीस स्टेशन, वानवडी विभाग, पुणे शहर.",
+    applicant: "हांडे योगेश राजेंद्र",
+    address: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४१११८४०",
+    festival: "श्री. छत्रपती शिवाजी महाराज जयंती",
+    festDate: "१९ फेब्रुवारी २०२६",
+    phone: "८२३७१८९९७७",
+    subject: "ध्वनीक्षेपक परवाना मिळण्याबाबत.",
+    content: "आम्ही श्रीमंत शिवगर्जना प्रतिष्ठान केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो."
+  });
+
+  const downloadPDF = async () => {
+    const element = document.getElementById('letter-preview');
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff"
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Controls */}
+      <div className="lg:col-span-4 space-y-6">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <h3 className="text-lg font-bold text-[#2C1810] mb-4">Letter Details</h3>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Festival Name</label>
+            <input
+              value={data.festival}
+              onChange={e => setData({ ...data, festival: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              placeholder="e.g. गणेशोत्सव"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Festival Date</label>
+            <input
+              value={data.festDate}
+              onChange={e => setData({ ...data, festDate: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              placeholder="e.g. १९ फेब्रुवारी"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Today's Date</label>
+              <input
+                value={data.date}
+                onChange={e => setData({ ...data, date: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Phone No</label>
+              <input
+                value={data.phone}
+                onChange={e => setData({ ...data, phone: e.target.value })}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To (Name/Title)</label>
+            <input
+              value={data.toName}
+              onChange={e => setData({ ...data, toName: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">To (Department)</label>
+            <input
+              value={data.toDept}
+              onChange={e => setData({ ...data, toDept: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Applicant Name</label>
+            <input
+              value={data.applicant}
+              onChange={e => setData({ ...data, applicant: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Applicant Address</label>
+            <textarea
+              value={data.address}
+              onChange={e => setData({ ...data, address: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[60px]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Subject</label>
+            <input
+              value={data.subject}
+              onChange={e => setData({ ...data, subject: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Letter Content</label>
+            <textarea
+              value={data.content}
+              onChange={e => setData({ ...data, content: e.target.value })}
+              className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 min-h-[150px]"
+            />
+          </div>
+
+          <button
+            onClick={downloadPDF}
+            className="w-full flex items-center justify-center gap-2 bg-[#D95D1E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20 mt-4"
+          >
+            <Download size={18} /> Download Permission PDF
+          </button>
+        </div>
+      </div>
+
+      {/* Preview */}
+      <div className="lg:col-span-8">
+        <div className="bg-gray-200 p-8 rounded-xl overflow-auto flex justify-center">
+          {/* The actual A4 Letter */}
+          <div
+            id="letter-preview"
+            className="bg-white w-[210mm] min-h-[297mm] shadow-2xl relative flex flex-col pt-40 pb-20 px-16"
+            style={{
+              backgroundImage: 'url("/images/letterhead.png")',
+              backgroundSize: '100% 100%',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            {/* Overlay Watermark if needed, but it's usually in the image */}
+
+            <div className="mt-8 flex justify-end">
+              <span className="text-sm font-bold">दिनांक. {data.date}</span>
+            </div>
+
+            <div className="mt-8 space-y-1">
+              <div className="font-bold text-sm">प्रति.</div>
+              <div className="font-bold text-sm">{data.toName}</div>
+              <div className="font-bold text-sm">{data.toDept}</div>
+            </div>
+
+            <div className="mt-12 flex justify-end text-right">
+              <div className="max-w-xs space-y-1">
+                <div className="font-bold text-sm">अर्जदार:- {data.applicant}</div>
+                <div className="font-bold text-[10px] leading-tight text-gray-700 whitespace-pre-wrap">{data.address}</div>
+              </div>
+            </div>
+
+            <div className="mt-12 text-center">
+              <div className="font-bold text-lg border-b-2 border-black inline-block pb-1 whitespace-pre-wrap">
+                विषय :- {data.subject}
+              </div>
+            </div>
+
+            <div className="mt-12 space-y-6">
+              <div className="font-bold">महोदय,</div>
+              <p className="font-bold text-lg leading-relaxed text-justify indent-12 whitespace-pre-wrap">
+                {data.content}
+              </p>
+            </div>
+
+            <div className="flex-1"></div>
+
+            <div className="flex justify-end mt-20">
+              <div className="text-center space-y-4">
+                <div className="font-bold">कळावे,</div>
+                <div className="pt-8">
+                  <div className="font-bold">आपला विश्वासू</div>
+                  <div className="font-bold mt-2">{data.applicant}</div>
+                  <div className="text-sm font-bold">फोन:- {data.phone}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Layout ---
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("members");
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -1082,8 +1295,8 @@ const Dashboard = () => {
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
-            <span className="font-display font-black text-sm tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
-            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
+            <span className="font-display font-black text-sm tracking-tight text-[#2C1810] block leading-none uppercase">श्रीमंत शिवगर्जना</span>
+            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">वानवडी, पुणे</span>
           </div>
         </div>
         <button
@@ -1113,17 +1326,30 @@ const Dashboard = () => {
                 md:relative md:translate-x-0
                 ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
-        <div className="p-8 border-b border-gray-50 bg-white flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img src="/images/logo.png" className="w-12 h-12 object-contain drop-shadow-lg" alt="Logo" />
-            <div>
-              <span className="font-display font-black text-lg tracking-tight text-[#2C1810] block leading-none">SHIV GARJANA</span>
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#D95D1E]">Admin</span>
+        <div className="p-8 border-b border-gray-50 bg-white flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <img src="/images/logo.png" className="w-14 h-14 object-contain drop-shadow-lg" alt="Logo" />
+              <div>
+                <span className="font-display font-black text-lg tracking-tight text-[#2C1810] block leading-none uppercase text-primary">शिवगर्जना</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#D95D1E]">वानवडी, पुणे</span>
+              </div>
+            </div>
+            <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#2C1810]/60 hover:text-red-500 transition-colors">
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="bg-[#FDFBF7] p-3 rounded-xl border border-primary/10">
+            <div className="flex items-start gap-2 text-[10px] font-bold text-[#2C1810]/70 leading-tight">
+              <MapPin size={10} className="text-[#D95D1E] shrink-0 mt-0.5" />
+              <span>सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४१११८४०</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-[#2C1810]/70 mt-2">
+              <Phone size={10} className="text-[#D95D1E] shrink-0" />
+              <span>८२३७१८९९७७</span>
             </div>
           </div>
-          <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#2C1810]/60 hover:text-red-500 transition-colors">
-            <X size={20} />
-          </button>
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto">
@@ -1131,6 +1357,7 @@ const Dashboard = () => {
           <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
           <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
           <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
+          <SidebarItem id="letterhead" label="Letterhead" icon={FileText} active={activeTab === "letterhead"} onClick={handleTabChange} />
           <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
         </nav>
 
@@ -1144,19 +1371,29 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] md:h-screen">
+        {/* Header with Global Year Selector */}
+        <div className="bg-white border-b border-gray-100 p-4 md:px-12 flex items-center justify-between shrink-0">
+          <h1 className="text-xl md:text-2xl font-black text-[#2C1810] capitalize">{activeTab}</h1>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-black uppercase tracking-widest text-[#2C1810]/40 hidden md:block">Active Year</span>
+            <YearSelector selected={selectedYear} onChange={setSelectedYear} />
+          </div>
+        </div>
+
         <div className="flex-1 overflow-y-auto p-4 md:p-12 scrollbar-hide">
           <motion.div
-            key={activeTab}
+            key={`${activeTab}-${selectedYear}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
             className="max-w-6xl mx-auto space-y-6 md:space-y-8 pb-20"
           >
-            {activeTab === "members" && <MembersTab />}
-            {activeTab === "tasks" && <TasksTab />}
-            {activeTab === "expenses" && <ExpensesTab />}
+            {activeTab === "members" && <MembersTab year={selectedYear} />}
+            {activeTab === "tasks" && <TasksTab year={selectedYear} />}
+            {activeTab === "expenses" && <ExpensesTab year={selectedYear} />}
             {activeTab === "invitations" && <InvitationsTab />}
             {activeTab === "suppliers" && <SuppliersTab />}
+            {activeTab === "letterhead" && <LetterheadTab />}
           </motion.div>
         </div>
       </main>

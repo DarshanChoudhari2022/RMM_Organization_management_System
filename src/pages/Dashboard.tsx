@@ -82,14 +82,22 @@ const MembersTab = ({ year }: { year: number }) => {
   const [newMember, setNewMember] = useState({ name: "", phone: "", role: "Member" });
   const [editingVargani, setEditingVargani] = useState<{ id: string, amount: number } | null>(null);
 
+  const { data: expenses } = useExpenses();
+
   const stats = useMemo(() => {
     const total = members?.length || 0;
     const yearPayments = members?.map(m => m.varganiHistory.find(v => v.year === year)).filter(Boolean);
     const paid = yearPayments?.filter(v => v?.paid).length || 0;
     const collected = yearPayments?.reduce((sum, v) => sum + (v?.paid ? (v?.amount || 0) : 0), 0) || 0;
     const pending = yearPayments?.reduce((sum, v) => sum + (!v?.paid ? (v?.amount || 0) : 0), 0) || 0;
-    return { total, paid, collected, pending };
-  }, [members, year]);
+
+    // Calculate Mandal Expenses for the year
+    const mandalExpenses = (expenses || [])
+      .filter(e => e.year === year && e.paidBy === 'Mandal')
+      .reduce((sum, e) => sum + e.amount, 0);
+
+    return { total, paid, collected, pending, mandalExpenses };
+  }, [members, year, expenses]);
 
   const handleAdd = () => {
     if (!newMember.name || !newMember.phone) return;
@@ -109,33 +117,36 @@ const MembersTab = ({ year }: { year: number }) => {
   return (
     <div className="space-y-8">
       {/* Toolbar */}
-      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-display font-black text-[#2C1810]">Member Directory ({year})</h2>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <h2 className="text-xl font-display font-black text-[#2C1810]">Member Directory ({year})</h2>
         <button
           onClick={() => setIsAddOpen(true)}
-          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20"
         >
           <Plus size={16} /> Add Member
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Total Members</div>
-          <div className="text-3xl font-black text-[#2C1810]">{stats.total}</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1 md:mb-2">Total Members</div>
+          <div className="text-xl md:text-3xl font-black text-[#2C1810]">{stats.total}</div>
         </div>
-        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Vargani Collected</div>
-          <div className="text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
-          <div className="text-xs text-[#2C1810]/60 mt-1">{stats.paid} Members Paid</div>
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1 md:mb-2">Vargani Collected</div>
+          <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
+          <div className="text-[10px] text-[#2C1810]/60 mt-1 hidden md:block">{stats.paid} Members Paid</div>
         </div>
-        <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-          <div className="text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-2">Pending Amount</div>
-          <div className="text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
-          <div className="text-xs text-[#2C1810]/60 mt-1">{stats.total - stats.paid} Members Pending</div>
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1 md:mb-2">Pending Vargani</div>
+          <div className="text-xl md:text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
+          <div className="text-[10px] text-[#2C1810]/60 mt-1 hidden md:block">{stats.total - stats.paid} Pending</div>
+        </div>
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm bg-orange-50/30 border-orange-100">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#D95D1E] mb-1 md:mb-2">Mandal Expenses</div>
+          <div className="text-xl md:text-3xl font-black text-[#D95D1E]">₹{stats.mandalExpenses.toLocaleString()}</div>
+          <div className="text-[10px] text-[#D95D1E]/60 mt-1 hidden md:block">Paid by Mandal</div>
         </div>
       </div>
 
@@ -974,14 +985,14 @@ const SuppliersTab = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <h2 className="text-xl font-display font-black text-[#2C1810]">Supplier Contacts</h2>
         <button
           onClick={() => {
             setEditingSup(null);
             setIsAddOpen(true);
           }}
-          className="flex items-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#D95D1E]/90 transition-all shadow-lg shadow-[#D95D1E]/20"
         >
           <Plus size={16} /> Add Supplier
         </button>
@@ -1389,22 +1400,27 @@ const LetterheadTab = () => {
     }
 
     try {
-      // Create a canvas with high scale for printing
+      // Create a canvas with specific dimensions for A4
+      // 210mm x 297mm at 2x scale = 1587.4px x 2245.1px
       const canvas = await html2canvas(element, {
-        scale: 2, // 4 might be too much for mobile memory, 2 is plenty for A4
+        scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        // Set a fixed viewport width for capture to ensure desktop-like layout
-        windowWidth: 1200,
+        width: 793.7, // exactly 210mm at 96dpi
+        height: 1122.5, // exactly 297mm at 96dpi
+        windowWidth: 793.7,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
           if (el) {
             el.style.transform = 'none';
             el.style.position = 'relative';
             el.style.width = '210mm';
+            el.style.height = '297mm';
             el.style.minHeight = '297mm';
+            el.style.margin = '0';
+            el.style.padding = '0';
 
             // Remove parent scaling that affects capture
             let parent = el.parentElement;
@@ -1413,13 +1429,16 @@ const LetterheadTab = () => {
               parent.style.scale = 'none';
               parent.style.padding = '0';
               parent.style.margin = '0';
+              parent.style.width = 'auto';
+              parent.style.height = 'auto';
+              parent.style.maxWidth = 'none';
               parent = parent.parentElement;
             }
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
@@ -1430,7 +1449,8 @@ const LetterheadTab = () => {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      // Explicitly specify size to avoid zooming/distortion
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Permission_Letter_${data.festival.replace(/\s+/g, '_')}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {

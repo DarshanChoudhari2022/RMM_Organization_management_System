@@ -28,7 +28,12 @@ import {
   FileText,
   Download,
   ClipboardList,
-  Activity
+  Activity,
+  Image as ImageIcon,
+  Palette,
+  Type,
+  Maximize2,
+  Heart
 } from "lucide-react";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -1744,6 +1749,194 @@ const LogsTab = () => {
   );
 };
 
+const DigitalPostTab = () => {
+  const [festival, setFestival] = useState("Shiv Jayanti");
+  const [greeting, setGreeting] = useState("सर्व शिवभक्तांना शिवजयंतीच्या हार्दिक शुभेच्छा!");
+  const [includeLogo, setIncludeLogo] = useState(true);
+  const [includeAddress, setIncludeAddress] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const festivals = [
+    { name: "Shiv Jayanti", color: "from-[#D95D1E] via-[#F18F01] to-[#D95D1E]", text: "शिवजयंती", defaultGreeting: "सर्व शिवभक्तांना शिवजयंतीच्या हार्दिक शुभेच्छा!" },
+    { name: "Holi", color: "from-[#FF0080] via-[#7928CA] to-[#FF0080]", text: "होळी", defaultGreeting: "रंगांच्या या उत्सवाच्या आपणास व आपल्या परिवारास हार्दिक शुभेच्छा!" },
+    { name: "Gudi Padwa", color: "from-[#4CAF50] via-[#8BC34A] to-[#4CAF50]", text: "गुढीपाडवा", defaultGreeting: "हिंदू नववर्षाच्या व गुढीपाडव्याच्या हार्दिक शुभेच्छा!" },
+    { name: "Ram Navami", color: "from-[#FF9800] via-[#FFC107] to-[#FF9800]", text: "रामनवमी", defaultGreeting: "राम जन्मोत्सवाच्या मंगलमय शुभेच्छा!" },
+    { name: "Ganesh Chaturthi", color: "from-[#D32F2F] via-[#F44336] to-[#D32F2F]", text: "गणेशोत्सव", defaultGreeting: "गणेशोत्सवाच्या तुम्हा सर्वांना भक्तीमय शुभेच्छा!" }
+  ];
+
+  const currentFest = festivals.find(f => f.name === festival) || festivals[0];
+
+  const downloadPoster = async () => {
+    const element = document.getElementById("digital-poster");
+    if (!element) return;
+
+    setIsDownloading(true);
+    toast.info("Generating high-quality poster...");
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 4, // 4k-ish quality
+        useCORS: true,
+        backgroundColor: null,
+      });
+
+      const link = document.createElement('a');
+      link.download = `Shiv_Garjana_${festival.replace(/\s+/g, '_')}_Post.png`;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+      toast.success("Poster downloaded successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate poster.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* Controls */}
+      <div className="lg:col-span-5 space-y-6">
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+          <h2 className="text-xl font-display font-black text-[#2C1810] flex items-center gap-2">
+            <Palette className="text-[#D95D1E]" /> Design Settings
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Select Festival</label>
+              <div className="grid grid-cols-2 gap-2">
+                {festivals.map(f => (
+                  <button
+                    key={f.name}
+                    onClick={() => { setFestival(f.name); setGreeting(f.defaultGreeting); }}
+                    className={`px-4 py-3 rounded-xl text-xs font-bold transition-all border ${festival === f.name
+                        ? "bg-[#D95D1E] text-white border-[#D95D1E] shadow-lg shadow-[#D95D1E]/20"
+                        : "bg-[#FDFBF7] text-[#2C1810]/60 border-gray-100 hover:border-[#D95D1E]/30"
+                      }`}
+                  >
+                    {f.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Marathi Greeting Text</label>
+              <textarea
+                value={greeting}
+                onChange={(e) => setGreeting(e.target.value)}
+                rows={3}
+                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 resize-none font-marathi"
+              />
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                <input type="checkbox" checked={includeLogo} onChange={e => setIncludeLogo(e.target.checked)} className="accent-[#D95D1E] w-4 h-4" />
+                <span className="text-xs font-bold text-[#2C1810]/70">Include Mandal Logo</span>
+              </label>
+              <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                <input type="checkbox" checked={includeAddress} onChange={e => setIncludeAddress(e.target.checked)} className="accent-[#D95D1E] w-4 h-4" />
+                <span className="text-xs font-bold text-[#2C1810]/70">Include Office Address</span>
+              </label>
+            </div>
+          </div>
+
+          <button
+            onClick={downloadPoster}
+            disabled={isDownloading}
+            className="w-full bg-[#2C1810] text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[11px] shadow-xl hover:bg-[#D95D1E] transition-all disabled:opacity-50"
+          >
+            {isDownloading ? <Activity className="animate-spin" size={18} /> : <Download size={18} />}
+            Download Poster (PNG)
+          </button>
+        </div>
+
+        <div className="bg-[#D95D1E]/5 p-6 rounded-3xl border border-[#D95D1E]/10">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#D95D1E] mb-2 flex items-center gap-2">
+            <Heart size={14} /> Tip for Social Media
+          </h4>
+          <p className="text-xs text-[#2C1810]/70 leading-relaxed">
+            Choose a square format (1:1) for Instagram posts. Our generator ensures high density resolution so your poster looks professional on all devices.
+          </p>
+        </div>
+      </div>
+
+      {/* Preview */}
+      <div className="lg:col-span-7">
+        <div className="sticky top-12 space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Live Preview</h2>
+            <div className="flex gap-2">
+              <div className="w-2 h-2 rounded-full bg-red-400"></div>
+              <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+              <div className="w-2 h-2 rounded-full bg-green-400"></div>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            {/* The Poster Container - 1:1 Aspect Ratio for Social Media */}
+            <div
+              id="digital-poster"
+              className={`w-[500px] h-[500px] bg-gradient-to-br ${currentFest.color} relative overflow-hidden shadow-2xl flex flex-col items-center justify-between p-12 text-center`}
+            >
+              {/* Background Patterns */}
+              <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden text-white/10">
+                <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white/40 blur-3xl animate-pulse"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[40px] border-white/10 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/40 blur-3xl animate-pulse duration-5000"></div>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center space-y-8 py-4">
+                {includeLogo && (
+                  <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-3xl p-3 border border-white/30 shadow-2xl scale-125 mb-4">
+                    <img src="/images/logo.png" className="w-full h-full object-contain drop-shadow-2xl" alt="Mandal Logo" />
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <div className="text-white/80 text-sm font-bold uppercase tracking-[0.3em] font-sans">🚩 जय शिवराय 🚩</div>
+                  <h3 className="text-6xl font-display font-black text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.3)] leading-tight font-marathi">
+                    {currentFest.text}
+                  </h3>
+                </div>
+
+                <div className="max-w-xs mx-auto">
+                  <div className="w-12 h-1 bg-white/50 mx-auto mb-6 rounded-full shadow-lg"></div>
+                  <p className="text-xl font-bold text-white drop-shadow-md leading-relaxed px-4 font-marathi">
+                    {greeting}
+                  </p>
+                  <div className="w-12 h-1 bg-white/50 mx-auto mt-6 rounded-full shadow-lg"></div>
+                </div>
+              </div>
+
+              {/* Footer Signature */}
+              <div className="relative z-10 w-full bg-black/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl mt-4">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="text-[12px] font-black uppercase tracking-[0.4em] text-white/90">शुभेच्छुक</div>
+                  <div className="text-2xl font-display font-black text-white py-1">श्रीमंत शिवगर्जना प्रतिष्ठान</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/60">वानवडी, पुणे</div>
+                  {includeAddress && (
+                    <div className="text-[8px] font-medium text-white/40 mt-1 max-w-[250px] leading-tight">केदारी नगर, पुणे ४११०४०</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              Poster size is optimized for 1080x1080 (Instagram Standard)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Layout ---
 
 const Dashboard = () => {
@@ -1849,6 +2042,7 @@ const Dashboard = () => {
           <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
           <SidebarItem id="letterhead" label="Letterhead" icon={FileText} active={activeTab === "letterhead"} onClick={handleTabChange} />
           <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
+          <SidebarItem id="posters" label="Digital Posters" icon={ImageIcon} active={activeTab === "posters"} onClick={handleTabChange} />
           <SidebarItem id="logs" label="System Logs" icon={ClipboardList} active={activeTab === "logs"} onClick={handleTabChange} />
         </nav>
 
@@ -1885,6 +2079,7 @@ const Dashboard = () => {
             {activeTab === "invitations" && <InvitationsTab />}
             {activeTab === "suppliers" && <SuppliersTab />}
             {activeTab === "letterhead" && <LetterheadTab />}
+            {activeTab === "posters" && <DigitalPostTab />}
             {activeTab === "logs" && <LogsTab />}
           </motion.div>
         </div>

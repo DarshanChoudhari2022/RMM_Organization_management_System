@@ -43,6 +43,7 @@ export interface Expense {
     year: number; // For filtering
     paidBy: string; // Who paid originally
     isRefunded: boolean; // Has Mandal refunded them?
+    vendorName?: string; // New field from database
 }
 
 export interface Invitation {

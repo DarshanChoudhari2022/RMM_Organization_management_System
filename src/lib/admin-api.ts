@@ -257,7 +257,8 @@ export const useExpenses = () => {
                 status: e.status,
                 year: parseInt(e.date.split('-')[0]), // Extract year from date
                 paidBy: e.paid_by || 'Mandal',
-                isRefunded: e.is_refunded || false
+                isRefunded: e.is_refunded || false,
+                vendorName: e.vendor_name || 'General'
             })) as Expense[];
         },
     });
@@ -274,7 +275,8 @@ export const useExpenses = () => {
                     status: newExpense.status,
                     year: newExpense.year,
                     paid_by: newExpense.paidBy,
-                    is_refunded: newExpense.isRefunded
+                    is_refunded: newExpense.isRefunded,
+                    vendor_name: newExpense.vendorName || 'General'
                 }])
                 .select()
                 .single();
@@ -316,7 +318,8 @@ export const useExpenses = () => {
                     date: expense.date,
                     year: expense.year,
                     paid_by: expense.paidBy,
-                    is_refunded: expense.isRefunded
+                    is_refunded: expense.isRefunded,
+                    vendor_name: expense.vendorName
                 })
                 .eq('id', expense.id)
                 .select()

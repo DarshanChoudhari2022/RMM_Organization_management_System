@@ -140,95 +140,103 @@ const MembersTab = ({ year }: { year: number }) => {
       </div>
 
       {/* List - Scrollable Table for all screens */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
-        <div className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
-          <div className="col-span-4">Name & Role</div>
-          <div className="col-span-3">Contact</div>
-          <div className="col-span-3">Vargani ({year})</div>
-          <div className="col-span-2 text-right">Actions</div>
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <div className="min-w-[800px]">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+              <div className="col-span-4 lowercase">Name & Role</div>
+              <div className="col-span-3">Contact</div>
+              <div className="col-span-3">Vargani ({year})</div>
+              <div className="col-span-2 text-right">Actions</div>
+            </div>
+          </div>
         </div>
         {members?.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No members found. Add one to get started.</div>
         ) : (
-          members?.map((member) => {
-            const vargani = member.varganiHistory.find(v => v.year === year);
-            const isPaid = vargani?.paid;
-            const amount = vargani?.amount || 1500;
-            const isEditing = editingVargani?.id === member.id;
+          <div className="overflow-x-auto">
+            <div className="min-w-[800px]">
+              {members?.map((member) => {
+                const vargani = member.varganiHistory.find(v => v.year === year);
+                const isPaid = vargani?.paid;
+                const amount = vargani?.amount || 1500;
+                const isEditing = editingVargani?.id === member.id;
 
-            return (
-              <div key={member.id} className="min-w-[800px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-                <div className="col-span-4">
-                  <div className="font-bold text-[#2C1810]">{member.name}</div>
-                  <div className="text-[10px] text-[#2C1810]/60">{member.role}</div>
-                </div>
-                <div className="col-span-3 text-sm text-[#2C1810]/80 font-mono">{member.phone}</div>
-                <div className="col-span-3 flex items-center gap-3">
-                  {isEditing ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        className="w-20 px-2 py-1 border border-[#D95D1E] rounded text-sm font-bold outline-none"
-                        value={editingVargani.amount}
-                        onChange={(e) => setEditingVargani({ ...editingVargani, amount: parseInt(e.target.value) || 0 })}
-                      />
+                return (
+                  <div key={member.id} className="grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                    <div className="col-span-4">
+                      <div className="font-bold text-[#2C1810]">{member.name}</div>
+                      <div className="text-[10px] text-[#2C1810]/60">{member.role}</div>
+                    </div>
+                    <div className="col-span-3 text-sm text-[#2C1810]/80 font-mono">{member.phone}</div>
+                    <div className="col-span-3 flex items-center gap-3">
+                      {isEditing ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            className="w-20 px-2 py-1 border border-[#D95D1E] rounded text-sm font-bold outline-none"
+                            value={editingVargani.amount}
+                            onChange={(e) => setEditingVargani({ ...editingVargani, amount: parseInt(e.target.value) || 0 })}
+                          />
+                          <button
+                            onClick={() => saveVarganiAmount(member.id, editingVargani.amount)}
+                            className="p-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                          >
+                            <CheckCircle2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => setEditingVargani(null)}
+                            className="p-1 bg-red-50 text-red-500 rounded hover:bg-red-100"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="font-bold text-[#2C1810] w-12">₹{amount}</span>
+                          <button
+                            onClick={() => setEditingVargani({ id: member.id, amount })}
+                            className="p-1 text-[#D95D1E]/60 hover:text-[#D95D1E] rounded transition-colors"
+                            title="Edit Amount"
+                          >
+                            <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                          </button>
+                          <button
+                            onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })}
+                            disabled={updateVargani.isPending}
+                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 w-fit transition-all ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500 hover:bg-red-100"
+                              } disabled:opacity-50`}
+                          >
+                            {isPaid ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                            {isPaid ? "Paid" : "Pending"}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    <div className="col-span-2 flex justify-end gap-2">
                       <button
-                        onClick={() => saveVarganiAmount(member.id, editingVargani.amount)}
-                        className="p-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                        onClick={() => {
+                          const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
+                          window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                        }}
+                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                        title="Send WhatsApp Reminder"
                       >
-                        <CheckCircle2 size={16} />
+                        <MessageSquare size={16} />
                       </button>
                       <button
-                        onClick={() => setEditingVargani(null)}
-                        className="p-1 bg-red-50 text-red-500 rounded hover:bg-red-100"
+                        onClick={() => deleteMember.mutate(member.id)}
+                        className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Member"
                       >
-                        <X size={16} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
-                  ) : (
-                    <>
-                      <span className="font-bold text-[#2C1810] w-12">₹{amount}</span>
-                      <button
-                        onClick={() => setEditingVargani({ id: member.id, amount })}
-                        className="p-1 text-[#D95D1E]/60 hover:text-[#D95D1E] rounded transition-colors"
-                        title="Edit Amount"
-                      >
-                        <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
-                      </button>
-                      <button
-                        onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })}
-                        disabled={updateVargani.isPending}
-                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 w-fit transition-all ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500 hover:bg-red-100"
-                          } disabled:opacity-50`}
-                      >
-                        {isPaid ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
-                        {isPaid ? "Paid" : "Pending"}
-                      </button>
-                    </>
-                  )}
-                </div>
-                <div className="col-span-2 flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
-                      window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                    }}
-                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                    title="Send WhatsApp Reminder"
-                  >
-                    <MessageSquare size={16} />
-                  </button>
-                  <button
-                    onClick={() => deleteMember.mutate(member.id)}
-                    className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Delete Member"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 
@@ -697,72 +705,80 @@ const ExpensesTab = ({ year }: { year: number }) => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
-        <div className="min-w-[900px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
-          <div className="col-span-2">Description</div>
-          <div className="col-span-2">Vendor</div>
-          <div className="col-span-1">Paid By</div>
-          <div className="col-span-2">Category</div>
-          <div className="col-span-1">Date</div>
-          <div className="col-span-1 text-right">Amount</div>
-          <div className="col-span-2 text-center">Refund?</div>
-          <div className="col-span-1 text-right">Actions</div>
+      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <div className="min-w-[900px]">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+              <div className="col-span-2">Description</div>
+              <div className="col-span-2">Vendor</div>
+              <div className="col-span-1">Paid By</div>
+              <div className="col-span-2">Category</div>
+              <div className="col-span-1">Date</div>
+              <div className="col-span-1 text-right">Amount</div>
+              <div className="col-span-2 text-center">Refund?</div>
+              <div className="col-span-1 text-right">Actions</div>
+            </div>
+          </div>
         </div>
         {filteredExpenses.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No expenses recorded for {year}.</div>
         ) : (
-          filteredExpenses.map((ex) => (
-            <div key={ex.id} className="min-w-[900px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-              <div className="col-span-2">
-                <div className="font-bold text-[#2C1810] line-clamp-2" title={ex.description}>{ex.description}</div>
-              </div>
-              <div className="col-span-2">
-                <div className="text-xs font-bold text-[#2C1810]/60">{ex.vendorName || "General"}</div>
-              </div>
-              <div className="col-span-1">
-                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${ex.paidBy === 'Mandal' ? 'bg-[#D95D1E]/10 text-[#D95D1E]' : 'bg-purple-100 text-purple-700'}`}>
-                  {ex.paidBy}
-                </span>
-              </div>
-              <div className="col-span-2">
-                <span className="bg-gray-100 text-[#2C1810]/80 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">{ex.category}</span>
-              </div>
-              <div className="col-span-1 text-[11px] text-[#2C1810]/70 font-mono">{ex.date}</div>
-              <div className="col-span-1 text-right">
-                <div className="font-black text-[#D95D1E]">₹{ex.amount.toLocaleString()}</div>
-              </div>
-              <div className="col-span-2 text-center">
-                {ex.paidBy !== 'Mandal' ? (
-                  <button
-                    onClick={() => toggleRefund(ex.id, ex.isRefunded)}
-                    className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border transition-all ${ex.isRefunded
-                      ? "bg-green-50 text-green-700 border-green-200"
-                      : "bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"}`}
-                  >
-                    {ex.isRefunded ? "Paid ✅" : "Pending ⚠️"}
-                  </button>
-                ) : (
-                  <span className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">-</span>
-                )}
-              </div>
-              <div className="col-span-1 flex justify-end gap-2">
-                <button
-                  onClick={() => openEdit(ex)}
-                  className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-100"
-                >
-                  <div className="w-3.5 h-3.5 border border-current rounded-sm flex items-center justify-center text-[8px] font-sans">✎</div>
-                </button>
-                <button
-                  onClick={() => {
-                    if (window.confirm("Are you sure?")) deleteExpense.mutate(ex.id);
-                  }}
-                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[900px]">
+              {filteredExpenses.map((ex) => (
+                <div key={ex.id} className="grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                  <div className="col-span-2">
+                    <div className="font-bold text-[#2C1810] line-clamp-2" title={ex.description}>{ex.description}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="text-xs font-bold text-[#2C1810]/60">{ex.vendorName || "General"}</div>
+                  </div>
+                  <div className="col-span-1">
+                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${ex.paidBy === 'Mandal' ? 'bg-[#D95D1E]/10 text-[#D95D1E]' : 'bg-purple-100 text-purple-700'}`}>
+                      {ex.paidBy}
+                    </span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="bg-gray-100 text-[#2C1810]/80 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">{ex.category}</span>
+                  </div>
+                  <div className="col-span-1 text-[11px] text-[#2C1810]/70 font-mono">{ex.date}</div>
+                  <div className="col-span-1 text-right">
+                    <div className="font-black text-[#D95D1E]">₹{ex.amount.toLocaleString()}</div>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    {ex.paidBy !== 'Mandal' ? (
+                      <button
+                        onClick={() => toggleRefund(ex.id, ex.isRefunded)}
+                        className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border transition-all ${ex.isRefunded
+                          ? "bg-green-50 text-green-700 border-green-200"
+                          : "bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"}`}
+                      >
+                        {ex.isRefunded ? "Paid ✅" : "Pending ⚠️"}
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">-</span>
+                    )}
+                  </div>
+                  <div className="col-span-1 flex justify-end gap-2">
+                    <button
+                      onClick={() => openEdit(ex)}
+                      className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-100"
+                    >
+                      <div className="w-3.5 h-3.5 border border-current rounded-sm flex items-center justify-center text-[8px] font-sans">✎</div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (window.confirm("Are you sure?")) deleteExpense.mutate(ex.id);
+                      }}
+                      className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
+          </div>
         )}
       </div>
 
@@ -972,89 +988,97 @@ const SuppliersTab = () => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-x-auto">
-        <div className="min-w-[1000px] grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
-          <div className="col-span-2">Supplier</div>
-          <div className="col-span-2">Contact</div>
-          <div className="col-span-2">Payment Status</div>
-          <div className="col-span-1">Confirmed?</div>
-          <div className="col-span-3">Terms & Notes</div>
-          <div className="col-span-2 text-right">Actions</div>
+      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <div className="min-w-[1000px]">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+              <div className="col-span-2">Supplier</div>
+              <div className="col-span-2">Contact</div>
+              <div className="col-span-2">Payment Status</div>
+              <div className="col-span-1">Confirmed?</div>
+              <div className="col-span-3">Terms & Notes</div>
+              <div className="col-span-2 text-right">Actions</div>
+            </div>
+          </div>
         </div>
         {suppliers?.length === 0 ? (
           <div className="p-10 text-center text-[#2C1810]/60 text-sm">No suppliers found.</div>
         ) : (
-          suppliers?.map((sup) => {
-            const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
-            return (
-              <div key={sup.id} className="min-w-[1000px] grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-                <div className="col-span-2">
-                  <div className="font-bold text-[#2C1810]">{sup.name}</div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E]/60">{sup.category}</span>
-                </div>
-                <div className="col-span-2">
-                  <div className="text-sm text-[#2C1810]/80 font-mono mb-1">{sup.contact}</div>
-                  <a href={`tel:${sup.contact}`} className="text-[#D95D1E] inline-flex items-center gap-1 text-[10px] font-bold"><Phone size={10} /> Call</a>
-                </div>
-                <div className="col-span-2">
-                  <div className="flex justify-between text-[10px] font-black mb-1">
-                    <span className="text-[#D95D1E]">₹{sup.paid_amount?.toLocaleString() || 0}</span>
-                    <span className="text-gray-400">/ ₹{sup.total_amount?.toLocaleString() || 0}</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#D95D1E]" style={{ width: `${Math.min(progress, 100)}%` }}></div>
-                  </div>
-                </div>
-                <div className="col-span-1">
-                  {sup.is_confirmed ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-green-600 font-bold text-[10px] flex items-center gap-1"><CheckCircle2 size={12} /> Yes</span>
-                      <span className="text-[8px] text-gray-400 font-mono">{sup.confirmed_at ? new Date(sup.confirmed_at).toLocaleDateString('mr-IN') : ''}</span>
+          <div className="overflow-x-auto">
+            <div className="min-w-[1000px]">
+              {suppliers?.map((sup) => {
+                const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
+                return (
+                  <div key={sup.id} className="grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                    <div className="col-span-2">
+                      <div className="font-bold text-[#2C1810]">{sup.name}</div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E]/60">{sup.category}</span>
+                    </div>
+                    <div className="col-span-2">
+                      <div className="text-sm text-[#2C1810]/80 font-mono mb-1">{sup.contact}</div>
+                      <a href={`tel:${sup.contact}`} className="text-[#D95D1E] inline-flex items-center gap-1 text-[10px] font-bold"><Phone size={10} /> Call</a>
+                    </div>
+                    <div className="col-span-2">
+                      <div className="flex justify-between text-[10px] font-black mb-1">
+                        <span className="text-[#D95D1E]">₹{sup.paid_amount?.toLocaleString() || 0}</span>
+                        <span className="text-gray-400">/ ₹{sup.total_amount?.toLocaleString() || 0}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-[#D95D1E]" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+                      </div>
+                    </div>
+                    <div className="col-span-1">
+                      {sup.is_confirmed ? (
+                        <div className="flex flex-col items-center">
+                          <span className="text-green-600 font-bold text-[10px] flex items-center gap-1"><CheckCircle2 size={12} /> Yes</span>
+                          <span className="text-[8px] text-gray-400 font-mono">{sup.confirmed_at ? new Date(sup.confirmed_at).toLocaleDateString('mr-IN') : ''}</span>
+                          <button
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to revert this confirmation?")) {
+                                updateSupplier.mutate({ ...sup, is_confirmed: false, confirmed_at: null as any });
+                              }
+                            }}
+                            className="text-[8px] text-red-400 hover:text-red-600 font-black uppercase tracking-tighter mt-1 hover:underline"
+                          >
+                            Revert
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-yellow-600 font-bold text-[10px] flex items-center gap-1"><Clock size={12} /> Pending</span>
+                      )}
+                    </div>
+                    <div className="col-span-3 text-xs text-[#2C1810]/60 space-y-1">
+                      {sup.terms && <div className="italic line-clamp-1">"Terms: {sup.terms}"</div>}
+                      {sup.supplier_comment && <div className="text-[#D95D1E] font-medium line-clamp-1">"Comment: {sup.supplier_comment}"</div>}
+                      {sup.notes && <div className="line-clamp-1">{sup.notes}</div>}
+                      {sup.address && <div className="text-[10px] flex items-center gap-1 text-gray-400"><MapPin size={10} /> {sup.address}</div>}
+                    </div>
+                    <div className="col-span-2 flex justify-end gap-2">
                       <button
-                        onClick={() => {
-                          if (window.confirm("Are you sure you want to revert this confirmation?")) {
-                            updateSupplier.mutate({ ...sup, is_confirmed: false, confirmed_at: null as any });
-                          }
-                        }}
-                        className="text-[8px] text-red-400 hover:text-red-600 font-black uppercase tracking-tighter mt-1 hover:underline"
+                        onClick={() => shareConfirmation(sup)}
+                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                        title="Share Confirmation Link"
                       >
-                        Revert
+                        <Share2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => openEdit(sup)}
+                        className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
+                      >
+                        <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
+                      </button>
+                      <button
+                        onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }}
+                        className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
-                  ) : (
-                    <span className="text-yellow-600 font-bold text-[10px] flex items-center gap-1"><Clock size={12} /> Pending</span>
-                  )}
-                </div>
-                <div className="col-span-3 text-xs text-[#2C1810]/60 space-y-1">
-                  {sup.terms && <div className="italic line-clamp-1">"Terms: {sup.terms}"</div>}
-                  {sup.supplier_comment && <div className="text-[#D95D1E] font-medium line-clamp-1">"Comment: {sup.supplier_comment}"</div>}
-                  {sup.notes && <div className="line-clamp-1">{sup.notes}</div>}
-                  {sup.address && <div className="text-[10px] flex items-center gap-1 text-gray-400"><MapPin size={10} /> {sup.address}</div>}
-                </div>
-                <div className="col-span-2 flex justify-end gap-2">
-                  <button
-                    onClick={() => shareConfirmation(sup)}
-                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                    title="Share Confirmation Link"
-                  >
-                    <Share2 size={16} />
-                  </button>
-                  <button
-                    onClick={() => openEdit(sup)}
-                    className="p-2 text-[#D95D1E]/60 hover:text-[#D95D1E] hover:bg-orange-50 rounded-lg transition-colors"
-                  >
-                    <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center text-[10px] font-sans">✎</div>
-                  </button>
-                  <button
-                    onClick={() => { if (window.confirm("Are you sure?")) deleteSupplier.mutate(sup.id); }}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 
@@ -1439,11 +1463,14 @@ const LetterheadTab = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         {/* Controls */}
-        <div className={`lg:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden lg:block' : ''}`}>
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
-            <h3 className="text-lg font-bold text-[#2C1810] mb-4">Letter Details</h3>
+        <div className={`xl:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden lg:block' : ''}`}>
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar sticky top-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xl font-display font-black text-[#2C1810]">Letter Details</h3>
+              <div className="text-[10px] font-black uppercase tracking-widest text-[#D95D1E] bg-[#D95D1E]/5 px-2 py-1 rounded">Editor</div>
+            </div>
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">Festival Name</label>
@@ -1593,109 +1620,120 @@ const LetterheadTab = () => {
           </div>
         </div>
 
-        {/* Preview Container - Improved Mobile Handling */}
-        <div className={`lg:col-span-8 ${activeMode === 'edit' ? 'invisible absolute' : 'relative block'}`}>
-          <div className="bg-gray-300 p-4 lg:p-8 rounded-xl overflow-x-auto flex flex-col items-center custom-scrollbar">
-            <div className="lg:hidden bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-[10px] font-bold mb-4 flex items-center gap-2">
-              <Activity size={12} /> Pinch to zoom or scroll horizontally to see full letter
+        {/* Preview Container - Improved Responsive Handling */}
+        <div className={`xl:col-span-8 ${activeMode === 'edit' ? 'hidden lg:block' : ''}`}>
+          <div className="flex flex-col items-center">
+            {/* Download Button - Desktop only */}
+            <div className="hidden lg:flex w-full justify-end mb-6">
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-2 bg-[#D95D1E] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#B84D19] transition-all shadow-lg hover:shadow-orange-200/50 active:scale-95 group"
+              >
+                <Download size={18} className="group-hover:-translate-y-1 transition-transform" />
+                Download PDF
+              </button>
             </div>
 
-            {/* Scale Wrapper for Mobile Viewport */}
-            <div className="origin-top scale-[0.4] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 transition-transform bg-white shadow-2xl">
-              {/* A4 Frame (Capture Target) */}
-              <div
-                id="letter-preview"
-                className="bg-white w-[210mm] min-h-[297mm] relative flex flex-col font-serif select-none text-black"
-                style={{ width: '210mm', minWidth: '210mm' }}
-              >
-                {/* Professional Header */}
-                <div className="pt-8 px-12 pb-4">
-                  <div className="flex justify-between items-start relative z-10">
-                    <div className="flex gap-6 items-center">
-                      <div className="relative">
-                        <div className="absolute -inset-2 bg-[#D95D1E]/10 rounded-full blur-lg"></div>
-                        <img src="/images/logo.png" className="w-28 h-28 object-contain relative transition-transform hover:scale-105" alt="Logo" />
+            {/* Paper Container Wrapper */}
+            <div className="w-full bg-gray-200/50 backdrop-blur-sm rounded-[40px] p-4 md:p-12 lg:p-16 border-2 border-dashed border-gray-300 flex justify-center items-start overflow-hidden min-h-[850px] shadow-inner mb-20">
+              {/* Scale Wrapper for Responsive Viewport */}
+              <div className="origin-top transition-transform bg-white shadow-2xl scale-[0.35] sm:scale-[0.5] md:scale-[0.7] lg:scale-[0.8] xl:scale-90 2xl:scale-100">
+                {/* A4 Frame (Capture Target) */}
+                <div
+                  id="letter-preview"
+                  className="bg-white w-[210mm] min-h-[297mm] relative flex flex-col font-serif select-none text-black"
+                  style={{ width: '210mm', minWidth: '210mm' }}
+                >
+                  {/* Professional Header */}
+                  <div className="pt-12 px-16 pb-6">
+                    <div className="flex justify-between items-start relative z-10">
+                      <div className="flex gap-8 items-center">
+                        <div className="relative">
+                          <div className="absolute -inset-4 bg-[#D95D1E]/10 rounded-full blur-xl"></div>
+                          <img src="/images/logo.png" className="w-32 h-32 object-contain relative transition-transform hover:scale-105" alt="Logo" />
+                        </div>
+                        <div>
+                          <h1 className="text-6xl font-black text-[#D95D1E] tracking-tighter leading-none mb-2">
+                            श्रीमंत शिवगर्जना प्रतिष्ठान
+                          </h1>
+                          <p className="text-3xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
+                          <p className="text-base font-bold text-[#D95D1E] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                        </div>
                       </div>
-                      <div>
-                        <h1 className="text-5xl font-black text-[#D95D1E] tracking-tighter leading-none mb-1">
-                          श्रीमंत शिवगर्जना प्रतिष्ठान
-                        </h1>
-                        <p className="text-2xl font-bold text-[#2C1810]/80">वानवडी, पुणे</p>
-                        <p className="text-sm font-bold text-[#D95D1E] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                      <div className="text-right space-y-2 pt-4">
+                        <p className="font-black text-lg text-gray-800">{data.establishmentLabel}</p>
+                        <div className="h-1 w-full bg-[#D95D1E] rounded-full"></div>
                       </div>
                     </div>
-                    <div className="text-right space-y-1">
-                      <p className="font-black text-sm text-gray-800">{data.establishmentLabel}</p>
-                      <div className="h-0.5 w-full bg-[#D95D1E] rounded-full"></div>
-                    </div>
                   </div>
-                </div>
 
-                {/* Zigzag Header Border - Replaced problematic gradient with robust DOM circles */}
-                <div className="w-full h-10 bg-[#D95D1E] flex items-center mb-10 relative">
-                  <div className="absolute inset-x-0 -bottom-5 flex overflow-hidden">
-                    {[...Array(25)].map((_, i) => (
-                      <div key={i} className="w-10 h-10 bg-[#D95D1E] rounded-full shrink-0 -mt-5" />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="px-16 flex-1 flex flex-col">
-                  <div className="flex justify-between items-start mt-4">
-                    <div className="space-y-1">
-                      <span className="block font-bold text-lg">{data.toLabel}</span>
-                      <p className="font-bold text-lg">{data.toName}</p>
-                      <p className="font-bold text-lg">{data.toDept}</p>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold text-lg">{data.dateLabel} {data.date}</span>
+                  {/* Zigzag Header Border */}
+                  <div className="w-full h-12 bg-[#D95D1E] flex items-center mb-12 relative">
+                    <div className="absolute inset-x-0 -bottom-6 flex overflow-hidden">
+                      {[...Array(30)].map((_, i) => (
+                        <div key={i} className="w-12 h-12 bg-[#D95D1E] rounded-full shrink-0 -mt-6" />
+                      ))}
                     </div>
                   </div>
 
-                  <div className="mt-12 flex justify-end pr-4">
-                    <div className="text-right space-y-1 border-r-8 border-[#D95D1E] pr-6 bg-gray-50 p-4 rounded-l-2xl shadow-sm">
-                      <span className="block font-black italic text-[10px] text-[#D95D1E] uppercase tracking-[0.2em] mb-1">{data.applicantLabel}</span>
-                      <p className="font-black text-2xl text-[#2C1810] leading-none">{data.applicant}</p>
-                      <p className="text-[12px] font-bold text-gray-600 max-w-[250px] leading-relaxed mt-2">{data.address}</p>
+                  {/* Content Area */}
+                  <div className="px-20 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start mt-6">
+                      <div className="space-y-2 text-xl">
+                        <span className="block font-bold text-[#D95D1E] text-sm uppercase tracking-widest">{data.toLabel}</span>
+                        <p className="font-black text-[#2C1810]">{data.toName}</p>
+                        <p className="font-bold text-gray-600">{data.toDept}</p>
+                      </div>
+                      <div className="text-right text-xl font-bold">
+                        <span className="text-gray-400 text-sm uppercase tracking-widest block mb-1">Date</span>
+                        {data.dateLabel} {data.date}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="mt-16 text-center">
-                    <div className="inline-block relative">
-                      <h2 className="text-2xl font-black text-[#2C1810] px-4 py-1 relative z-10">
-                        {data.subjectLabel} {data.subject}
-                      </h2>
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D95D1E] rounded-full"></div>
+                    <div className="mt-14 flex justify-end">
+                      <div className="text-right space-y-2 border-r-[12px] border-[#D95D1E] pr-8 bg-gray-50/50 p-6 rounded-l-[32px] shadow-sm max-w-[400px]">
+                        <span className="block font-black italic text-xs text-[#D95D1E] uppercase tracking-[0.3em] mb-2">{data.applicantLabel}</span>
+                        <p className="font-black text-3xl text-[#2C1810] leading-none mb-2">{data.applicant}</p>
+                        <p className="text-sm font-bold text-gray-500 leading-relaxed">{data.address}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="mt-16 space-y-8">
-                    <p className="font-bold text-xl">महोदय,</p>
-                    <p className="text-xl leading-[1.8] text-justify font-medium text-gray-800 indent-16">
-                      {data.content}
-                    </p>
-                  </div>
+                    <div className="mt-20 text-center">
+                      <div className="inline-block relative">
+                        <h2 className="text-3xl font-black text-[#2C1810] px-8 py-2 relative z-10 bg-white border-2 border-[#D95D1E] rounded-full shadow-lg">
+                          {data.subjectLabel} {data.subject}
+                        </h2>
+                      </div>
+                    </div>
 
-                  <div className="flex-1 mt-20 flex flex-col justify-end pb-20">
-                    <div className="flex justify-end pr-8">
-                      <div className="text-center space-y-12">
-                        <p className="font-bold text-xl">{data.closingLabel}</p>
-                        <div className="space-y-2">
-                          <p className="font-bold text-xl border-t border-gray-200 pt-2">{data.signLabel}</p>
-                          <p className="font-black text-2xl text-[#D95D1E]">{data.applicant}</p>
-                          <p className="font-bold text-lg">{data.phoneLabel} {data.phone}</p>
+                    <div className="mt-20 space-y-10">
+                      <p className="font-bold text-2xl">महोदय,</p>
+                      <p className="text-2xl leading-[1.85] text-justify font-medium text-gray-800 indent-24">
+                        {data.content}
+                      </p>
+                    </div>
+
+                    <div className="flex-1 mt-24 flex flex-col justify-end pb-24">
+                      <div className="flex justify-end pr-12">
+                        <div className="text-center space-y-16">
+                          <p className="font-bold text-2xl text-gray-800">{data.closingLabel}</p>
+                          <div className="space-y-3">
+                            <div className="h-px w-full bg-gray-200 mb-4 mx-auto"></div>
+                            <p className="font-black text-3xl text-[#D95D1E] mb-1">{data.applicant}</p>
+                            <p className="font-bold text-xl text-gray-600">{data.phoneLabel} {data.phone}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Professional Footer Bar */}
-                <div className="h-16 bg-[#D95D1E] flex items-center justify-center px-12 relative overflow-hidden mt-auto">
-                  <p className="text-white font-black text-xs tracking-[0.2em] relative z-10 uppercase text-center leading-relaxed">
-                    {data.footerText}
-                  </p>
+                  {/* Professional Footer Bar */}
+                  <div className="h-20 bg-[#D95D1E] flex items-center justify-center px-20 relative overflow-hidden mt-auto">
+                    <p className="text-white font-black text-sm tracking-[0.25em] relative z-10 uppercase text-center leading-relaxed">
+                      {data.footerText}
+                    </p>
+                    <div className="absolute top-0 right-0 w-40 h-full bg-white/10 skew-x-[-45] -mr-20"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1720,57 +1758,51 @@ const LogsTab = () => {
         </div>
       </div>
 
-      <div className="bg-white lg:border border-gray-100 lg:rounded-3xl shadow-sm overflow-hidden">
+      <div className="bg-white lg:border border-gray-100 lg:rounded-3xl shadow-sm overflow-hidden border border-gray-100 rounded-2xl">
         {/* Desktop Header */}
         <div className="hidden lg:grid grid-cols-12 gap-4 p-5 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 border-b border-gray-100">
-          <div className="col-span-3">Time & Date</div>
+          <div className="col-span-2">Time & Date</div>
           <div className="col-span-2">User</div>
           <div className="col-span-2">Action</div>
-          <div className="col-span-5">Details</div>
+          <div className="col-span-6">Details</div>
         </div>
 
         {/* List */}
-        <div className="divide-y divide-gray-50 max-h-[75vh] overflow-y-auto custom-scrollbar p-2 lg:p-0">
+        <div className="divide-y divide-gray-50 max-h-[75vh] overflow-y-auto custom-scrollbar">
           {logs?.length === 0 ? (
             <div className="p-10 text-center text-gray-400 text-sm">No logs found. Actions will appear here.</div>
           ) : (
             logs?.map((log) => (
-              <div key={log.id} className="lg:grid lg:grid-cols-12 gap-4 p-4 lg:p-5 items-center hover:bg-gray-50/50 transition-colors bg-white lg:bg-transparent rounded-2xl lg:rounded-none mb-3 lg:mb-0 border lg:border-none border-gray-100/50 lg:border-transparent shadow-sm lg:shadow-none">
+              <div key={log.id} className="lg:grid lg:grid-cols-12 gap-4 p-4 lg:p-5 items-center hover:bg-gray-50/50 transition-colors bg-white group">
                 {/* Time Section */}
-                <div className="lg:col-span-3 mb-2 lg:mb-0 flex lg:block justify-between items-center border-b lg:border-none border-gray-50 pb-2 lg:pb-0">
-                  <div>
-                    <div className="text-xs font-bold text-[#2C1810]">
-                      {new Date(log.created_at).toLocaleDateString('mr-IN')}
-                    </div>
-                    <div className="text-[10px] text-[#2C1810]/50 font-mono">
-                      {new Date(log.created_at).toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
+                <div className="lg:col-span-2 mb-2 lg:mb-0 flex lg:flex-col justify-between lg:justify-center">
+                  <div className="text-[11px] lg:text-xs font-bold text-[#2C1810]">
+                    {new Date(log.created_at).toLocaleDateString('mr-IN')}
                   </div>
-                  <div className="lg:hidden">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 px-2 py-1 rounded">
-                      {log.user_name || "System"}
-                    </div>
+                  <div className="text-[10px] text-[#2C1810]/50 font-mono">
+                    {new Date(log.created_at).toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
 
-                {/* User Section (Hidden on mobile) */}
-                <div className="hidden lg:col-span-2 lg:block">
-                  <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 px-2 py-1 rounded w-fit">
+                {/* User Section */}
+                <div className="lg:col-span-2 mb-2 lg:mb-0">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#D95D1E] bg-[#D95D1E]/5 lg:bg-[#D95D1E]/10 px-2 py-1 rounded w-fit border border-[#D95D1E]/10">
                     {log.user_name || "System"}
                   </div>
                 </div>
 
                 {/* Action Section */}
                 <div className="lg:col-span-2 mb-1 lg:mb-0">
-                  <div className="text-[10px] lg:text-xs font-black uppercase lg:font-bold text-[#2C1810]">
+                  <div className="text-[10px] lg:text-xs font-black uppercase tracking-wider text-[#2C1810]">
                     {log.action}
                   </div>
                 </div>
 
                 {/* Details Section */}
-                <div className="lg:col-span-5">
-                  <p className="text-[11px] lg:text-xs text-[#2C1810]/70 leading-relaxed italic border-l-2 lg:border-none border-[#D95D1E]/20 pl-2 lg:pl-0">
-                    "{log.details || "No details"}"
+                <div className="lg:col-span-6">
+                  <p className="text-[11px] lg:text-xs text-[#2C1810]/70 leading-relaxed bg-gray-50 lg:bg-transparent p-2 lg:p-0 rounded-lg lg:rounded-none">
+                    <span className="lg:hidden font-black text-[9px] uppercase tracking-widest text-[#2C1810]/40 block mb-1">Details:</span>
+                    {log.details || "No details"}
                   </p>
                 </div>
               </div>
@@ -1901,7 +1933,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] md:h-screen">
         {/* Header with Global Year Selector */}
-        <div className="bg-white border-b border-gray-100 p-4 md:px-12 flex items-center justify-between shrink-0">
+        <div className="bg-white border-b border-gray-100 p-4 sm:px-6 lg:px-12 flex items-center justify-between shrink-0">
           <h1 className="text-xl md:text-2xl font-black text-[#2C1810] capitalize">{activeTab}</h1>
           <div className="flex items-center gap-4">
             <span className="text-xs font-black uppercase tracking-widest text-[#2C1810]/40 hidden md:block">Active Year</span>
@@ -1909,13 +1941,13 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-12 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-12 scrollbar-hide">
           <motion.div
             key={`${activeTab}-${selectedYear}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="max-w-6xl mx-auto space-y-6 md:space-y-8 pb-20"
+            className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
           >
             {activeTab === "members" && <MembersTab year={selectedYear} />}
             {activeTab === "tasks" && <TasksTab year={selectedYear} />}

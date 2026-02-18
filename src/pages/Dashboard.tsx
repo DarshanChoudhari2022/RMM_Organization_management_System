@@ -1402,66 +1402,69 @@ const LetterheadTab = () => {
     const wasEdit = activeMode === 'edit';
     try {
       setActiveMode('preview');
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 1500)); // Wait for high-res layout
+
+      // A4 dimensions in pixels at 96 DPI
+      const a4Width = 794;
+      const a4Height = 1123;
 
       const canvas = await html2canvas(element, {
-        scale: 3,
+        scale: 4, // Higher scale for ultra-sharp text
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        windowWidth: 1200,
-        windowHeight: 1600,
+        width: a4Width,
+        height: a4Height,
+        windowWidth: a4Width,
+        windowHeight: a4Height,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
-          const body = clonedDoc.body;
-          const html = clonedDoc.documentElement;
-
-          if (body && html) {
+          if (el) {
+            // FORCE ABSOLUTE ISOLATION
+            // Clear entire body and put only the target element there
+            const body = clonedDoc.body;
+            body.innerHTML = '';
             body.style.margin = '0';
             body.style.padding = '0';
-            html.style.margin = '0';
-            html.style.padding = '0';
-          }
+            body.style.overflow = 'hidden';
+            body.style.width = `${a4Width}px`;
+            body.style.height = `${a4Height}px`;
 
-          if (el) {
+            // Style the element exactly
             el.style.transform = 'none';
-            el.style.position = 'fixed';
+            el.style.position = 'absolute';
             el.style.top = '0';
             el.style.left = '0';
-            el.style.width = '210mm';
-            el.style.height = '297mm';
             el.style.margin = '0';
             el.style.padding = '0';
+            el.style.width = `${a4Width}px`;
+            el.style.height = `${a4Height}px`;
+            el.style.minHeight = `${a4Height}px`;
+            el.style.display = 'flex';
+            el.style.flexDirection = 'column';
             el.style.boxShadow = 'none';
-            el.style.zIndex = '9999';
+            el.style.border = 'none';
 
-            let p = el.parentElement;
-            while (p) {
-              p.style.transform = 'none';
-              p.style.margin = '0';
-              p.style.padding = '0';
-              p.style.overflow = 'visible';
-              p.style.width = 'auto';
-              p.style.height = 'auto';
-              p = p.parentElement;
-            }
+            body.appendChild(el);
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const imgData = canvas.toDataURL('image/png', 1.0);
       const pdf = new jsPDF({
         orientation: 'p',
-        unit: 'mm',
-        format: 'a4',
+        unit: 'px',
+        format: [a4Width, a4Height],
+        hotfixes: ['px_scaling']
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Letterhead_${new Date().getTime()}.pdf`);
+      pdf.addImage(imgData, 'PNG', 0, 0, a4Width, a4Height);
+      pdf.save(`Shivgarjana_Letterhead_${new Date().getTime()}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {
       console.error("PDF Generation Error:", error);

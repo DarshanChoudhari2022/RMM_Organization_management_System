@@ -1394,51 +1394,56 @@ const LetterheadTab = () => {
     // Store switch back if needed
     const wasEdit = activeMode === 'edit';
     try {
-      // Force preview mode and wait for layout to stabilize
       setActiveMode('preview');
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 1500));
 
       const canvas = await html2canvas(element, {
-        scale: 4, // Ultra-high resolution for printing
+        scale: 3,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        // Pixel dimensions for A4 at 96 DPI (Standard for web capture)
-        width: 794,
-        height: 1123,
-        windowWidth: 794,
-        windowHeight: 1123,
+        windowWidth: 1200,
+        windowHeight: 1600,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
+          const body = clonedDoc.body;
+          const html = clonedDoc.documentElement;
+
+          if (body && html) {
+            body.style.margin = '0';
+            body.style.padding = '0';
+            html.style.margin = '0';
+            html.style.padding = '0';
+          }
+
           if (el) {
-            // Absolute isolation in the clone
             el.style.transform = 'none';
-            el.style.position = 'absolute';
+            el.style.position = 'fixed';
             el.style.top = '0';
             el.style.left = '0';
-            el.style.width = '794px';
-            el.style.height = '1123px';
+            el.style.width = '210mm';
+            el.style.height = '297mm';
             el.style.margin = '0';
             el.style.padding = '0';
             el.style.boxShadow = 'none';
+            el.style.zIndex = '9999';
 
-            // Ensure no parent clipping or transforms
             let p = el.parentElement;
             while (p) {
               p.style.transform = 'none';
               p.style.margin = '0';
               p.style.padding = '0';
               p.style.overflow = 'visible';
-              p.style.width = '794px';
-              p.style.height = '1123px';
+              p.style.width = 'auto';
+              p.style.height = 'auto';
               p = p.parentElement;
             }
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/png'); // PNG for best text clarity
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
@@ -1448,9 +1453,8 @@ const LetterheadTab = () => {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      // Place image exactly at the edges
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'SLOW');
-      pdf.save(`Shivgarjana_Letter_${new Date().getTime()}.pdf`);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Letterhead_${new Date().getTime()}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {
       console.error("PDF Generation Error:", error);

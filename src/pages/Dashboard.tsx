@@ -1402,22 +1402,27 @@ const LetterheadTab = () => {
     const wasEdit = activeMode === 'edit';
     try {
       setActiveMode('preview');
-      await new Promise(r => setTimeout(r, 1500)); // Wait for high-res layout
+      await new Promise(r => setTimeout(r, 1500)); // Wait for preview to fully render
 
-      // A4 dimensions in pixels at 96 DPI
-      const a4Width = 794;
-      const a4Height = 1123;
+      // A4 dimensions at 96 DPI
+      const a4WidthPx = 794;
+      const a4HeightPx = 1123;
+
+      // Measure the element's actual full scroll height
+      const naturalWidth = element.scrollWidth || a4WidthPx;
+      const naturalHeight = element.scrollHeight || a4HeightPx;
 
       const canvas = await html2canvas(element, {
-        scale: 4, // Higher scale for ultra-sharp text
+        scale: 3, // High quality rendering
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
         allowTaint: true,
-        width: a4Width,
-        height: a4Height,
-        windowWidth: a4Width,
-        windowHeight: a4Height,
+        // Capture the FULL content, not just visible viewport
+        width: naturalWidth,
+        height: naturalHeight,
+        windowWidth: naturalWidth,
+        windowHeight: naturalHeight,
         x: 0,
         y: 0,
         scrollX: 0,
@@ -1425,45 +1430,65 @@ const LetterheadTab = () => {
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('letter-preview');
           if (el) {
-            // FORCE ABSOLUTE ISOLATION
-            // Clear entire body and put only the target element there
             const body = clonedDoc.body;
             body.innerHTML = '';
             body.style.margin = '0';
             body.style.padding = '0';
-            body.style.overflow = 'hidden';
-            body.style.width = `${a4Width}px`;
-            body.style.height = `${a4Height}px`;
+            body.style.background = '#ffffff';
 
-            // Style the element exactly
+            // CRITICAL: Do NOT constrain height — let content flow naturally
             el.style.transform = 'none';
-            el.style.position = 'absolute';
+            el.style.position = 'relative';
             el.style.top = '0';
             el.style.left = '0';
             el.style.margin = '0';
             el.style.padding = '0';
-            el.style.width = `${a4Width}px`;
-            el.style.height = `${a4Height}px`;
-            el.style.minHeight = `${a4Height}px`;
+            el.style.width = `${naturalWidth}px`;
+            // Remove any max-height/height constraints so full content renders
+            el.style.height = 'auto';
+            el.style.minHeight = `${naturalHeight}px`;
+            el.style.maxHeight = 'none';
+            el.style.overflow = 'visible';
             el.style.display = 'flex';
             el.style.flexDirection = 'column';
             el.style.boxShadow = 'none';
             el.style.border = 'none';
+            // Ensure footer doesn't get pushed or clipped
+            el.style.pageBreakInside = 'avoid';
 
+            body.style.width = `${naturalWidth}px`;
+            body.style.height = 'auto';
+            body.style.overflow = 'visible';
             body.appendChild(el);
           }
         }
       });
 
+      // Calculate canvas dimensions after render
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
       const imgData = canvas.toDataURL('image/png', 1.0);
+
+      // Create PDF at A4 dimensions
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'px',
-        format: [a4Width, a4Height],
+        format: [a4WidthPx, a4HeightPx],
         hotfixes: ['px_scaling']
       });
 
-      pdf.addImage(imgData, 'PNG', 0, 0, a4Width, a4Height);
+      // Scale image to fit exactly within the A4 page (maintain aspect ratio)
+      const scaleX = a4WidthPx / canvasWidth;
+      const scaleY = a4HeightPx / canvasHeight;
+      const scale = Math.min(scaleX, scaleY); // fit-within scaling
+
+      const imgW = canvasWidth * scale;
+      const imgH = canvasHeight * scale;
+      const offsetX = (a4WidthPx - imgW) / 2;
+      const offsetY = (a4HeightPx - imgH) / 2;
+
+      pdf.addImage(imgData, 'PNG', offsetX, offsetY, imgW, imgH);
       pdf.save(`Shivgarjana_Letterhead_${new Date().getTime()}.pdf`);
       toast.success("डाउनलोड पूर्ण झाले!", { id: toastId });
     } catch (error: any) {

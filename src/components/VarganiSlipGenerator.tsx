@@ -17,36 +17,37 @@ import { toast } from "sonner";
 
 const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
     <div style={{
-        width: '780px',
+        width: '800px',
         background: '#FFFFFF',
-        fontFamily: "'Noto Sans Devanagari', 'Segoe UI', 'Mangal', Arial, sans-serif",
-        overflow: 'hidden',
-        border: '4px solid #2E3590',
-        position: 'relative'
+        fontFamily: "'Noto Sans Devanagari', 'Mangal', 'Segoe UI', Arial, sans-serif",
+        overflow: 'visible',
+        border: '5px solid #1a237e',
+        position: 'relative',
+        boxSizing: 'border-box'
     }}>
         {/* Inner decorative border */}
         <div style={{
-            position: 'absolute', inset: '4px',
-            border: '2px solid #5A5AC0',
+            position: 'absolute', inset: '5px',
+            border: '2px solid #5c6bc0',
             pointerEvents: 'none',
             zIndex: 10
         }} />
 
-        {/* ====== HEADER — Blue Gradient with Portraits & Mandal Name ====== */}
+        {/* ====== HEADER â€” Blue Gradient with Portraits ====== */}
         <div style={{
-            background: 'linear-gradient(135deg, #1a237e 0%, #283593 25%, #3949ab 50%, #5c6bc0 75%, #7986cb 100%)',
+            background: 'linear-gradient(135deg, #0d1257 0%, #1a237e 20%, #283593 40%, #3949ab 60%, #5c6bc0 80%, #7986cb 100%)',
             padding: '0',
             position: 'relative',
             overflow: 'hidden',
-            height: '160px'
+            height: '180px'
         }}>
-            {/* Stupa watermark in header center */}
+            {/* Stupa watermark in header */}
             <div style={{
                 position: 'absolute',
                 top: '50%', left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '200px', height: '150px',
-                opacity: 0.1,
+                width: '220px', height: '160px',
+                opacity: 0.08,
                 zIndex: 0,
                 pointerEvents: 'none'
             }}>
@@ -58,11 +59,11 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 />
             </div>
 
-            {/* Ambedkar Portrait — Left Side */}
+            {/* Ambedkar Portrait â€” Left */}
             <div style={{
                 position: 'absolute',
-                left: '10px', bottom: '0',
-                width: '130px', height: '150px',
+                left: '14px', bottom: '0',
+                width: '120px', height: '160px',
                 zIndex: 3
             }}>
                 <img
@@ -71,17 +72,17 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                     style={{
                         width: '100%', height: '100%', objectFit: 'contain',
                         objectPosition: 'bottom',
-                        filter: 'drop-shadow(2px 2px 6px rgba(0,0,0,0.4))'
+                        filter: 'drop-shadow(2px 2px 8px rgba(0,0,0,0.5))'
                     }}
                     crossOrigin="anonymous"
                 />
             </div>
 
-            {/* Shivaji Maharaj Portrait — Right Side */}
+            {/* Shivaji Maharaj â€” Right */}
             <div style={{
                 position: 'absolute',
-                right: '10px', bottom: '0',
-                width: '120px', height: '140px',
+                right: '14px', bottom: '0',
+                width: '110px', height: '150px',
                 zIndex: 3
             }}>
                 <img
@@ -90,71 +91,68 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                     style={{
                         width: '100%', height: '100%', objectFit: 'contain',
                         objectPosition: 'bottom',
-                        filter: 'drop-shadow(2px 2px 6px rgba(0,0,0,0.4))'
+                        filter: 'drop-shadow(2px 2px 8px rgba(0,0,0,0.5))'
                     }}
                     crossOrigin="anonymous"
                 />
             </div>
 
-            {/* Center Text Content */}
+            {/* Center Text */}
             <div style={{
                 position: 'relative', zIndex: 2,
                 textAlign: 'center',
-                padding: '16px 150px 0'
+                padding: '20px 150px 0'
             }}>
-                {/* Mandal Name — Large */}
                 <div style={{
-                    fontSize: '36px', fontWeight: 900, color: 'white',
-                    letterSpacing: '4px', lineHeight: 1.2,
-                    textShadow: '0 3px 8px rgba(0,0,0,0.4)',
-                    marginBottom: '4px'
+                    fontSize: '42px', fontWeight: 900, color: 'white',
+                    letterSpacing: '5px', lineHeight: 1.15,
+                    textShadow: '0 3px 10px rgba(0,0,0,0.5)',
+                    marginBottom: '6px'
                 }}>
-                    राहुल मित्र मंडळ
+                    à¤°à¤¾à¤¹à¥à¤² à¤®à¤¿à¤¤à¥à¤° à¤®à¤‚à¤¡à¤³
                 </div>
-
-                {/* Address */}
                 <div style={{
-                    fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.9)',
-                    letterSpacing: '2px', marginBottom: '8px'
+                    fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.85)',
+                    letterSpacing: '3px'
                 }}>
-                    बारथे बस्ती, दायोडी गावठाण, पुणे-१२.
+                    à¤¬à¤¾à¤°à¤¥à¥‡ à¤¬à¤¸à¥à¤¤à¥€, à¤¦à¤¾à¤¯à¥‹à¤¡à¥€ à¤—à¤¾à¤µà¤ à¤¾à¤£, à¤ªà¥à¤£à¥‡-à¥§à¥¨.
                 </div>
             </div>
 
-            {/* Event Title Bar — Darker blue strip */}
+            {/* Event Title â€” Bottom Strip */}
             <div style={{
                 position: 'absolute',
                 bottom: '0', left: '0', right: '0',
-                background: 'linear-gradient(90deg, rgba(26,35,126,0.95), rgba(40,53,147,0.9), rgba(26,35,126,0.95))',
-                padding: '8px 150px',
+                background: 'linear-gradient(90deg, rgba(13,18,87,0.95), rgba(26,35,126,0.9), rgba(13,18,87,0.95))',
+                padding: '10px 40px',
                 textAlign: 'center',
                 zIndex: 4,
                 borderTop: '1px solid rgba(255,255,255,0.15)'
             }}>
                 <div style={{
-                    fontSize: '16px', fontWeight: 900, color: 'white',
-                    letterSpacing: '3px', lineHeight: 1.3,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.3)'
+                    fontSize: '18px', fontWeight: 900, color: 'white',
+                    letterSpacing: '4px', lineHeight: 1.3,
+                    textShadow: '0 2px 6px rgba(0,0,0,0.4)'
                 }}>
-                    भारतरत्न डॉ. बाबासाहेब आंबेडकर जयंती महोत्सव
+                    à¤­à¤¾à¤°à¤¤à¤°à¤¤à¥à¤¨ à¤¡à¥‰. à¤¬à¤¾à¤¬à¤¾à¤¸à¤¾à¤¹à¥‡à¤¬ à¤†à¤‚à¤¬à¥‡à¤¡à¤•à¤° à¤œà¤¯à¤‚à¤¤à¥€ à¤®à¤¹à¥‹à¤¤à¥à¤¸à¤µ
                 </div>
             </div>
         </div>
 
-        {/* ====== FORM BODY — White with light stupa watermark ====== */}
+        {/* ====== FORM BODY â€” Cheque Style ====== */}
         <div style={{
             position: 'relative',
-            padding: '22px 32px 18px',
+            padding: '28px 36px 24px',
             background: '#FFFFFF',
-            minHeight: '260px'
+            minHeight: '300px'
         }}>
-            {/* Stupa watermark — center of form body */}
+            {/* Stupa watermark in body */}
             <div style={{
                 position: 'absolute',
                 top: '50%', left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '280px', height: '200px',
-                opacity: 0.06,
+                width: '300px', height: '220px',
+                opacity: 0.04,
                 zIndex: 0,
                 pointerEvents: 'none'
             }}>
@@ -166,30 +164,27 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 />
             </div>
 
-            {/* Form Content */}
             <div style={{ position: 'relative', zIndex: 2 }}>
 
-                {/* Row 1: पावती क्र. & दिनांक */}
+                {/* Row 1: à¤ªà¤¾à¤µà¤¤à¥€ à¤•à¥à¤°. & à¤¦à¤¿à¤¨à¤¾à¤‚à¤• */}
                 <div style={{
                     display: 'flex', justifyContent: 'space-between',
-                    alignItems: 'center', marginBottom: '20px',
-                    paddingBottom: '10px',
-                    borderBottom: '1.5px solid #ccc'
+                    alignItems: 'baseline', marginBottom: '28px'
                 }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222' }}>
-                        पावती क्र. : <span style={{
-                            fontWeight: 900, color: '#1a237e', fontSize: '17px',
-                            borderBottom: '2px dotted #999', paddingBottom: '2px',
-                            paddingLeft: '8px', paddingRight: '20px', minWidth: '120px',
-                            display: 'inline-block'
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a' }}>
+                        à¤ªà¤¾à¤µà¤¤à¥€ à¤•à¥à¤°. : <span style={{
+                            fontWeight: 900, color: '#1a237e', fontSize: '18px',
+                            borderBottom: '2px solid #333', paddingBottom: '2px',
+                            paddingLeft: '10px', paddingRight: '30px',
+                            display: 'inline-block', minWidth: '160px'
                         }}>{slip.slip_number || 'N/A'}</span>
                     </div>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222' }}>
-                        दिनांक : <span style={{
-                            fontWeight: 900, color: '#1a237e', fontSize: '17px',
-                            borderBottom: '2px dotted #999', paddingBottom: '2px',
-                            paddingLeft: '8px', paddingRight: '8px',
-                            display: 'inline-block'
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a' }}>
+                        à¤¦à¤¿à¤¨à¤¾à¤‚à¤• : <span style={{
+                            fontWeight: 900, color: '#1a237e', fontSize: '18px',
+                            borderBottom: '2px solid #333', paddingBottom: '2px',
+                            paddingLeft: '10px', paddingRight: '10px',
+                            display: 'inline-block', minWidth: '140px'
                         }}>
                             {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
                                 day: '2-digit', month: '2-digit', year: 'numeric'
@@ -198,89 +193,70 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                     </div>
                 </div>
 
-                {/* Row 2: आयु. (Name) — full width */}
+                {/* Row 2: à¤†à¤¯à¥. _____________ à¤¯à¤¾à¤‚à¤œà¤•à¤¡à¥‚à¤¨ (SAME LINE like cheque) */}
                 <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '18px', gap: '12px'
+                    marginBottom: '28px'
                 }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222', whiteSpace: 'nowrap' }}>
-                        आयु.
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingRight: '10px' }}>
+                        à¤†à¤¯à¥.
                     </div>
                     <div style={{
                         flex: 1, fontSize: '18px', fontWeight: 900, color: '#111',
-                        borderBottom: '2px dotted #999', paddingBottom: '4px',
-                        paddingLeft: '10px', letterSpacing: '0.5px'
+                        borderBottom: '2px solid #333', paddingBottom: '4px',
+                        paddingLeft: '10px', paddingRight: '10px',
+                        textAlign: 'left', minHeight: '24px'
                     }}>
                         {slip.name}
                     </div>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingLeft: '10px' }}>
+                        à¤¯à¤¾à¤‚à¤œà¤•à¤¡à¥‚à¤¨
+                    </div>
                 </div>
 
-                {/* Row 3: यांजकडून (Shop + Location) */}
-                <div style={{
-                    display: 'flex', alignItems: 'baseline',
-                    marginBottom: '18px', gap: '12px'
-                }}>
-                    <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
-                        यांजकडून
-                    </div>
+                {/* Row 3: Shop + Location + Address â€” full width underline */}
+                <div style={{ marginBottom: '24px' }}>
                     <div style={{
-                        flex: 1, fontSize: '17px', fontWeight: 800, color: '#111',
-                        borderBottom: '2px dotted #999', paddingBottom: '4px',
-                        paddingLeft: '10px'
+                        fontSize: '17px', fontWeight: 800, color: '#111',
+                        borderBottom: '2px solid #333', paddingBottom: '4px',
+                        paddingLeft: '4px', minHeight: '24px'
                     }}>
                         {slip.shop_name}{slip.location ? ` ,${slip.location}` : ''}
+                        {slip.address ? ` , ${slip.address}` : ''}
                     </div>
                 </div>
 
-                {/* Row 4: पत्ता (Address) */}
-                {slip.address && (
-                    <div style={{
-                        display: 'flex', alignItems: 'baseline',
-                        marginBottom: '14px', gap: '10px'
-                    }}>
-                        <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
-                            पत्ता
-                        </div>
-                        <div style={{
-                            flex: 1, fontSize: '15px', fontWeight: 800, color: '#111',
-                            borderBottom: '2px dotted #aaa', paddingBottom: '3px',
-                            paddingLeft: '8px'
-                        }}>
-                            {slip.address}
-                        </div>
-                    </div>
-                )}
-
-                {/* Row 5: मोबाईल */}
+                {/* Row 4: à¤®à¥‹à¤¬à¤¾à¤ˆà¤² â€” full width underline */}
                 <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '18px', gap: '12px'
+                    marginBottom: '24px'
                 }}>
-                    <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
-                        मोबाईल
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingRight: '10px' }}>
+                        à¤®à¥‹à¤¬à¤¾à¤ˆà¤²
                     </div>
                     <div style={{
                         flex: 1, fontSize: '17px', fontWeight: 900, color: '#111',
-                        borderBottom: '2px dotted #999', paddingBottom: '4px',
-                        paddingLeft: '10px', fontFamily: "'Segoe UI', monospace"
+                        borderBottom: '2px solid #333', paddingBottom: '4px',
+                        paddingLeft: '10px', minHeight: '24px',
+                        fontFamily: "'Segoe UI', monospace", letterSpacing: '1px'
                     }}>
                         {slip.mobile}
                     </div>
                 </div>
 
-                {/* Purpose Line */}
+                {/* Row 5: Purpose text with underline */}
                 <div style={{
-                    fontSize: '15px', fontWeight: 700, color: '#222',
-                    marginBottom: '8px', lineHeight: 1.7,
-                    borderBottom: '1.5px solid #ddd', paddingBottom: '8px'
+                    fontSize: '15px', fontWeight: 700, color: '#1a1a1a',
+                    marginBottom: '8px', lineHeight: 1.8,
+                    borderBottom: '2px solid #333', paddingBottom: '6px'
                 }}>
-                    भारतरत्न डॉ. बाबासाहेब आंबेडकर जयंती महोत्सवानिमित्त अक्षरी रुपये
+                    à¤­à¤¾à¤°à¤¤à¤°à¤¤à¥à¤¨ à¤¡à¥‰. à¤¬à¤¾à¤¬à¤¾à¤¸à¤¾à¤¹à¥‡à¤¬ à¤†à¤‚à¤¬à¥‡à¤¡à¤•à¤° à¤œà¤¯à¤‚à¤¤à¥€ à¤®à¤¹à¥‹à¤¤à¥à¤¸à¤µà¤¾à¤¨à¤¿à¤®à¤¿à¤¤à¥à¤¤ à¤…à¤•à¥à¤·à¤°à¥€ à¤°à¥à¤ªà¤¯à¥‡
                 </div>
 
-                {/* Amount Row with ₹ Badge */}
+                {/* Row 6: Amount display */}
                 <div style={{
                     display: 'flex', alignItems: 'center',
-                    marginTop: '12px', marginBottom: '14px', gap: '16px'
+                    marginTop: '16px', marginBottom: '16px', gap: '16px'
                 }}>
                     <div style={{
                         width: '44px', height: '44px',
@@ -291,34 +267,35 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                         boxShadow: '0 3px 10px rgba(26,35,126,0.35)',
                         flexShrink: 0
                     }}>
-                        ₹
+                        â‚¹
                     </div>
                     <div style={{
-                        fontSize: '34px', fontWeight: 900, color: '#1a237e',
-                        letterSpacing: '1px', lineHeight: 1
+                        flex: 1, fontSize: '34px', fontWeight: 900, color: '#1a237e',
+                        letterSpacing: '1px', lineHeight: 1,
+                        borderBottom: '2px solid #333', paddingBottom: '4px'
                     }}>
                         {Number(slip.amount).toLocaleString('en-IN')}/-
                     </div>
                 </div>
 
-                {/* Acknowledgement line */}
+                {/* Row 7: Acknowledgement */}
                 <div style={{
-                    fontSize: '15px', fontWeight: 700, color: '#222',
-                    marginBottom: '8px', lineHeight: 1.5,
-                    borderTop: '1.5px solid #ddd', paddingTop: '10px'
+                    fontSize: '16px', fontWeight: 700, color: '#1a1a1a',
+                    marginTop: '12px', marginBottom: '12px', lineHeight: 1.6,
+                    paddingTop: '8px'
                 }}>
-                    देणगी रोख मिळाली. आभारी आहोत!
+                    à¤¦à¥‡à¤£à¤—à¥€ à¤°à¥‹à¤– à¤®à¤¿à¤³à¤¾à¤²à¥€. à¤†à¤­à¤¾à¤°à¥€ à¤†à¤¹à¥‹à¤¤!
                 </div>
 
                 {/* Confirmed By */}
                 {slip.confirmed_by_name && (
                     <div style={{
                         fontSize: '12px', fontWeight: 600, color: '#555',
-                        marginTop: '6px'
+                        marginTop: '4px'
                     }}>
                         Confirmed by: <span style={{ fontWeight: 900, color: '#1a237e' }}>{slip.confirmed_by_name}</span>
                         {slip.confirmed_at && (
-                            <span style={{ marginLeft: '8px', color: '#999' }}>
+                            <span style={{ marginLeft: '8px', color: '#888' }}>
                                 ({new Date(slip.confirmed_at).toLocaleString('en-IN', {
                                     day: '2-digit', month: 'short', year: 'numeric',
                                     hour: '2-digit', minute: '2-digit', hour12: true
@@ -330,54 +307,53 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
             </div>
         </div>
 
-        {/* ====== FOOTER — Blue Gradient with ₹, धन्यवाद!, प्रासकर्ता ====== */}
+        {/* ====== FOOTER â€” Blue with â‚¹, à¤§à¤¨à¥à¤¯à¤µà¤¾à¤¦!, à¤ªà¥à¤°à¤¾à¤¸à¤•à¤°à¥à¤¤à¤¾ ====== */}
         <div style={{
-            background: 'linear-gradient(90deg, #1a237e, #283593, #3949ab, #283593, #1a237e)',
-            padding: '16px 32px',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            position: 'relative'
+            background: 'linear-gradient(90deg, #0d1257, #1a237e, #283593, #1a237e, #0d1257)',
+            padding: '20px 36px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
         }}>
-            {/* Left: ₹ Badge */}
+            {/* Left: Gold â‚¹ Badge */}
             <div style={{
-                width: '40px', height: '40px',
-                background: 'rgba(255,255,255,0.12)',
+                width: '48px', height: '48px',
+                background: '#FFD700',
                 borderRadius: '8px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontSize: '20px', fontWeight: 900,
-                border: '1.5px solid rgba(255,255,255,0.2)'
+                color: '#1a237e', fontSize: '24px', fontWeight: 900,
+                boxShadow: '0 3px 10px rgba(0,0,0,0.3)'
             }}>
-                ₹
+                â‚¹
             </div>
 
-            {/* Center: धन्यवाद! */}
+            {/* Center: à¤§à¤¨à¥à¤¯à¤µà¤¾à¤¦! */}
             <div style={{
-                fontSize: '32px', fontWeight: 900, color: '#FF3D00',
-                textShadow: '0 2px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255,61,0,0.3)',
+                fontSize: '36px', fontWeight: 900, color: '#D32F2F',
+                textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 0 30px rgba(211,47,47,0.3)',
                 fontStyle: 'italic',
-                letterSpacing: '4px'
+                letterSpacing: '5px'
             }}>
-                धन्यवाद!
+                à¤§à¤¨à¥à¤¯à¤µà¤¾à¤¦!
             </div>
 
-            {/* Right: प्रासकर्ता */}
+            {/* Right: à¤ªà¥à¤°à¤¾à¤¸à¤•à¤°à¥à¤¤à¤¾ */}
             <div style={{
-                fontSize: '16px', fontWeight: 900, color: 'white',
-                letterSpacing: '3px',
-                textShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                fontSize: '18px', fontWeight: 900, color: 'white',
+                letterSpacing: '4px',
+                textShadow: '0 2px 4px rgba(0,0,0,0.4)'
             }}>
-                प्रासकर्ता
+                à¤ªà¥à¤°à¤¾à¤¸à¤•à¤°à¥à¤¤à¤¾
             </div>
         </div>
 
         {/* ====== Powered By ====== */}
         <div style={{
-            padding: '8px 24px',
+            padding: '10px 36px',
             textAlign: 'center',
-            background: '#0d1442'
+            background: '#0a0f3a'
         }}>
             <div style={{
-                fontSize: '10px', color: '#9999BB', fontWeight: 700,
-                letterSpacing: '4px', textTransform: 'uppercase'
+                fontSize: '11px', color: '#AAAACC', fontWeight: 700,
+                letterSpacing: '5px', textTransform: 'uppercase'
             }}>
                 Powered by <span style={{ color: '#FFD700', fontWeight: 900 }}>busyhub.in</span>
             </div>
@@ -496,7 +472,7 @@ const VarganiSlipTab = () => {
                 status: editData.status,
                 tentative_date: editData.status === 'pending' ? editData.tentative_date : null
             });
-            toast.success(`✅ Slip updated for ${editData.name}`);
+            toast.success(`âœ… Slip updated for ${editData.name}`);
             setIsEditOpen(false);
             setEditingSlip(null);
         } catch (err: any) {
@@ -509,12 +485,12 @@ const VarganiSlipTab = () => {
 
     // Handle form submit
     const handleSubmit = async () => {
-        if (!formData.name.trim()) return toast.error("कृपया नाव भरा / Please enter name");
-        if (!formData.shop_name.trim()) return toast.error("कृपया दुकानाचे नाव भरा / Please enter shop name");
-        if (!formData.amount || parseFloat(formData.amount) <= 0) return toast.error("कृपया रक्कम भरा / Please enter valid amount");
-        if (!formData.location.trim()) return toast.error("कृपया ठिकाण भरा / Please enter location");
-        if (!isValidMobile(formData.mobile)) return toast.error("कृपया वैध 10 अंकी WhatsApp नंबर भरा / Please enter valid 10-digit WhatsApp number");
-        if (formData.paymentStatus === 'pending' && !formData.tentative_date) return toast.error("कृपया अंदाजित तारीख भरा / Please enter tentative date");
+        if (!formData.name.trim()) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤¨à¤¾à¤µ à¤­à¤°à¤¾ / Please enter name");
+        if (!formData.shop_name.trim()) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤¦à¥à¤•à¤¾à¤¨à¤¾à¤šà¥‡ à¤¨à¤¾à¤µ à¤­à¤°à¤¾ / Please enter shop name");
+        if (!formData.amount || parseFloat(formData.amount) <= 0) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤°à¤•à¥à¤•à¤® à¤­à¤°à¤¾ / Please enter valid amount");
+        if (!formData.location.trim()) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤ à¤¿à¤•à¤¾à¤£ à¤­à¤°à¤¾ / Please enter location");
+        if (!isValidMobile(formData.mobile)) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤µà¥ˆà¤§ 10 à¤…à¤‚à¤•à¥€ WhatsApp à¤¨à¤‚à¤¬à¤° à¤­à¤°à¤¾ / Please enter valid 10-digit WhatsApp number");
+        if (formData.paymentStatus === 'pending' && !formData.tentative_date) return toast.error("à¤•à¥ƒà¤ªà¤¯à¤¾ à¤…à¤‚à¤¦à¤¾à¤œà¤¿à¤¤ à¤¤à¤¾à¤°à¥€à¤– à¤­à¤°à¤¾ / Please enter tentative date");
 
         try {
             const result = await addSlip.mutateAsync({
@@ -529,8 +505,8 @@ const VarganiSlipTab = () => {
             });
 
             toast.success(formData.paymentStatus === 'paid'
-                ? `✅ पावती तयार! / Slip generated for ${formData.name}`
-                : `⏳ Pending entry saved for ${formData.name}`
+                ? `âœ… à¤ªà¤¾à¤µà¤¤à¥€ à¤¤à¤¯à¤¾à¤°! / Slip generated for ${formData.name}`
+                : `â³ Pending entry saved for ${formData.name}`
             );
 
             // If paid, auto-trigger slip download
@@ -541,7 +517,7 @@ const VarganiSlipTab = () => {
             resetForm();
             setIsFormOpen(false);
         } catch (err: any) {
-            toast.error(err.message || "त्रुटी / Error saving slip");
+            toast.error(err.message || "à¤¤à¥à¤°à¥à¤Ÿà¥€ / Error saving slip");
         }
     };
 
@@ -550,7 +526,7 @@ const VarganiSlipTab = () => {
         setConfirmingId(id);
         try {
             const result = await confirmPayment.mutateAsync(id);
-            toast.success(`✅ Payment confirmed for ${result.name}!`);
+            toast.success(`âœ… Payment confirmed for ${result.name}!`);
             // Auto-download the slip
             setTimeout(() => handleDownloadSlip(result), 500);
         } catch (err: any) {
@@ -584,7 +560,7 @@ const VarganiSlipTab = () => {
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            toast.success("📥 Slip downloaded!");
+            toast.success("ðŸ“¥ Slip downloaded!");
         } catch (err) {
             console.error("Slip generation error:", err);
             toast.error("Slip download failed. Please try again.");
@@ -623,11 +599,11 @@ const VarganiSlipTab = () => {
                 const file = new File([blob], `Vargani_${slip.slip_number}.png`, { type: 'image/png' });
                 try {
                     await navigator.share({
-                        title: `वर्गणी पावती - ${slip.name}`,
-                        text: `🚩 राहुल मित्र मंडळ - वर्गणी पावती\n\nनाव: ${slip.name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nPowered by busyhub.in`,
+                        title: `à¤µà¤°à¥à¤—à¤£à¥€ à¤ªà¤¾à¤µà¤¤à¥€ - ${slip.name}`,
+                        text: `ðŸš© à¤°à¤¾à¤¹à¥à¤² à¤®à¤¿à¤¤à¥à¤° à¤®à¤‚à¤¡à¤³ - à¤µà¤°à¥à¤—à¤£à¥€ à¤ªà¤¾à¤µà¤¤à¥€\n\nà¤¨à¤¾à¤µ: ${slip.name}\nà¤°à¤•à¥à¤•à¤®: â‚¹${Number(slip.amount).toLocaleString('en-IN')}\nà¤ªà¤¾à¤µà¤¤à¥€: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nPowered by busyhub.in`,
                         files: [file]
                     });
-                    toast.success("✅ Shared successfully!");
+                    toast.success("âœ… Shared successfully!");
                     return;
                 } catch {
                     // User cancelled or API not supported for files, fall through
@@ -640,10 +616,10 @@ const VarganiSlipTab = () => {
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            const msg = `🚩 *राहुल मित्र मंडळ - वर्गणी पावती*\n\nनाव: ${slip.name}\nदुकान: ${slip.shop_name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती क्रमांक: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nआपल्या सहकार्याबद्दल धन्यवाद! 🙏\n\n_Powered by busyhub.in_`;
+            const msg = `ðŸš© *à¤°à¤¾à¤¹à¥à¤² à¤®à¤¿à¤¤à¥à¤° à¤®à¤‚à¤¡à¤³ - à¤µà¤°à¥à¤—à¤£à¥€ à¤ªà¤¾à¤µà¤¤à¥€*\n\nà¤¨à¤¾à¤µ: ${slip.name}\nà¤¦à¥à¤•à¤¾à¤¨: ${slip.shop_name}\nà¤°à¤•à¥à¤•à¤®: â‚¹${Number(slip.amount).toLocaleString('en-IN')}\nà¤ªà¤¾à¤µà¤¤à¥€ à¤•à¥à¤°à¤®à¤¾à¤‚à¤•: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nà¤†à¤ªà¤²à¥à¤¯à¤¾ à¤¸à¤¹à¤•à¤¾à¤°à¥à¤¯à¤¾à¤¬à¤¦à¥à¤¦à¤² à¤§à¤¨à¥à¤¯à¤µà¤¾à¤¦! ðŸ™\n\n_Powered by busyhub.in_`;
             window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
 
-            toast.success("📥 Slip downloaded! WhatsApp opened.");
+            toast.success("ðŸ“¥ Slip downloaded! WhatsApp opened.");
         } catch (err) {
             console.error("Share error:", err);
             toast.error("Sharing failed. Please try again.");
@@ -693,7 +669,7 @@ const VarganiSlipTab = () => {
             {/* ======= Header ======= */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <div>
-                    <h2 className="text-xl font-display font-black text-[#0F172A]">वर्गणी पावती / Vargani Slips</h2>
+                    <h2 className="text-xl font-display font-black text-[#0F172A]">à¤µà¤°à¥à¤—à¤£à¥€ à¤ªà¤¾à¤µà¤¤à¥€ / Vargani Slips</h2>
                     <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-widest mt-1">Generate & manage vargani receipts</p>
                 </div>
                 <button
@@ -712,12 +688,12 @@ const VarganiSlipTab = () => {
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-green-600 mb-1 md:mb-2">Collected</div>
-                    <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.totalCollected.toLocaleString('en-IN')}</div>
+                    <div className="text-xl md:text-3xl font-black text-green-600">â‚¹{stats.totalCollected.toLocaleString('en-IN')}</div>
                     <div className="text-[10px] text-green-600/60 mt-1 hidden md:block">{stats.paidCount} Paid</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-red-500 mb-1 md:mb-2">Pending</div>
-                    <div className="text-xl md:text-3xl font-black text-red-500">₹{stats.totalPending.toLocaleString('en-IN')}</div>
+                    <div className="text-xl md:text-3xl font-black text-red-500">â‚¹{stats.totalPending.toLocaleString('en-IN')}</div>
                     <div className="text-[10px] text-red-500/60 mt-1 hidden md:block">{stats.pendingCount} Pending</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-green-100 rounded-2xl shadow-sm bg-green-50/30">
@@ -742,7 +718,7 @@ const VarganiSlipTab = () => {
                                 : 'text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#F5F5F0]'
                                 }`}
                         >
-                            {f === 'all' ? `All (${stats.total})` : f === 'paid' ? `✅ Paid (${stats.paidCount})` : `⏳ Pending (${stats.pendingCount})`}
+                            {f === 'all' ? `All (${stats.total})` : f === 'paid' ? `âœ… Paid (${stats.paidCount})` : `â³ Pending (${stats.pendingCount})`}
                         </button>
                     ))}
                 </div>
@@ -777,7 +753,7 @@ const VarganiSlipTab = () => {
 
                 {filteredSlips.length === 0 ? (
                     <div className="p-10 text-center">
-                        <div className="text-4xl mb-3">📃</div>
+                        <div className="text-4xl mb-3">ðŸ“ƒ</div>
                         <div className="text-[#0F172A]/60 text-sm font-bold">No slips found.</div>
                         <button
                             onClick={() => { resetForm(); setIsFormOpen(true); }}
@@ -803,7 +779,7 @@ const VarganiSlipTab = () => {
                                             </div>
                                         </div>
                                         <div className="col-span-1">
-                                            <div className="font-black text-[#0F172A] text-sm">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
+                                            <div className="font-black text-[#0F172A] text-sm">â‚¹{Number(slip.amount).toLocaleString('en-IN')}</div>
                                         </div>
                                         <div className="col-span-2">
                                             <a
@@ -830,7 +806,7 @@ const VarganiSlipTab = () => {
                                             {slip.status === 'paid' ? (
                                                 <div>
                                                     <div className="text-[10px] text-green-600 font-bold">
-                                                        ✅ {slip.confirmed_by_name}
+                                                        âœ… {slip.confirmed_by_name}
                                                     </div>
                                                     <div className="text-[9px] text-[#0F172A]/40">
                                                         {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleDateString('en-IN')}
@@ -910,7 +886,7 @@ const VarganiSlipTab = () => {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-black text-[#1D4ED8] text-lg">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
+                                            <div className="font-black text-[#1D4ED8] text-lg">â‚¹{Number(slip.amount).toLocaleString('en-IN')}</div>
                                             <div className="text-[9px] text-[#0F172A]/40 font-mono">{slip.slip_number}</div>
                                         </div>
                                     </div>
@@ -939,7 +915,7 @@ const VarganiSlipTab = () => {
 
                                     {slip.status === 'paid' && (
                                         <div className="text-[10px] text-green-600 font-bold bg-green-50 px-3 py-1.5 rounded-lg">
-                                            ✅ Confirmed by {slip.confirmed_by_name} • {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleDateString('en-IN')}
+                                            âœ… Confirmed by {slip.confirmed_by_name} â€¢ {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleDateString('en-IN')}
                                         </div>
                                     )}
 
@@ -1000,7 +976,7 @@ const VarganiSlipTab = () => {
                             {/* Modal Header */}
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-xl font-display font-black text-[#0F172A]">नवीन वर्गणी / New Entry</h3>
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">à¤¨à¤µà¥€à¤¨ à¤µà¤°à¥à¤—à¤£à¥€ / New Entry</h3>
                                     <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">Fill in contribution details</p>
                                 </div>
                                 <button onClick={() => setIsFormOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -1012,7 +988,7 @@ const VarganiSlipTab = () => {
                                 {/* Name */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <User size={10} className="inline mr-1" /> नाव / Name *
+                                        <User size={10} className="inline mr-1" /> à¤¨à¤¾à¤µ / Name *
                                     </label>
                                     <input
                                         value={formData.name}
@@ -1025,7 +1001,7 @@ const VarganiSlipTab = () => {
                                 {/* Shop Name */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <Store size={10} className="inline mr-1" /> दुकान / Shop Name *
+                                        <Store size={10} className="inline mr-1" /> à¤¦à¥à¤•à¤¾à¤¨ / Shop Name *
                                     </label>
                                     <input
                                         value={formData.shop_name}
@@ -1038,7 +1014,7 @@ const VarganiSlipTab = () => {
                                 {/* Amount */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <IndianRupee size={10} className="inline mr-1" /> रक्कम / Amount (₹) *
+                                        <IndianRupee size={10} className="inline mr-1" /> à¤°à¤•à¥à¤•à¤® / Amount (â‚¹) *
                                     </label>
                                     <input
                                         type="number"
@@ -1053,7 +1029,7 @@ const VarganiSlipTab = () => {
                                 {/* Location */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <MapPin size={10} className="inline mr-1" /> ठिकाण / Location *
+                                        <MapPin size={10} className="inline mr-1" /> à¤ à¤¿à¤•à¤¾à¤£ / Location *
                                     </label>
                                     <input
                                         value={formData.location}
@@ -1066,7 +1042,7 @@ const VarganiSlipTab = () => {
                                 {/* Address */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <Home size={10} className="inline mr-1" /> पत्ता / Address
+                                        <Home size={10} className="inline mr-1" /> à¤ªà¤¤à¥à¤¤à¤¾ / Address
                                     </label>
                                     <textarea
                                         value={formData.address}
@@ -1148,7 +1124,7 @@ const VarganiSlipTab = () => {
                                         >
                                             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                                                 <label className="block text-[10px] font-black uppercase tracking-widest text-amber-700 mb-2">
-                                                    <Calendar size={10} className="inline mr-1" /> अंदाजित तारीख / Tentative Payment Date *
+                                                    <Calendar size={10} className="inline mr-1" /> à¤…à¤‚à¤¦à¤¾à¤œà¤¿à¤¤ à¤¤à¤¾à¤°à¥€à¤– / Tentative Payment Date *
                                                 </label>
                                                 <input
                                                     type="date"
@@ -1209,7 +1185,7 @@ const VarganiSlipTab = () => {
                         >
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-xl font-display font-black text-[#0F172A]">✏️ Edit Entry</h3>
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">âœï¸ Edit Entry</h3>
                                     <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">
                                         Slip: {editingSlip.slip_number}
                                     </p>
@@ -1222,7 +1198,7 @@ const VarganiSlipTab = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <User size={10} className="inline mr-1" /> नाव / Name *
+                                        <User size={10} className="inline mr-1" /> à¤¨à¤¾à¤µ / Name *
                                     </label>
                                     <input value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
@@ -1230,7 +1206,7 @@ const VarganiSlipTab = () => {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <Store size={10} className="inline mr-1" /> दुकान / Shop Name *
+                                        <Store size={10} className="inline mr-1" /> à¤¦à¥à¤•à¤¾à¤¨ / Shop Name *
                                     </label>
                                     <input value={editData.shop_name} onChange={e => setEditData({ ...editData, shop_name: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
@@ -1238,7 +1214,7 @@ const VarganiSlipTab = () => {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <IndianRupee size={10} className="inline mr-1" /> रक्कम / Amount (₹) *
+                                        <IndianRupee size={10} className="inline mr-1" /> à¤°à¤•à¥à¤•à¤® / Amount (â‚¹) *
                                     </label>
                                     <input type="number" value={editData.amount} onChange={e => setEditData({ ...editData, amount: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20" min="1"
@@ -1246,7 +1222,7 @@ const VarganiSlipTab = () => {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <MapPin size={10} className="inline mr-1" /> ठिकाण / Location *
+                                        <MapPin size={10} className="inline mr-1" /> à¤ à¤¿à¤•à¤¾à¤£ / Location *
                                     </label>
                                     <input value={editData.location} onChange={e => setEditData({ ...editData, location: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
@@ -1254,7 +1230,7 @@ const VarganiSlipTab = () => {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <Home size={10} className="inline mr-1" /> पत्ता / Address
+                                        <Home size={10} className="inline mr-1" /> à¤ªà¤¤à¥à¤¤à¤¾ / Address
                                     </label>
                                     <textarea value={editData.address} onChange={e => setEditData({ ...editData, address: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 resize-none" rows={2}
@@ -1282,12 +1258,12 @@ const VarganiSlipTab = () => {
                                         <button type="button" onClick={() => setEditData({ ...editData, status: 'paid' })}
                                             className={`p-3 rounded-xl border-2 text-center transition-all ${editData.status === 'paid' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`}>
                                             <CheckCircle2 size={24} className={`mx-auto mb-1 ${editData.status === 'paid' ? 'text-green-500' : 'text-gray-300'}`} />
-                                            <div className={`text-xs font-black uppercase ${editData.status === 'paid' ? 'text-green-600' : 'text-gray-500'}`}>Paid ✅</div>
+                                            <div className={`text-xs font-black uppercase ${editData.status === 'paid' ? 'text-green-600' : 'text-gray-500'}`}>Paid âœ…</div>
                                         </button>
                                         <button type="button" onClick={() => setEditData({ ...editData, status: 'pending' })}
                                             className={`p-3 rounded-xl border-2 text-center transition-all ${editData.status === 'pending' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
                                             <Clock size={24} className={`mx-auto mb-1 ${editData.status === 'pending' ? 'text-amber-500' : 'text-gray-300'}`} />
-                                            <div className={`text-xs font-black uppercase ${editData.status === 'pending' ? 'text-amber-600' : 'text-gray-500'}`}>Pending ⏳</div>
+                                            <div className={`text-xs font-black uppercase ${editData.status === 'pending' ? 'text-amber-600' : 'text-gray-500'}`}>Pending â³</div>
                                         </button>
                                     </div>
                                 </div>

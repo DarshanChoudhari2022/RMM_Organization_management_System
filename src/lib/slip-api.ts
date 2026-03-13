@@ -150,6 +150,7 @@ export const useVarganiSlips = () => {
             shop_name: string;
             amount: number;
             location: string;
+            address: string;
             mobile: string;
             status: 'paid' | 'pending';
             tentative_date?: string | null;
@@ -162,6 +163,7 @@ export const useVarganiSlips = () => {
                 shop_name: newSlip.shop_name,
                 amount: newSlip.amount,
                 location: newSlip.location,
+                address: newSlip.address,
                 mobile: newSlip.mobile,
                 status: newSlip.status,
                 slip_number: slipNumber,
@@ -187,6 +189,59 @@ export const useVarganiSlips = () => {
 
             if (error) throw error;
             await createLog("Vargani Slip Created", `Slip ${slipNumber} for ${newSlip.name} - ₹${newSlip.amount} (${newSlip.status})`);
+            return data as VarganiSlip;
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
+    });
+
+    const updateSlip = useMutation({
+        mutationFn: async (update: {
+            id: string;
+            name?: string;
+            shop_name?: string;
+            amount?: number;
+            location?: string;
+            address?: string;
+            mobile?: string;
+            status?: 'paid' | 'pending';
+            tentative_date?: string | null;
+        }) => {
+            const { userId, userName } = await getCurrentUserName();
+
+            // Build update object with only provided fields
+            const updateData: any = {};
+            if (update.name !== undefined) updateData.name = update.name;
+            if (update.shop_name !== undefined) updateData.shop_name = update.shop_name;
+            if (update.amount !== undefined) updateData.amount = update.amount;
+            if (update.location !== undefined) updateData.location = update.location;
+            if (update.address !== undefined) updateData.address = update.address;
+            if (update.mobile !== undefined) updateData.mobile = update.mobile;
+            if (update.tentative_date !== undefined) updateData.tentative_date = update.tentative_date;
+
+            // Handle status change
+            if (update.status !== undefined) {
+                updateData.status = update.status;
+                if (update.status === 'paid') {
+                    updateData.confirmed_by_user_id = userId;
+                    updateData.confirmed_by_name = userName;
+                    updateData.confirmed_at = new Date().toISOString();
+                } else if (update.status === 'pending') {
+                    // Reverting to pending clears confirmation
+                    updateData.confirmed_by_user_id = null;
+                    updateData.confirmed_by_name = null;
+                    updateData.confirmed_at = null;
+                }
+            }
+
+            const { data, error } = await supabase
+                .from('vargani_slips')
+                .update(updateData)
+                .eq('id', update.id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            await createLog("Vargani Slip Updated", `Updated slip ${data.slip_number} - ${data.name} - ₹${data.amount} (${data.status})`);
             return data as VarganiSlip;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
@@ -224,5 +279,5 @@ export const useVarganiSlips = () => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });
 
-    return { ...query, addSlip, confirmPayment, deleteSlip };
+    return { ...query, addSlip, updateSlip, confirmPayment, deleteSlip };
 };

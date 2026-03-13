@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Plus, Trash2, Search, CheckCircle2, XCircle, Calendar,
     Download, Share2, Phone, MapPin, Store, User, IndianRupee,
-    Clock, Filter, X, AlertCircle, Loader2
+    Clock, Filter, X, AlertCircle, Loader2, Edit3, Home
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import { useVarganiSlips } from "@/lib/slip-api";
@@ -139,6 +139,7 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 { label: 'श्री / सौ (Name)', value: slip.name },
                 { label: 'दुकान (Shop)', value: slip.shop_name },
                 { label: 'ठिकाण (Location)', value: slip.location },
+                { label: 'पत्ता (Address)', value: slip.address || '-' },
                 { label: 'मोबाईल (WhatsApp)', value: slip.mobile },
             ].map((row, i) => (
                 <div key={i} style={{
@@ -273,10 +274,12 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
 // ============================================
 
 const VarganiSlipTab = () => {
-    const { data: slips, isLoading, addSlip, confirmPayment, deleteSlip } = useVarganiSlips();
+    const { data: slips, isLoading, addSlip, updateSlip, confirmPayment, deleteSlip } = useVarganiSlips();
 
     // State
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editingSlip, setEditingSlip] = useState<VarganiSlip | null>(null);
     const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
     const [search, setSearch] = useState("");
     const [activeSlip, setActiveSlip] = useState<VarganiSlip | null>(null);
@@ -289,8 +292,21 @@ const VarganiSlipTab = () => {
         shop_name: '',
         amount: '',
         location: '',
+        address: '',
         mobile: '',
         paymentStatus: 'paid' as 'paid' | 'pending',
+        tentative_date: ''
+    });
+
+    // Edit Form State
+    const [editData, setEditData] = useState({
+        name: '',
+        shop_name: '',
+        amount: '',
+        location: '',
+        address: '',
+        mobile: '',
+        status: 'paid' as 'paid' | 'pending',
         tentative_date: ''
     });
 
@@ -324,7 +340,51 @@ const VarganiSlipTab = () => {
 
     // Reset form
     const resetForm = () => {
-        setFormData({ name: '', shop_name: '', amount: '', location: '', mobile: '', paymentStatus: 'paid', tentative_date: '' });
+        setFormData({ name: '', shop_name: '', amount: '', location: '', address: '', mobile: '', paymentStatus: 'paid', tentative_date: '' });
+    };
+
+    // Open edit modal
+    const openEditModal = (slip: VarganiSlip) => {
+        setEditingSlip(slip);
+        setEditData({
+            name: slip.name,
+            shop_name: slip.shop_name,
+            amount: String(slip.amount),
+            location: slip.location,
+            address: slip.address || '',
+            mobile: slip.mobile,
+            status: slip.status,
+            tentative_date: slip.tentative_date || ''
+        });
+        setIsEditOpen(true);
+    };
+
+    // Handle edit submit
+    const handleEditSubmit = async () => {
+        if (!editingSlip) return;
+        if (!editData.name.trim()) return toast.error("Name is required");
+        if (!editData.amount || parseFloat(editData.amount) <= 0) return toast.error("Valid amount required");
+        if (!isValidMobile(editData.mobile)) return toast.error("Valid 10-digit mobile required");
+        if (editData.status === 'pending' && !editData.tentative_date) return toast.error("Tentative date required for pending");
+
+        try {
+            await updateSlip.mutateAsync({
+                id: editingSlip.id,
+                name: editData.name.trim(),
+                shop_name: editData.shop_name.trim(),
+                amount: parseFloat(editData.amount),
+                location: editData.location.trim(),
+                address: editData.address.trim(),
+                mobile: editData.mobile.replace(/\s/g, ''),
+                status: editData.status,
+                tentative_date: editData.status === 'pending' ? editData.tentative_date : null
+            });
+            toast.success(`✅ Slip updated for ${editData.name}`);
+            setIsEditOpen(false);
+            setEditingSlip(null);
+        } catch (err: any) {
+            toast.error(err.message || "Error updating slip");
+        }
     };
 
     // Validate WhatsApp number
@@ -345,6 +405,7 @@ const VarganiSlipTab = () => {
                 shop_name: formData.shop_name.trim(),
                 amount: parseFloat(formData.amount),
                 location: formData.location.trim(),
+                address: formData.address.trim(),
                 mobile: formData.mobile.replace(/\s/g, ''),
                 status: formData.paymentStatus,
                 tentative_date: formData.paymentStatus === 'pending' ? formData.tentative_date : null
@@ -670,6 +731,12 @@ const VarganiSlipTab = () => {
                                             )}
                                         </div>
                                         <div className="col-span-3 flex justify-end gap-2">
+                                            <button
+                                                onClick={() => openEditModal(slip)}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-amber-100 transition-all"
+                                            >
+                                                <Edit3 size={12} /> Edit
+                                            </button>
                                             {slip.status === 'pending' && (
                                                 <button
                                                     onClick={() => handleConfirmPayment(slip.id)}
@@ -760,6 +827,12 @@ const VarganiSlipTab = () => {
                                     )}
 
                                     <div className="flex gap-2 pt-1">
+                                        <button
+                                            onClick={() => openEditModal(slip)}
+                                            className="flex items-center justify-center gap-1 py-2 px-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl text-[10px] font-black uppercase"
+                                        >
+                                            <Edit3 size={12} /> Edit
+                                        </button>
                                         {slip.status === 'pending' && (
                                             <button
                                                 onClick={() => handleConfirmPayment(slip.id)}
@@ -870,6 +943,20 @@ const VarganiSlipTab = () => {
                                         onChange={e => setFormData({ ...formData, location: e.target.value })}
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
                                         placeholder="e.g. Wanwadi, Pune"
+                                    />
+                                </div>
+
+                                {/* Address */}
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <Home size={10} className="inline mr-1" /> पत्ता / Address
+                                    </label>
+                                    <textarea
+                                        value={formData.address}
+                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 resize-none"
+                                        placeholder="Full address (optional)"
+                                        rows={2}
                                     />
                                 </div>
 
@@ -985,6 +1072,133 @@ const VarganiSlipTab = () => {
                                     ) : (
                                         <><Clock size={16} /> Save as Pending</>
                                     )}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ======= Edit Entry Modal ======= */}
+            <AnimatePresence>
+                {isEditOpen && editingSlip && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+                            className="bg-white rounded-2xl w-full max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+                        >
+                            <div className="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 className="text-xl font-display font-black text-[#2C1810]">✏️ Edit Entry</h3>
+                                    <p className="text-[10px] text-[#2C1810]/50 font-bold uppercase tracking-widest mt-1">
+                                        Slip: {editingSlip.slip_number}
+                                    </p>
+                                </div>
+                                <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <X size={18} className="text-[#2C1810]/60" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <User size={10} className="inline mr-1" /> नाव / Name *
+                                    </label>
+                                    <input value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <Store size={10} className="inline mr-1" /> दुकान / Shop Name *
+                                    </label>
+                                    <input value={editData.shop_name} onChange={e => setEditData({ ...editData, shop_name: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <IndianRupee size={10} className="inline mr-1" /> रक्कम / Amount (₹) *
+                                    </label>
+                                    <input type="number" value={editData.amount} onChange={e => setEditData({ ...editData, amount: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20" min="1"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <MapPin size={10} className="inline mr-1" /> ठिकाण / Location *
+                                    </label>
+                                    <input value={editData.location} onChange={e => setEditData({ ...editData, location: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <Home size={10} className="inline mr-1" /> पत्ता / Address
+                                    </label>
+                                    <textarea value={editData.address} onChange={e => setEditData({ ...editData, address: e.target.value })}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 resize-none" rows={2}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                        <Phone size={10} className="inline mr-1" /> WhatsApp Number *
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-bold text-[#2C1810]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
+                                        <input type="tel" value={editData.mobile}
+                                            onChange={e => setEditData({ ...editData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                                            className="flex-1 bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 font-mono" maxLength={10}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Status Toggle */}
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-3">
+                                        Payment Status *
+                                    </label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button type="button" onClick={() => setEditData({ ...editData, status: 'paid' })}
+                                            className={`p-3 rounded-xl border-2 text-center transition-all ${editData.status === 'paid' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                                            <CheckCircle2 size={24} className={`mx-auto mb-1 ${editData.status === 'paid' ? 'text-green-500' : 'text-gray-300'}`} />
+                                            <div className={`text-xs font-black uppercase ${editData.status === 'paid' ? 'text-green-600' : 'text-gray-500'}`}>Paid ✅</div>
+                                        </button>
+                                        <button type="button" onClick={() => setEditData({ ...editData, status: 'pending' })}
+                                            className={`p-3 rounded-xl border-2 text-center transition-all ${editData.status === 'pending' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                                            <Clock size={24} className={`mx-auto mb-1 ${editData.status === 'pending' ? 'text-amber-500' : 'text-gray-300'}`} />
+                                            <div className={`text-xs font-black uppercase ${editData.status === 'pending' ? 'text-amber-600' : 'text-gray-500'}`}>Pending ⏳</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Tentative Date (pending only) */}
+                                <AnimatePresence>
+                                    {editData.status === 'pending' && (
+                                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                                            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-700 mb-2">
+                                                    <Calendar size={10} className="inline mr-1" /> Tentative Date *
+                                                </label>
+                                                <input type="date" value={editData.tentative_date}
+                                                    onChange={e => setEditData({ ...editData, tentative_date: e.target.value })}
+                                                    className="w-full bg-white border border-amber-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            <div className="flex gap-3 mt-8">
+                                <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }}
+                                    className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                                <button onClick={handleEditSubmit} disabled={updateSlip.isPending}
+                                    className="flex-1 py-3 text-white font-bold text-sm rounded-xl bg-[#D95D1E] hover:bg-[#B94A15] flex items-center justify-center gap-2 disabled:opacity-50">
+                                    {updateSlip.isPending ? <Loader2 size={16} className="animate-spin" /> : <><Edit3 size={16} /> Save Changes</>}
                                 </button>
                             </div>
                         </motion.div>

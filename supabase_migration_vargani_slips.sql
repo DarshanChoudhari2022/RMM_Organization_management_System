@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS vargani_slips (
     shop_name TEXT NOT NULL,
     amount NUMERIC NOT NULL,
     location TEXT NOT NULL,
+    address TEXT DEFAULT '',  -- Full address (optional)
     mobile TEXT NOT NULL,  -- WhatsApp number (mandatory)
     status TEXT DEFAULT 'pending' CHECK (status IN ('paid', 'pending')),
     tentative_date DATE,  -- When they said they'll pay (for pending entries)

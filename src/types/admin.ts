@@ -97,6 +97,7 @@ export interface VarganiSlip {
     shop_name: string;
     amount: number;
     location: string;
+    address: string;
     mobile: string;
     status: 'paid' | 'pending';
     tentative_date?: string | null;

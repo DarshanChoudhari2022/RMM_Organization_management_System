@@ -19,7 +19,7 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
     <div style={{
         width: '780px',
         background: '#FFFFFF',
-        fontFamily: "'Noto Sans Devanagari', 'Segoe UI', Arial, sans-serif",
+        fontFamily: "'Noto Sans Devanagari', 'Segoe UI', 'Mangal', Arial, sans-serif",
         overflow: 'hidden',
         border: '4px solid #2E3590',
         position: 'relative'
@@ -144,9 +144,9 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
         {/* ====== FORM BODY — White with light stupa watermark ====== */}
         <div style={{
             position: 'relative',
-            padding: '16px 28px 14px',
+            padding: '22px 32px 18px',
             background: '#FFFFFF',
-            minHeight: '220px'
+            minHeight: '260px'
         }}>
             {/* Stupa watermark — center of form body */}
             <div style={{
@@ -172,21 +172,21 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Row 1: पावती क्र. & दिनांक */}
                 <div style={{
                     display: 'flex', justifyContent: 'space-between',
-                    alignItems: 'center', marginBottom: '14px',
-                    paddingBottom: '8px',
-                    borderBottom: '1px solid #e0e0e0'
+                    alignItems: 'center', marginBottom: '20px',
+                    paddingBottom: '10px',
+                    borderBottom: '1.5px solid #ccc'
                 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222' }}>
                         पावती क्र. : <span style={{
-                            fontWeight: 900, color: '#1a237e', fontSize: '15px',
+                            fontWeight: 900, color: '#1a237e', fontSize: '17px',
                             borderBottom: '2px dotted #999', paddingBottom: '2px',
                             paddingLeft: '8px', paddingRight: '20px', minWidth: '120px',
                             display: 'inline-block'
                         }}>{slip.slip_number || 'N/A'}</span>
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222' }}>
                         दिनांक : <span style={{
-                            fontWeight: 900, color: '#1a237e', fontSize: '15px',
+                            fontWeight: 900, color: '#1a237e', fontSize: '17px',
                             borderBottom: '2px dotted #999', paddingBottom: '2px',
                             paddingLeft: '8px', paddingRight: '8px',
                             display: 'inline-block'
@@ -201,15 +201,15 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Row 2: आयु. (Name) — full width */}
                 <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '14px', gap: '10px'
+                    marginBottom: '18px', gap: '12px'
                 }}>
-                    <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#222', whiteSpace: 'nowrap' }}>
                         आयु.
                     </div>
                     <div style={{
-                        flex: 1, fontSize: '17px', fontWeight: 900, color: '#111',
-                        borderBottom: '2px dotted #aaa', paddingBottom: '3px',
-                        paddingLeft: '8px', letterSpacing: '0.5px'
+                        flex: 1, fontSize: '18px', fontWeight: 900, color: '#111',
+                        borderBottom: '2px dotted #999', paddingBottom: '4px',
+                        paddingLeft: '10px', letterSpacing: '0.5px'
                     }}>
                         {slip.name}
                     </div>
@@ -218,15 +218,15 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Row 3: यांजकडून (Shop + Location) */}
                 <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '14px', gap: '10px'
+                    marginBottom: '18px', gap: '12px'
                 }}>
                     <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
                         यांजकडून
                     </div>
                     <div style={{
-                        flex: 1, fontSize: '16px', fontWeight: 800, color: '#111',
-                        borderBottom: '2px dotted #aaa', paddingBottom: '3px',
-                        paddingLeft: '8px'
+                        flex: 1, fontSize: '17px', fontWeight: 800, color: '#111',
+                        borderBottom: '2px dotted #999', paddingBottom: '4px',
+                        paddingLeft: '10px'
                     }}>
                         {slip.shop_name}{slip.location ? ` ,${slip.location}` : ''}
                     </div>
@@ -254,15 +254,15 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Row 5: मोबाईल */}
                 <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '14px', gap: '10px'
+                    marginBottom: '18px', gap: '12px'
                 }}>
                     <div style={{ fontSize: '15px', fontWeight: 800, color: '#333', whiteSpace: 'nowrap' }}>
                         मोबाईल
                     </div>
                     <div style={{
-                        flex: 1, fontSize: '16px', fontWeight: 900, color: '#111',
-                        borderBottom: '2px dotted #aaa', paddingBottom: '3px',
-                        paddingLeft: '8px', fontFamily: "'Segoe UI', monospace"
+                        flex: 1, fontSize: '17px', fontWeight: 900, color: '#111',
+                        borderBottom: '2px dotted #999', paddingBottom: '4px',
+                        paddingLeft: '10px', fontFamily: "'Segoe UI', monospace"
                     }}>
                         {slip.mobile}
                     </div>
@@ -270,9 +270,9 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
 
                 {/* Purpose Line */}
                 <div style={{
-                    fontSize: '14px', fontWeight: 700, color: '#333',
-                    marginBottom: '4px', lineHeight: 1.6,
-                    borderBottom: '1px solid #ddd', paddingBottom: '6px'
+                    fontSize: '15px', fontWeight: 700, color: '#222',
+                    marginBottom: '8px', lineHeight: 1.7,
+                    borderBottom: '1.5px solid #ddd', paddingBottom: '8px'
                 }}>
                     भारतरत्न डॉ. बाबासाहेब आंबेडकर जयंती महोत्सवानिमित्त अक्षरी रुपये
                 </div>
@@ -280,21 +280,21 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Amount Row with ₹ Badge */}
                 <div style={{
                     display: 'flex', alignItems: 'center',
-                    marginTop: '10px', marginBottom: '10px', gap: '14px'
+                    marginTop: '12px', marginBottom: '14px', gap: '16px'
                 }}>
                     <div style={{
-                        width: '50px', height: '50px',
+                        width: '44px', height: '44px',
                         background: 'linear-gradient(135deg, #1a237e, #3949ab)',
                         borderRadius: '8px',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'white', fontSize: '26px', fontWeight: 900,
+                        color: 'white', fontSize: '22px', fontWeight: 900,
                         boxShadow: '0 3px 10px rgba(26,35,126,0.35)',
                         flexShrink: 0
                     }}>
                         ₹
                     </div>
                     <div style={{
-                        fontSize: '36px', fontWeight: 900, color: '#1a237e',
+                        fontSize: '34px', fontWeight: 900, color: '#1a237e',
                         letterSpacing: '1px', lineHeight: 1
                     }}>
                         {Number(slip.amount).toLocaleString('en-IN')}/-
@@ -303,9 +303,9 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
 
                 {/* Acknowledgement line */}
                 <div style={{
-                    fontSize: '14px', fontWeight: 700, color: '#333',
-                    marginBottom: '6px', lineHeight: 1.5,
-                    borderTop: '1px solid #ddd', paddingTop: '8px'
+                    fontSize: '15px', fontWeight: 700, color: '#222',
+                    marginBottom: '8px', lineHeight: 1.5,
+                    borderTop: '1.5px solid #ddd', paddingTop: '10px'
                 }}>
                     देणगी रोख मिळाली. आभारी आहोत!
                 </div>
@@ -313,8 +313,8 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                 {/* Confirmed By */}
                 {slip.confirmed_by_name && (
                     <div style={{
-                        fontSize: '11px', fontWeight: 600, color: '#666',
-                        marginTop: '4px'
+                        fontSize: '12px', fontWeight: 600, color: '#555',
+                        marginTop: '6px'
                     }}>
                         Confirmed by: <span style={{ fontWeight: 900, color: '#1a237e' }}>{slip.confirmed_by_name}</span>
                         {slip.confirmed_at && (
@@ -333,7 +333,7 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
         {/* ====== FOOTER — Blue Gradient with ₹, धन्यवाद!, प्रासकर्ता ====== */}
         <div style={{
             background: 'linear-gradient(90deg, #1a237e, #283593, #3949ab, #283593, #1a237e)',
-            padding: '12px 28px',
+            padding: '16px 32px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             position: 'relative'
         }}>
@@ -371,12 +371,12 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
 
         {/* ====== Powered By ====== */}
         <div style={{
-            padding: '5px 24px',
+            padding: '8px 24px',
             textAlign: 'center',
             background: '#0d1442'
         }}>
             <div style={{
-                fontSize: '8px', color: '#7777AA', fontWeight: 700,
+                fontSize: '10px', color: '#9999BB', fontWeight: 700,
                 letterSpacing: '4px', textTransform: 'uppercase'
             }}>
                 Powered by <span style={{ color: '#FFD700', fontWeight: 900 }}>busyhub.in</span>

@@ -17,253 +17,316 @@ import { toast } from "sonner";
 
 const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
     <div style={{
-        width: '480px',
+        width: '520px',
         background: '#FFFFFF',
-        fontFamily: "'Segoe UI', 'Noto Sans Devanagari', Arial, sans-serif",
+        fontFamily: "'Noto Sans Devanagari', 'Segoe UI', Arial, sans-serif",
         overflow: 'hidden',
-        border: '3px solid #B8860B',
+        border: '4px solid #3740A0',
         position: 'relative'
     }}>
-        {/* Decorative Gold Double Border */}
+        {/* Inner decorative border */}
         <div style={{
-            position: 'absolute', inset: '3px',
-            border: '1px solid #DAA520',
+            position: 'absolute', inset: '4px',
+            border: '2px solid #5A5AC0',
             pointerEvents: 'none',
             zIndex: 5
         }} />
 
-        {/* ====== HEADER — Rich Saffron/Maroon with Logo ====== */}
+        {/* ====== HEADER — Royal Blue with Mandal Name ====== */}
         <div style={{
-            background: 'linear-gradient(180deg, #8B1A1A 0%, #A0522D 30%, #CD6600 70%, #D2691E 100%)',
-            padding: '20px 20px 16px',
+            background: 'linear-gradient(180deg, #2E3590 0%, #3740A0 50%, #4A4AB0 100%)',
+            padding: '18px 20px 14px',
             textAlign: 'center',
             color: 'white',
             position: 'relative',
             overflow: 'hidden'
         }}>
-            {/* Subtle traditional pattern overlay */}
+            {/* Subtle pattern overlay */}
             <div style={{
-                position: 'absolute', inset: 0, opacity: 0.06,
-                backgroundImage: `radial-gradient(circle at 20px 20px, rgba(255,215,0,0.3) 2px, transparent 2px)`,
-                backgroundSize: '30px 30px'
+                position: 'absolute', inset: 0, opacity: 0.05,
+                backgroundImage: `radial-gradient(circle at 15px 15px, rgba(255,255,255,0.4) 1.5px, transparent 1.5px)`,
+                backgroundSize: '20px 20px'
             }} />
 
             <div style={{ position: 'relative', zIndex: 2 }}>
-                {/* Logo */}
-                <div style={{ marginBottom: '8px' }}>
-                    <img
-                        src="/images/logo.png"
-                        alt="Logo"
-                        style={{
-                            width: '90px', height: '90px', objectFit: 'contain',
-                            margin: '0 auto', display: 'block',
-                            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))'
-                        }}
-                        crossOrigin="anonymous"
-                    />
-                </div>
-
-                {/* Mandal Name */}
+                {/* Mandal Name — Big Marathi Header */}
                 <div style={{
-                    fontSize: '11px', fontWeight: 800, letterSpacing: '6px',
-                    opacity: 0.8, marginBottom: '2px'
-                }}>
-                    ॥ श्री छत्रपती शिवाजी महाराज ॥
-                </div>
-                <div style={{
-                    fontSize: '26px', fontWeight: 900, letterSpacing: '3px',
-                    lineHeight: 1.2, textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                    fontSize: '32px', fontWeight: 900, letterSpacing: '4px',
+                    lineHeight: 1.2, textShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                    marginBottom: '6px'
                 }}>
                     राहुल मित्र मंडळ
                 </div>
+
+                {/* Address */}
                 <div style={{
-                    fontSize: '13px', fontWeight: 700, letterSpacing: '4px',
-                    opacity: 0.85, marginTop: '2px'
+                    fontSize: '13px', fontWeight: 700, letterSpacing: '2px',
+                    opacity: 0.9, marginBottom: '8px'
                 }}>
-                    वानवडी, पुणे ४११०४०
+                    बारथे बस्ती, दायोडी गावठाण, पुणे-१२.
                 </div>
 
-                {/* Receipt Title */}
+                {/* Event Title */}
                 <div style={{
-                    marginTop: '12px',
-                    paddingTop: '10px',
-                    borderTop: '1px solid rgba(255,255,255,0.2)'
+                    fontSize: '16px', fontWeight: 900, letterSpacing: '2px',
+                    lineHeight: 1.4,
+                    borderTop: '1px solid rgba(255,255,255,0.3)',
+                    paddingTop: '8px'
                 }}>
-                    <div style={{
-                        fontSize: '22px', fontWeight: 900, letterSpacing: '8px',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.3)'
-                    }}>
-                        • वर्गणी पावती •
-                    </div>
-                    <div style={{
-                        fontSize: '10px', fontWeight: 800, letterSpacing: '6px',
-                        textTransform: 'uppercase', opacity: 0.7, marginTop: '2px'
-                    }}>
-                        VARGANI RECEIPT
-                    </div>
+                    भारतरत्न डॉ. बाबासाहेब आंबेडकर
+                </div>
+                <div style={{
+                    fontSize: '15px', fontWeight: 800, letterSpacing: '3px',
+                    marginTop: '2px'
+                }}>
+                    जयंती महोत्सव
                 </div>
             </div>
         </div>
 
-        {/* ====== Indian Tricolor Stripe ====== */}
-        <div style={{ display: 'flex', height: '6px' }}>
-            <div style={{ flex: 1, background: '#FF9933' }} />
-            <div style={{ flex: 1, background: '#FFFFFF' }} />
-            <div style={{ flex: 1, background: '#138808' }} />
-        </div>
-
-        {/* ====== Slip Info Bar ====== */}
+        {/* ====== BODY with Ambedkar portrait watermark ====== */}
         <div style={{
-            padding: '10px 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: '#FFF8F0',
-            borderBottom: '2px solid #E8C07A'
+            position: 'relative',
+            padding: '16px 24px 12px',
+            background: '#FFFFFF',
+            minHeight: '280px'
         }}>
-            <div style={{ fontSize: '12px', fontWeight: 800, color: '#5C3310' }}>
-                पावती क्र.: <span style={{ color: '#CD6600', fontSize: '13px' }}>{slip.slip_number || 'N/A'}</span>
+            {/* Ambedkar portrait as watermark in center */}
+            <div style={{
+                position: 'absolute',
+                top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '200px', height: '240px',
+                opacity: 0.12,
+                zIndex: 0,
+                pointerEvents: 'none'
+            }}>
+                <img
+                    src="/images/ambedkar-portrait.png"
+                    alt="Dr. Ambedkar"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    crossOrigin="anonymous"
+                />
             </div>
-            <div style={{ fontSize: '12px', fontWeight: 800, color: '#5C3310' }}>
-                दि.: <span style={{ color: '#CD6600' }}>
-                    {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
-                        day: '2-digit', month: '2-digit', year: 'numeric'
-                    })}
-                </span>
-            </div>
-        </div>
 
-        {/* ====== Receipt Details — Traditional Form Style ====== */}
-        <div style={{ padding: '18px 24px 14px', background: '#FFFEFB' }}>
-            {[
-                { label: 'श्री / सौ (Name)', value: slip.name },
-                { label: 'दुकान (Shop)', value: slip.shop_name },
-                { label: 'ठिकाण (Location)', value: slip.location },
-                { label: 'पत्ता (Address)', value: slip.address || '-' },
-                { label: 'मोबाईल (WhatsApp)', value: slip.mobile },
-            ].map((row, i) => (
-                <div key={i} style={{
+            {/* Content overlay */}
+            <div style={{ position: 'relative', zIndex: 2 }}>
+                {/* Receipt Number & Date Row */}
+                <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center', marginBottom: '16px',
+                    paddingBottom: '8px',
+                    borderBottom: '1px solid #E0E0E0'
+                }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>
+                        पावती क्र. : <span style={{
+                            fontWeight: 900, color: '#2E3590', fontSize: '14px',
+                            borderBottom: '1.5px dotted #999', paddingBottom: '2px', paddingLeft: '6px', paddingRight: '6px'
+                        }}>{slip.slip_number || 'N/A'}</span>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>
+                        दिनांक : <span style={{
+                            fontWeight: 900, color: '#2E3590', fontSize: '14px',
+                            borderBottom: '1.5px dotted #999', paddingBottom: '2px', paddingLeft: '6px', paddingRight: '6px'
+                        }}>
+                            {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit', month: '2-digit', year: 'numeric'
+                            })}
+                        </span>
+                    </div>
+                </div>
+
+                {/* आयु. (Name) Field */}
+                <div style={{
                     display: 'flex', alignItems: 'baseline',
-                    marginBottom: '10px', gap: '8px'
+                    marginBottom: '14px', gap: '8px'
                 }}>
                     <div style={{
-                        fontSize: '12px', fontWeight: 700, color: '#78716C',
-                        whiteSpace: 'nowrap', minWidth: '145px'
+                        fontSize: '14px', fontWeight: 700, color: '#444',
+                        whiteSpace: 'nowrap'
                     }}>
-                        {row.label}:
+                        आयु.
                     </div>
                     <div style={{
-                        flex: 1, fontSize: '15px', fontWeight: 800, color: '#1C1917',
-                        borderBottom: '1.5px dotted #D4C5A9', paddingBottom: '3px',
-                        paddingLeft: '4px'
+                        flex: 1, fontSize: '16px', fontWeight: 900, color: '#1a1a1a',
+                        borderBottom: '1.5px dotted #aaa', paddingBottom: '3px',
+                        paddingLeft: '6px'
                     }}>
-                        {row.value}
+                        {slip.name}
                     </div>
                 </div>
-            ))}
 
-            {/* Amount — Highlighted */}
-            <div style={{
-                display: 'flex', alignItems: 'center',
-                marginTop: '14px', padding: '12px 16px',
-                background: 'linear-gradient(135deg, #FFF7ED, #FEF3C7)',
-                borderRadius: '10px', border: '2px solid #E8C07A'
-            }}>
+                {/* यांजकडून (From) field — showing shop name & location */}
                 <div style={{
-                    fontSize: '13px', fontWeight: 800, color: '#92400E',
-                    minWidth: '130px'
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '14px', gap: '8px'
                 }}>
-                    💰 रक्कम (Amount):
+                    <div style={{
+                        fontSize: '14px', fontWeight: 700, color: '#444',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        यांजकडून
+                    </div>
+                    <div style={{
+                        flex: 1, fontSize: '15px', fontWeight: 800, color: '#1a1a1a',
+                        borderBottom: '1.5px dotted #aaa', paddingBottom: '3px',
+                        paddingLeft: '6px'
+                    }}>
+                        {slip.shop_name}{slip.location ? `, ${slip.location}` : ''}
+                    </div>
                 </div>
+
+                {/* Address if available */}
+                {slip.address && (
+                    <div style={{
+                        display: 'flex', alignItems: 'baseline',
+                        marginBottom: '14px', gap: '8px'
+                    }}>
+                        <div style={{
+                            fontSize: '14px', fontWeight: 700, color: '#444',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            पत्ता
+                        </div>
+                        <div style={{
+                            flex: 1, fontSize: '14px', fontWeight: 700, color: '#1a1a1a',
+                            borderBottom: '1.5px dotted #aaa', paddingBottom: '3px',
+                            paddingLeft: '6px'
+                        }}>
+                            {slip.address}
+                        </div>
+                    </div>
+                )}
+
+                {/* Mobile */}
                 <div style={{
-                    flex: 1, fontSize: '28px', fontWeight: 900, color: '#B45309',
-                    textAlign: 'right', letterSpacing: '1px'
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '14px', gap: '8px'
                 }}>
-                    ₹ {Number(slip.amount).toLocaleString('en-IN')}/-
+                    <div style={{
+                        fontSize: '14px', fontWeight: 700, color: '#444',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        मोबाईल
+                    </div>
+                    <div style={{
+                        flex: 1, fontSize: '15px', fontWeight: 800, color: '#1a1a1a',
+                        borderBottom: '1.5px dotted #aaa', paddingBottom: '3px',
+                        paddingLeft: '6px', fontFamily: 'monospace'
+                    }}>
+                        {slip.mobile}
+                    </div>
                 </div>
+
+                {/* Main text line about purpose */}
+                <div style={{
+                    fontSize: '13px', fontWeight: 600, color: '#333',
+                    marginBottom: '6px', lineHeight: 1.6
+                }}>
+                    भारतरत्न डॉ. बाबासाहेब आंबेडकर जयंती महोत्सवानिमित्त अक्षरी रुपये
+                </div>
+
+                {/* Amount Row — Prominent */}
+                <div style={{
+                    display: 'flex', alignItems: 'center',
+                    marginBottom: '14px', gap: '12px'
+                }}>
+                    {/* Rupee Badge */}
+                    <div style={{
+                        width: '48px', height: '48px',
+                        background: 'linear-gradient(135deg, #2E3590, #4A4AB0)',
+                        borderRadius: '8px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'white', fontSize: '24px', fontWeight: 900,
+                        boxShadow: '0 2px 8px rgba(46,53,144,0.3)'
+                    }}>
+                        ₹
+                    </div>
+                    <div style={{
+                        flex: 1, fontSize: '32px', fontWeight: 900, color: '#2E3590',
+                        letterSpacing: '1px', lineHeight: 1
+                    }}>
+                        {Number(slip.amount).toLocaleString('en-IN')}/-
+                    </div>
+                </div>
+
+                {/* Donation acknowledgement */}
+                <div style={{
+                    fontSize: '13px', fontWeight: 700, color: '#333',
+                    marginBottom: '12px', lineHeight: 1.5
+                }}>
+                    देणगी रोख मिळाली. आभारी आहोत!
+                </div>
+
+                {/* Confirmed By info */}
+                {slip.confirmed_by_name && (
+                    <div style={{
+                        fontSize: '11px', fontWeight: 600, color: '#666',
+                        marginBottom: '8px'
+                    }}>
+                        Confirmed by: <span style={{ fontWeight: 800, color: '#2E3590' }}>{slip.confirmed_by_name}</span>
+                        {slip.confirmed_at && (
+                            <span style={{ marginLeft: '8px', color: '#999' }}>
+                                ({new Date(slip.confirmed_at).toLocaleString('en-IN', {
+                                    day: '2-digit', month: 'short', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit', hour12: true
+                                })})
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
 
-        {/* ====== Payment Status Badge ====== */}
+        {/* ====== FOOTER — Blue with धन्यवाद! ====== */}
         <div style={{
+            background: 'linear-gradient(180deg, #3740A0, #2E3590)',
             padding: '14px 24px',
-            background: '#F0FDF4',
-            borderTop: '2px solid #22C55E',
-            borderBottom: '1px solid #BBF7D0',
-            textAlign: 'center'
-        }}>
-            <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'linear-gradient(135deg, #16A34A, #15803D)',
-                color: 'white', padding: '10px 32px', borderRadius: '30px',
-                fontSize: '13px', fontWeight: 900, letterSpacing: '3px',
-                textTransform: 'uppercase',
-                boxShadow: '0 2px 8px rgba(22,163,74,0.3)'
-            }}>
-                ✅ वर्गणी रोख मिळाली
-            </div>
-            <div style={{
-                fontSize: '10px', color: '#15803D', fontWeight: 700,
-                letterSpacing: '2px', marginTop: '4px', textTransform: 'uppercase'
-            }}>
-                PAYMENT RECEIVED
-            </div>
-        </div>
-
-        {/* ====== Confirmed By ====== */}
-        <div style={{
-            padding: '12px 24px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            borderBottom: '1px solid #E5E7EB',
-            background: '#FAFAF5'
+            position: 'relative'
         }}>
-            <div style={{ fontSize: '12px', color: '#57534E' }}>
-                <span style={{ fontWeight: 600 }}>Confirmed by: </span>
-                <strong style={{ color: '#B45309', fontWeight: 900 }}>{slip.confirmed_by_name || 'N/A'}</strong>
-            </div>
-            <div style={{ fontSize: '11px', color: '#78716C', fontWeight: 600 }}>
-                {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleString('en-IN', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', hour12: true
-                })}
-            </div>
-        </div>
-
-        {/* ====== Thank You Footer ====== */}
-        <div style={{
-            padding: '14px 24px',
-            textAlign: 'center',
-            background: '#FFFEFB',
-            borderBottom: '1px solid #E5E7EB'
-        }}>
+            {/* Left: Rupee icon badge */}
             <div style={{
-                fontSize: '14px', fontWeight: 800, color: '#5C3310', marginBottom: '3px'
+                width: '36px', height: '36px',
+                background: 'rgba(255,255,255,0.15)',
+                borderRadius: '6px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontSize: '18px', fontWeight: 900,
+                border: '1px solid rgba(255,255,255,0.2)'
             }}>
-                आपल्या सहकार्याबद्दल मनःपूर्वक धन्यवाद! 🙏
+                ₹
             </div>
-            <div style={{ fontSize: '11px', color: '#A8A29E', fontWeight: 600 }}>
-                Thank you for your generous contribution!
-            </div>
-        </div>
 
-        {/* ====== Indian Flag Stripe ====== */}
-        <div style={{ display: 'flex', height: '4px' }}>
-            <div style={{ flex: 1, background: '#FF9933' }} />
-            <div style={{ flex: 1, background: '#FFFFFF' }} />
-            <div style={{ flex: 1, background: '#138808' }} />
+            {/* Center: धन्यवाद! in stylized Marathi */}
+            <div style={{
+                fontSize: '28px', fontWeight: 900, color: '#FFD700',
+                textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                fontStyle: 'italic',
+                letterSpacing: '3px'
+            }}>
+                धन्यवाद!
+            </div>
+
+            {/* Right: प्रासकर्ता */}
+            <div style={{
+                fontSize: '14px', fontWeight: 800, color: 'white',
+                letterSpacing: '2px'
+            }}>
+                प्रासकर्ता
+            </div>
         </div>
 
         {/* ====== Powered By Footer ====== */}
         <div style={{
-            padding: '10px 24px',
+            padding: '6px 24px',
             textAlign: 'center',
-            background: '#1C1917'
+            background: '#1a1a3e'
         }}>
             <div style={{
-                fontSize: '10px', color: '#A8A29E', fontWeight: 700,
+                fontSize: '9px', color: '#8888AA', fontWeight: 700,
                 letterSpacing: '3px', textTransform: 'uppercase'
             }}>
-                Powered by <span style={{ color: '#E8870E', fontWeight: 900 }}>busyhub.in</span>
+                Powered by <span style={{ color: '#FFD700', fontWeight: 900 }}>busyhub.in</span>
             </div>
         </div>
     </div>

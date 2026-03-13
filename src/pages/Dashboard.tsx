@@ -28,14 +28,19 @@ import {
   FileText,
   Download,
   ClipboardList,
-  Activity
+  Activity,
+  Receipt,
+  UserCog
 } from "lucide-react";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers, useLogs } from "@/lib/admin-api";
+import { useUserProfile } from "@/lib/slip-api";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory, Supplier, SystemLog } from "@/types/admin";
 import { toast } from "sonner";
+import VarganiSlipTab from "@/components/VarganiSlipGenerator";
+import UserManagementTab from "@/components/UserManagement";
 
 // --- Components ---
 
@@ -1903,10 +1908,19 @@ const LogsTab = () => {
 // --- Main Layout ---
 
 const Dashboard = () => {
+  const { data: userProfile, isLoading: profileLoading } = useUserProfile();
+  const isSubAdmin = userProfile?.role === 'sub_admin';
   const [activeTab, setActiveTab] = useState("members");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Redirect sub-admin to vargani-slips tab on load
+  useEffect(() => {
+    if (userProfile?.role === 'sub_admin' && activeTab !== 'vargani-slips') {
+      setActiveTab('vargani-slips');
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -1999,13 +2013,23 @@ const Dashboard = () => {
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto">
-          <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
-          <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
-          <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
-          <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
-          <SidebarItem id="letterhead" label="Letterhead" icon={FileText} active={activeTab === "letterhead"} onClick={handleTabChange} />
-          <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
-          <SidebarItem id="logs" label="System Logs" icon={ClipboardList} active={activeTab === "logs"} onClick={handleTabChange} />
+          {!isSubAdmin && (
+            <>
+              <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
+              <SidebarItem id="tasks" label="Tasks" icon={Shield} active={activeTab === "tasks"} onClick={handleTabChange} />
+              <SidebarItem id="expenses" label="Expenses" icon={Wallet} active={activeTab === "expenses"} onClick={handleTabChange} />
+              <SidebarItem id="suppliers" label="Suppliers" icon={Users} active={activeTab === "suppliers"} onClick={handleTabChange} />
+              <SidebarItem id="letterhead" label="Letterhead" icon={FileText} active={activeTab === "letterhead"} onClick={handleTabChange} />
+              <SidebarItem id="invitations" label="Invitations" icon={Send} active={activeTab === "invitations"} onClick={handleTabChange} />
+            </>
+          )}
+          <SidebarItem id="vargani-slips" label="Vargani Slips" icon={Receipt} active={activeTab === "vargani-slips"} onClick={handleTabChange} />
+          {!isSubAdmin && (
+            <>
+              <SidebarItem id="user-management" label="User Management" icon={UserCog} active={activeTab === "user-management"} onClick={handleTabChange} />
+              <SidebarItem id="logs" label="System Logs" icon={ClipboardList} active={activeTab === "logs"} onClick={handleTabChange} />
+            </>
+          )}
         </nav>
 
         <div className="p-4 border-t border-gray-50 bg-[#FDFBF7]">
@@ -2035,13 +2059,15 @@ const Dashboard = () => {
             transition={{ duration: 0.3 }}
             className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
           >
-            {activeTab === "members" && <MembersTab year={selectedYear} />}
-            {activeTab === "tasks" && <TasksTab year={selectedYear} />}
-            {activeTab === "expenses" && <ExpensesTab year={selectedYear} />}
-            {activeTab === "invitations" && <InvitationsTab />}
-            {activeTab === "suppliers" && <SuppliersTab />}
-            {activeTab === "letterhead" && <LetterheadTab />}
-            {activeTab === "logs" && <LogsTab />}
+            {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} />}
+            {activeTab === "tasks" && !isSubAdmin && <TasksTab year={selectedYear} />}
+            {activeTab === "expenses" && !isSubAdmin && <ExpensesTab year={selectedYear} />}
+            {activeTab === "invitations" && !isSubAdmin && <InvitationsTab />}
+            {activeTab === "suppliers" && !isSubAdmin && <SuppliersTab />}
+            {activeTab === "letterhead" && !isSubAdmin && <LetterheadTab />}
+            {activeTab === "vargani-slips" && <VarganiSlipTab />}
+            {activeTab === "user-management" && !isSubAdmin && <UserManagementTab />}
+            {activeTab === "logs" && !isSubAdmin && <LogsTab />}
           </motion.div>
         </div>
       </main>

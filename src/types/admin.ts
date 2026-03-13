@@ -80,3 +80,31 @@ export interface SystemLog {
     user_id?: string;
     user_name?: string;
 }
+
+export interface UserProfile {
+    id: string;
+    auth_user_id: string;
+    email: string;
+    display_name?: string;
+    role: 'admin' | 'sub_admin';
+    created_at: string;
+    updated_at?: string;
+}
+
+export interface VarganiSlip {
+    id: string;
+    name: string;
+    shop_name: string;
+    amount: number;
+    location: string;
+    mobile: string;
+    status: 'paid' | 'pending';
+    tentative_date?: string | null;
+    slip_number?: string;
+    confirmed_by_user_id?: string;
+    confirmed_by_name?: string;
+    confirmed_at?: string;
+    created_by_user_id?: string;
+    created_by_name?: string;
+    created_at: string;
+}

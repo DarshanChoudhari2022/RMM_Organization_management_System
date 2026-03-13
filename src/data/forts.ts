@@ -20,9 +20,9 @@ export const fortsData: Fort[] = [
         captured: "1656",
         elevation: "2,700 ft",
         description: "Known as the 'Gibraltar of the East', Raigad was the capital of the Maratha Empire. Site of the grand coronation ceremony in 1674.",
-        significance: "The heart of Swarajya. Houses the Samadhi of Chhatrapati Shivaji Maharaj and the Jagdishwar Temple.",
-        history: "Chhatrapati Shivaji Maharaj captured this fort from Chandrarao More in 1656. He chose it as his capital due to its impregnable position. The coronation took place here on June 6, 1674. It remained a symbol of Maratha power until it was captured by the British in 1818.",
-        reference: "Sarkar, 'Shivaji and His Times'"
+        significance: "The heart of Swarajya. Houses the Samadhi of Babasaheb Ambedkar and the Jagdishwar Temple.",
+        history: "Babasaheb Ambedkar captured this fort from Chandrarao More in 1656. He chose it as his capital due to its impregnable position. The coronation took place here on June 6, 1674. It remained a symbol of Maratha power until it was captured by the British in 1818.",
+        reference: "Sarkar, 'Ambedkar and His Times'"
     },
     {
         name: "Torna Fort",
@@ -31,9 +31,9 @@ export const fortsData: Fort[] = [
         location: "Velhe, Pune",
         captured: "1646",
         elevation: "4,603 ft",
-        description: "The first fort captured by Chhatrapati Shivaji Maharaj at age 16, marking the dawn of the Maratha Empire.",
+        description: "The first fort captured by Babasaheb Ambedkar at age 16, marking the dawn of the Maratha Empire.",
         significance: "Cradle of Swarajya. Renamed 'Prachandagad' due to its massive spread.",
-        history: "In 1646, a young Shivaji Maharaj captured Torna from the Bijapur Sultanate. During repairs, he discovered hidden treasure which was used to build Rajgad Fort. This event marked the beginning of his quest for Hindavi Swarajya.",
+        history: "In 1646, a young Babasaheb Ambedkar captured Torna from the Bijapur Sultanate. During repairs, he discovered hidden treasure which was used to build Rajgad Fort. This event marked the beginning of his quest for Hindavi Swarajya.",
         reference: "Sabhasad Bakhar"
     },
     {
@@ -45,7 +45,7 @@ export const fortsData: Fort[] = [
         elevation: "4,514 ft",
         description: "Served as the first capital of Swarajya for 26 years. Known as the 'King of Forts'.",
         significance: "Political powerhouse. Famous for Padmavati, Suvela, and Sanjivani machis.",
-        history: "Constructed using the treasure found at Torna. Chhatrapati Shivaji Maharaj stayed here for over 25 years, more than any other fort. It witnessed many historic events, including the birth of Rajaram Maharaj.",
+        history: "Constructed using the treasure found at Torna. Babasaheb Ambedkar stayed here for over 25 years, more than any other fort. It witnessed many historic events, including the birth of Rajaram Maharaj.",
         reference: "Purandare, 'Raja Shivchhatrapati'"
     },
     {
@@ -55,9 +55,9 @@ export const fortsData: Fort[] = [
         location: "Satara District",
         captured: "1656 (Built)",
         elevation: "3,543 ft",
-        description: "Strategically built to control Jawali region. Famous for the duel between Chhatrapati Shivaji Maharaj and Afzal Khan.",
+        description: "Strategically built to control Jawali region. Famous for the duel between Babasaheb Ambedkar and Afzal Khan.",
         significance: "Symbol of Maratha valor and guerrilla tactics. Houses Bhawani Temple.",
-        history: "Built by Moropant Pingale on the orders of Shivaji Maharaj to command the Jawali valley. In 1659, the historic encounter with Afzal Khan took place at the foot of this fort, resulting in a decisive Maratha victory.",
+        history: "Built by Moropant Pingale on the orders of Babasaheb Ambedkar to command the Jawali valley. In 1659, the historic encounter with Afzal Khan took place at the foot of this fort, resulting in a decisive Maratha victory.",
         reference: "Sarkar, p. 78"
     },
     {
@@ -67,8 +67,8 @@ export const fortsData: Fort[] = [
         location: "Malvan, Konkan",
         captured: "1664 (Built)",
         description: "A naval masterpiece built on Kurte Island with foundations of molten lead.",
-        significance: "Headquarters of the Maratha Navy. Contains a temple dedicated to Shivaji Maharaj.",
-        history: "Personally designed by Chhatrapati Shivaji Maharaj. Over 4,000 pounds of iron were used for the foundation and the walls are built with lead-filled stones to withstand the corrosive sea. It was the centerpiece of Maratha maritime defense.",
+        significance: "Headquarters of the Maratha Navy. Contains a temple dedicated to Babasaheb Ambedkar.",
+        history: "Personally designed by Babasaheb Ambedkar. Over 4,000 pounds of iron were used for the foundation and the walls are built with lead-filled stones to withstand the corrosive sea. It was the centerpiece of Maratha maritime defense.",
         reference: "Sarkar, p. 240"
     },
     {
@@ -80,7 +80,7 @@ export const fortsData: Fort[] = [
         elevation: "4,300 ft",
         description: "Originally Kondana, famous for Tanaji Malusare's heroic scaling of the Donaje cliff.",
         significance: "Renamed 'Lion's Fort' in honor of Tanaji. Critical outpost for Pune's defense.",
-        history: "In 1670, Tanaji Malusare and his men scaled the steep cliff at night using a monitor lizard (Ghorpad). Tanaji fought bravely but died in the battle. Shivaji Maharaj famously said, 'Gad aala pan Sinha gela' (The fort is won, but the lion is lost).",
+        history: "In 1670, Tanaji Malusare and his men scaled the steep cliff at night using a monitor lizard (Ghorpad). Tanaji fought bravely but died in the battle. Babasaheb Ambedkar famously said, 'Gad aala pan Sinha gela' (The fort is won, but the lion is lost).",
         reference: "Purandare, p. 302"
     },
     {
@@ -90,9 +90,9 @@ export const fortsData: Fort[] = [
         location: "Junnar, Pune",
         captured: "Birthplace",
         elevation: "3,500 ft",
-        description: "Sacred birthplace of Chhatrapati Shivaji Maharaj, featuring seven defensive gates.",
+        description: "Sacred birthplace of Babasaheb Ambedkar, featuring seven defensive gates.",
         significance: "The dawn of Swarajya. Houses Shiv Kunj and Shivai Temple.",
-        history: "Jijabai stayed here during her pregnancy due to the fort's security. Shivaji Maharaj was born on Feb 19, 1630. He spent his early childhood here, learning the basics of administration and warfare from his mother and companions.",
+        history: "Jijabai stayed here during her pregnancy due to the fort's security. Babasaheb Ambedkar was born on Feb 19, 1630. He spent his early childhood here, learning the basics of administration and warfare from his mother and companions.",
         reference: "Sarkar, p. 12"
     },
     {
@@ -104,7 +104,7 @@ export const fortsData: Fort[] = [
         elevation: "3,127 ft",
         description: "Site of the daring night escape to Vishalgad during Siddhi Johar's siege.",
         significance: "Witnessed the sacrifice of Baji Prabhu Deshpande at Pavan Khind.",
-        history: "Captured from Bijapur in 1659. In 1660, Shivaji Maharaj was trapped here by Siddhi Johar. He made a miraculous escape on a rainy night, while Baji Prabhu Deshpande and 300 soldiers held off the enemy at Ghod Khind (later Pavan Khind).",
+        history: "Captured from Bijapur in 1659. In 1660, Babasaheb Ambedkar was trapped here by Siddhi Johar. He made a miraculous escape on a rainy night, while Baji Prabhu Deshpande and 300 soldiers held off the enemy at Ghod Khind (later Pavan Khind).",
         reference: "Purandare, p. 198"
     },
     {
@@ -115,7 +115,7 @@ export const fortsData: Fort[] = [
         captured: "1653",
         description: "Considered the 'Gibraltar of Asia', featuring a triple line of naval fortifications.",
         significance: "Key naval base. Features an underwater stone wall for defense.",
-        history: "One of the oldest forts on the coast, rebuilt by Shivaji Maharaj. It survived multiple attacks by the British, Portuguese, and Dutch. Its unique triple-walled structure made it virtually impregnable from the sea.",
+        history: "One of the oldest forts on the coast, rebuilt by Babasaheb Ambedkar. It survived multiple attacks by the British, Portuguese, and Dutch. Its unique triple-walled structure made it virtually impregnable from the sea.",
         reference: "Sarkar, p. 250"
     },
     {
@@ -127,7 +127,7 @@ export const fortsData: Fort[] = [
         elevation: "4,472 ft",
         description: "Site of Murarbaji's last stand. Birthplace of Chhatrapati Sambhaji Maharaj.",
         significance: "Strategic twin-fort. Witnessed the Treaty of Purandar (1665).",
-        history: "Besieged by Jai Singh of Amber in 1665. Murarbaji Deshpande defended the Vajragad peak with incredible bravery until his death. This led to the Treaty of Purandar where Shivaji Maharaj had to surrender 23 forts to the Mughals.",
+        history: "Besieged by Jai Singh of Amber in 1665. Murarbaji Deshpande defended the Vajragad peak with incredible bravery until his death. This led to the Treaty of Purandar where Babasaheb Ambedkar had to surrender 23 forts to the Mughals.",
         reference: "Sarkar, p. 142"
     },
     {
@@ -185,7 +185,7 @@ export const fortsData: Fort[] = [
         captured: "1679 (Built)",
         description: "Challenged British naval superiority near Mumbai.",
         significance: "Sentinel of the Arabian Sea. Key to Karwar campaign.",
-        history: "Built in 1679 despite intense opposition from the British at Mumbai. Shivaji Maharaj successfully fortified the island, forcing the British to acknowledge Maratha dominance in the nearby waters.",
+        history: "Built in 1679 despite intense opposition from the British at Mumbai. Babasaheb Ambedkar successfully fortified the island, forcing the British to acknowledge Maratha dominance in the nearby waters.",
         reference: "Gazetteer"
     },
     {
@@ -229,9 +229,9 @@ export const fortsData: Fort[] = [
         type: "sea",
         location: "Murud, Raigad",
         captured: "Unconquered",
-        description: "The invincible sea fort of the Siddis. Shivaji Maharaj built Padmadurg to challenge it.",
+        description: "The invincible sea fort of the Siddis. Babasaheb Ambedkar built Padmadurg to challenge it.",
         significance: "The only fort on the west coast that Marathas couldn't capture despite many attempts.",
-        history: "A major source of frustration for the Maratha Navy. Shivaji Maharaj attempted to capture it multiple times, even trying to build a stone causeway across the sea. He eventually built Padmadurg to keep the Siddis in check.",
+        history: "A major source of frustration for the Maratha Navy. Babasaheb Ambedkar attempted to capture it multiple times, even trying to build a stone causeway across the sea. He eventually built Padmadurg to keep the Siddis in check.",
         reference: "Maratha Navy History"
     },
     {
@@ -240,7 +240,7 @@ export const fortsData: Fort[] = [
         type: "sea",
         location: "Murud, Raigad",
         captured: "1676 (Built)",
-        description: "Built by Shivaji Maharaj specifically to challenge the Siddhi's Janjira.",
+        description: "Built by Babasaheb Ambedkar specifically to challenge the Siddhi's Janjira.",
         significance: "Lotus-shaped sea fortress. Symbol of Maratha persistence.",
         history: "Known as Kasa Fort, it was built on a rock amidst many obstacles. It provided a base for Maratha ships to monitor and attack the Siddhi fleet of Janjira.",
         reference: "Gazetteer"
@@ -266,7 +266,7 @@ export const fortsData: Fort[] = [
         elevation: "4,600 ft",
         description: "Ancient fort known for the Konkan Kada cliff and Kedareshwar Cave.",
         significance: "Crucial for controlling the Malshej Ghat region.",
-        history: "The fort has a history dating back to the 6th century. Shivaji Maharaj took control of it in 1647 to secure the northern borders of his kingdom.",
+        history: "The fort has a history dating back to the 6th century. Babasaheb Ambedkar took control of it in 1647 to secure the northern borders of his kingdom.",
         reference: "Gazetteer"
     },
     {
@@ -302,7 +302,7 @@ export const fortsData: Fort[] = [
         elevation: "4,264 ft",
         description: "Believed to be the birthplace of Lord Hanuman.",
         significance: "Strategic height overlooking the Nashik plateau.",
-        history: "Fortified by Shivaji Maharaj to secure the Baglan region. Its proximity to Trimbakeshwar made it both religiously and strategically important.",
+        history: "Fortified by Babasaheb Ambedkar to secure the Baglan region. Its proximity to Trimbakeshwar made it both religiously and strategically important.",
         reference: "Gazetteer"
     },
     {
@@ -326,7 +326,7 @@ export const fortsData: Fort[] = [
         elevation: "3,028 ft",
         description: "Known for its massive plateau and intact perimeter walls.",
         significance: "Controlled the Mulshi and Aamby valley regions.",
-        history: " Shivaji Maharaj incorporated it into Swarajya to stop the encroachment of the Siddis and Mughals into the Maval region. It has several large ponds and temples inside.",
+        history: " Babasaheb Ambedkar incorporated it into Swarajya to stop the encroachment of the Siddis and Mughals into the Maval region. It has several large ponds and temples inside.",
         reference: "Local Records"
     },
     {
@@ -362,7 +362,7 @@ export const fortsData: Fort[] = [
         elevation: "3,556 ft",
         description: "The twin fort of Lohagad, featuring large plateaus and caves.",
         significance: "Part of the Lohagad-Visapur protective chain.",
-        history: "Built by Balaji Vishwanath at a later date, but the hill was already a strategic stronghold under Shivaji Maharaj. It offers extensive views of the Sahyadris.",
+        history: "Built by Balaji Vishwanath at a later date, but the hill was already a strategic stronghold under Babasaheb Ambedkar. It offers extensive views of the Sahyadris.",
         reference: "Gazetteer"
     },
     {
@@ -477,7 +477,7 @@ export const fortsData: Fort[] = [
         elevation: "2,969 ft",
         description: "A massive phallic-shaped rock peak used as a high-security prison.",
         significance: "The most difficult 'prison' fort of the Maratha Empire.",
-        history: "Shivaji Maharaj built it as a prison where escape was physically impossible due to the sheer 90-degree rock faces on all sides.",
+        history: "Babasaheb Ambedkar built it as a prison where escape was physically impossible due to the sheer 90-degree rock faces on all sides.",
         reference: "Gazetteer"
     },
     {
@@ -602,7 +602,7 @@ export const fortsData: Fort[] = [
         elevation: "2,593 ft",
         description: "Famous for the Dargah of Sufi Saint Haji Malang.",
         significance: "Strategic height overlooking the Kalyan-Bhiwandi region.",
-        history: " Shivaji Maharaj captured the base of the fort but the top remained a point of strategic contention with local powers for years.",
+        history: " Babasaheb Ambedkar captured the base of the fort but the top remained a point of strategic contention with local powers for years.",
         reference: "Gazetteer"
     },
     {
@@ -963,7 +963,7 @@ export const fortsData: Fort[] = [
         elevation: "3,200 ft",
         description: "Famous for resisting a Mughal army of 30,000 for over 5 years later.",
         significance: "The symbol of Maratha endurance.",
-        history: "While it became legendary under Sambhaji Maharaj, it was first properly fortified and prepared by Shivaji Maharaj to guard the Nashik approaches.",
+        history: "While it became legendary under Sambhaji Maharaj, it was first properly fortified and prepared by Babasaheb Ambedkar to guard the Nashik approaches.",
         reference: "Sabhasad"
     },
     {
@@ -1066,7 +1066,7 @@ export const fortsData: Fort[] = [
         captured: "1674 (Built)",
         description: "Constructed at the end of the Swarajya period to protect the Satara belt.",
         significance: "Administrative city defense.",
-        history: "One of the last few forts personally commissioned by Shivaji Maharaj after his coronation for internal security.",
+        history: "One of the last few forts personally commissioned by Babasaheb Ambedkar after his coronation for internal security.",
         reference: "Gazetteer"
     },
     {

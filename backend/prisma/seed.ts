@@ -14,7 +14,7 @@ function loadJson<T>(relative: string): T {
 
 async function main() {
   // Seed one admin user
-  const adminEmail = "admin@shivgarjana.org";
+  const adminEmail = "admin@RAHUL MITRA MANDAL.org";
   await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},

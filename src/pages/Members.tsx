@@ -24,7 +24,7 @@ const mockMembers = [
         nameMr: "राहुल सतीश कदम",
         role: "super_admin",
         phone: "+91 98765 43210",
-        email: "rahul.k@shivgarjana.org",
+        email: "rahul.k@RAHUL MITRA MANDAL.org",
         joined: "२०१४",
         varganiStatus: "paid",
         totalPaid: "₹५,०००",
@@ -36,7 +36,7 @@ const mockMembers = [
         nameMr: "विशाल दादा माने",
         role: "committee",
         phone: "+91 98765 43211",
-        email: "vishal.m@shivgarjana.org",
+        email: "vishal.m@RAHUL MITRA MANDAL.org",
         joined: "२०१६",
         varganiStatus: "partial",
         totalPaid: "₹२,५००",
@@ -107,7 +107,7 @@ const Members = () => {
                                 सदस्य व्यवस्थापन <span className="text-shiv-orange italic font-serif text-3xl md:text-4xl block md:inline mt-2 md:mt-0 font-bold ml-0 md:ml-4 border-l-0 md:border-l border-white/10 pl-0 md:pl-6 leading-none">Council Management</span>
                             </h1>
                             <p className="text-white/50 font-serif italic text-lg leading-shiv max-w-2xl">
-                                Managing the strength of the Shivgarjana Mandal. Overseeing roles, mission contributions, and troop status.
+                                Managing the strength of the Rahul Mitra Mandal. Overseeing roles, mission contributions, and troop status.
                             </p>
                         </div>
                         <div className="flex gap-4 w-full md:w-auto">

@@ -24,15 +24,15 @@ const AboutSection = () => {
                     className="text-center mb-16 md:mb-20"
                 >
                     <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 block">
-                        The Warrior King
+                        The Architect of Modern India
                     </span>
                     <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-secondary tracking-tight mb-6">
-                        Chhatrapati Shivaji{" "}
-                        <span className="text-primary italic">Maharaj</span>
+                        Babasaheb{" "}
+                        <span className="text-primary italic">Ambedkar</span>
                     </h2>
                     <p className="text-foreground/80 text-base md:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-                        The founder of the Maratha Empire and a legendary warrior who established
-                        Hindavi Swarajya through unmatched military strategy, governance, and vision.
+                        The chief architect of the Indian Constitution, a social reformer, and a visionary leader who
+                        dedicated his life to justice, equality, and the empowerment of the marginalized.
                     </p>
                 </motion.div>
 
@@ -48,11 +48,11 @@ const AboutSection = () => {
                         <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 to-secondary/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         <div className="relative overflow-hidden rounded-2xl border border-primary/20 shadow-xl">
                             {/* 
-                            Prompt for this image: "Classic realistic painting-style portrait of Chhatrapati Shivaji Maharaj in three-quarter view, wearing traditional Maratha armor and turban with decorative ornaments, dignified and calm expression, dark neutral background softly fading to light at the bottom, warm focused lighting from one side, subtle canvas texture, 16:9 horizontal crop, ultra high resolution, no text, designed to be used as a hero portrait image on a history portal webpage."
+                            Portrait of Babasaheb Ambedkar
                         */}
                             <img
-                                src="/images/Photo1.jpg"
-                                alt="Chhatrapati Shivaji Maharaj on the Golden Throne — Historical Portrait"
+                                src="/images/ambedkar-portrait.png"
+                                alt="Dr. B.R. Ambedkar — Historical Portrait"
                                 className="w-full h-[500px] md:h-[600px] object-cover object-top transform group-hover:scale-[1.02] transition-transform duration-700"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
@@ -61,7 +61,7 @@ const AboutSection = () => {
                                     Historical Portrait
                                 </p>
                                 <p className="text-white font-display font-bold text-lg">
-                                    Chhatrapati Shivaji Maharaj
+                                    Babasaheb Ambedkar
                                 </p>
                                 <p className="text-white/50 text-xs mt-1">
                                     Source: British Museum Collection, London
@@ -81,39 +81,39 @@ const AboutSection = () => {
                             {[
                                 {
                                     icon: Calendar,
-                                    title: "Born — 19 February 1630",
-                                    desc: "Born at Shivneri Fort, near Junnar, Pune. Named 'Chhatrapati Shivaji Maharaj' after the local deity Goddess Shivai.",
-                                    ref: "Ref: Sarkar, Shivaji and His Times, p. 12"
+                                    title: "Born — 14 April 1891",
+                                    desc: "Born in Mhow, Central Provinces (now Madhya Pradesh). He was the 14th child of Ramji Maloji Sakpal and Bhimabai.",
+                                    ref: "Ref: Dhananjay Keer, Dr. Ambedkar: Life and Mission, p. 1"
                                 },
                                 {
                                     icon: Users,
-                                    title: "Parents — Shahaji Bhosale & Jijabai",
-                                    desc: "Father Shahaji, a Maratha general. Mother Jijabai, a deeply religious woman who instilled values of Swarajya and self-rule in young Shivaji.",
-                                    ref: "Ref: Purandare, Raja Shivchhatrapati, Vol. 1, Ch. 2"
+                                    title: "Parents — Ramji Sakpal & Bhimabai",
+                                    desc: "Father Ramji served in the Indian Army. Despite belonging to the Mahar caste and facing severe discrimination, the family emphasized education.",
+                                    ref: "Ref: Keer, Dr. Ambedkar: Life and Mission, Ch. 1"
                                 },
                                 {
                                     icon: Swords,
-                                    title: "First Fort — Torna (1646)",
-                                    desc: "At age 16, Chhatrapati Shivaji Maharaj captured Torna Fort, his first military conquest. This marked the beginning of Swarajya. He then renamed it 'Prachandagad'.",
-                                    ref: "Ref: Sarkar, Shivaji and His Times, p. 28"
+                                    title: "Education — Columbia & LSE",
+                                    desc: "Earned doctorates from Columbia University and the London School of Economics. One of the most educated leaders of his time, breaking barriers of caste discrimination.",
+                                    ref: "Ref: Keer, Dr. Ambedkar: Life and Mission, p. 38"
                                 },
                                 {
                                     icon: Crown,
-                                    title: "Coronation — 6 June 1674",
-                                    desc: "Crowned as Chhatrapati at Raigad Fort with full Vedic rites performed by Gaga Bhatt from Varanasi. Established the sovereign Maratha Kingdom.",
-                                    ref: "Ref: Sarkar, Shivaji and His Times, p. 198"
+                                    title: "Constitution — 26 November 1949",
+                                    desc: "As Chairman of the Drafting Committee, he presented the Indian Constitution to the Constituent Assembly. It was adopted on 26 November 1949 and came into effect on 26 January 1950.",
+                                    ref: "Ref: Granville Austin, The Indian Constitution, p. 15"
                                 },
                                 {
                                     icon: Landmark,
-                                    title: "Administration — Ashtapradhan Mandal",
-                                    desc: "Created an eight-member council of ministers (Ashtapradhan Mandal) for governance — one of the most advanced administrative systems of medieval India.",
-                                    ref: "Ref: Kincaid & Parasnis, A History of the Maratha People, Vol. 1, p. 145"
+                                    title: "Social Reform — Annihilation of Caste",
+                                    desc: "Led movements for Dalit rights, fought against untouchability, organized the Mahad Satyagraha (1927), and established educational institutions for the marginalized.",
+                                    ref: "Ref: Ambedkar, Annihilation of Caste, 1936"
                                 },
                                 {
                                     icon: Star,
-                                    title: "Legacy — Died 3 April 1680",
-                                    desc: "Left behind a powerful kingdom spanning over 300 forts, a navy of 400+ warships, and a vision of self-rule that inspired generations for centuries.",
-                                    ref: "Ref: Sarkar, Shivaji and His Times, p. 310"
+                                    title: "Legacy — Died 6 December 1956",
+                                    desc: "Left behind the world's longest written constitution, a vision of social equality, and inspired millions to pursue education and self-respect. Awarded Bharat Ratna in 1990.",
+                                    ref: "Ref: Keer, Dr. Ambedkar: Life and Mission, p. 498"
                                 },
                             ].map((item, i) => (
                                 <motion.div
@@ -139,10 +139,10 @@ const AboutSection = () => {
 
                         <Link
                             to="/history"
-                            className="inline-flex items-center gap-2 text-shiv-saffron text-xs font-bold uppercase tracking-[0.2em] hover:gap-4 transition-all mt-4"
+                            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-[0.2em] hover:gap-4 transition-all mt-6 md:mt-8 px-6 py-3 bg-white border border-primary/20 rounded-full shadow-sm hover:shadow-md hover:bg-primary/5 hover:text-primary active:scale-95"
                         >
-                            <BookOpen size={14} />
-                            Read Complete Timeline →
+                            <BookOpen size={16} />
+                            Read Complete Timeline <span className="text-xl">→</span>
                         </Link>
                     </motion.div>
                 </div>
@@ -161,23 +161,23 @@ const AboutSection = () => {
                                     About Our Mandal
                                 </span>
                                 <h3 className="text-2xl md:text-3xl font-display font-black text-secondary mb-4">
-                                    Shrimant Shivgarjana Prathisthan
+                                    Rahul Mitra Mandal
                                 </h3>
                                 <p className="text-foreground/80 text-sm leading-relaxed mb-4">
-                                    Since 2014, our Mandal in Kedari Nagar, Pune has been celebrating Shiv Jayanti
-                                    on <strong className="text-primary">19th February</strong> every year with grand processions,
-                                    educational events, and cultural programs to keep the spirit of Swarajya alive.
+                                    Since 2014, our Mandal in Kedari Nagar, Pune has been celebrating Ambedkar Jayanti
+                                    on <strong className="text-primary">14th April</strong> every year with grand processions,
+                                    educational events, and cultural programs to keep the spirit of social equality alive.
                                 </p>
                                 <p className="text-foreground/80 text-sm leading-relaxed">
-                                    Our mission is to educate the youth about the life, achievements, and governance
-                                    principles of Chhatrapati Shivaji Maharaj so that his legacy continues to inspire
+                                    Our mission is to educate the youth about the life, achievements, and social reform
+                                    principles of Babasaheb Ambedkar so that his legacy continues to inspire
                                     future generations.
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 {[
                                     { value: "12+", label: "Years Active" },
-                                    { value: "19 Feb", label: "Shiv Jayanti" },
+                                    { value: "14 Apr", label: "Ambedkar Jayanti" },
                                     { value: "100+", label: "Members" },
                                     { value: "2014", label: "Established" },
                                 ].map((s, i) => (

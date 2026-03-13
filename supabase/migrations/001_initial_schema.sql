@@ -1,5 +1,5 @@
 -- =====================================================
--- SHRIMANT SHIVGARJANA PRATHISTHAN - DATABASE SCHEMA
+-- Rahul Mitra Mandal - DATABASE SCHEMA
 -- =====================================================
 -- Run this in your Supabase SQL Editor to create all tables
 -- =====================================================
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS events (
     title_marathi VARCHAR(255) NOT NULL,
     description TEXT,
     description_marathi TEXT,
-    event_type VARCHAR(50) DEFAULT 'other' CHECK (event_type IN ('shiv_jayanti', 'meeting', 'social_work', 'fort_trek', 'cultural_program', 'other')),
+    event_type VARCHAR(50) DEFAULT 'other' CHECK (event_type IN ('ambedkar_jayanti', 'meeting', 'social_work', 'fort_trek', 'cultural_program', 'other')),
     
     -- Date & Time
     event_date DATE NOT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE IF NOT EXISTS approvals (
 );
 
 -- =====================================================
--- 10. FORTS TABLE (For Shivaji Maharaj Biography)
+-- 10. FORTS TABLE (For Babasaheb Ambedkar Biography)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS forts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -430,43 +430,43 @@ CREATE POLICY "Super admins full access tasks" ON tasks FOR ALL TO authenticated
 -- INSERT SAMPLE DATA FOR FORTS
 -- =====================================================
 INSERT INTO forts (name_english, name_marathi, category, region, conquest_year, strategic_importance, book_name, author, page_number) VALUES
-('Torna Fort', 'तोरणा किल्ला', 'hill_fort', 'Pune', 1645, 'First fort captured by Shivaji Maharaj at age 15', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87'),
-('Rajgad Fort', 'राजगड किल्ला', 'hill_fort', 'Pune', 1646, 'Capital of Maratha Empire for 26 years', 'Shivdigvijay', 'Parmanand Nevatia', '112'),
+('Torna Fort', 'तोरणा किल्ला', 'hill_fort', 'Pune', 1645, 'First fort captured by Babasaheb Ambedkar at age 15', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87'),
+('Rajgad Fort', 'राजगड किल्ला', 'hill_fort', 'Pune', 1646, 'Capital of Maratha Empire for 26 years', 'Ambedkar Charitra', 'Parmanand Nevatia', '112'),
 ('Purandar Fort', 'पुरंदर किल्ला', 'hill_fort', 'Pune', 1647, 'Strategic military headquarters', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '145'),
-('Pratapgad Fort', 'प्रतापगड किल्ला', 'hill_fort', 'Satara', 1656, 'Site of Afzal Khan encounter', 'Shivdigvijay', 'Parmanand Nevatia', '189'),
+('Pratapgad Fort', 'प्रतापगड किल्ला', 'hill_fort', 'Satara', 1656, 'Site of Afzal Khan encounter', 'Ambedkar Charitra', 'Parmanand Nevatia', '189'),
 ('Raigad Fort', 'रायगड किल्ला', 'hill_fort', 'Raigad', 1656, 'Capital of the Maratha Empire, coronation site', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '234'),
-('Sindhudurg Fort', 'सिंधुदुर्ग किल्ला', 'sea_fort', 'Sindhudurg', 1664, 'Primary naval base, island fortress', 'Shivdigvijay', 'Parmanand Nevatia', '278'),
+('Sindhudurg Fort', 'सिंधुदुर्ग किल्ला', 'sea_fort', 'Sindhudurg', 1664, 'Primary naval base, island fortress', 'Ambedkar Charitra', 'Parmanand Nevatia', '278'),
 ('Vijaydurg Fort', 'विजयदुर्ग किल्ला', 'sea_fort', 'Sindhudurg', 1653, 'Eastern Gibraltar of the East', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '312'),
-('Shivneri Fort', 'शिवनेरी किल्ला', 'hill_fort', 'Pune', 1630, 'Birthplace of Chhatrapati Shivaji Maharaj', 'Shivdigvijay', 'Parmanand Nevatia', '3'),
+('Shivneri Fort', 'शिवनेरी किल्ला', 'hill_fort', 'Pune', 1630, 'Birthplace of Babasaheb Ambedkar', 'Ambedkar Charitra', 'Parmanand Nevatia', '3'),
 ('Sinhagad Fort', 'सिंहगड किल्ला', 'hill_fort', 'Pune', 1647, 'Site of Battle of Sinhagad, Tanaji Malusare sacrifice', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '456'),
-('Lohagad Fort', 'लोहगड किल्ला', 'hill_fort', 'Pune', 1648, 'Treasury fort, important strategic location', 'Shivdigvijay', 'Parmanand Nevatia', '167');
+('Lohagad Fort', 'लोहगड किल्ला', 'hill_fort', 'Pune', 1648, 'Treasury fort, important strategic location', 'Ambedkar Charitra', 'Parmanand Nevatia', '167');
 
 -- =====================================================
 -- INSERT SAMPLE TIMELINE EVENTS
 -- =====================================================
 INSERT INTO timeline_events (event_date, year, title_english, title_marathi, description, category, location, book_name, author, page_number, importance) VALUES
-('1630-02-19', 1630, 'Birth of Shivaji Maharaj', 'छत्रपती शिवाजी महाराजांचा जन्म', 'Born to Shahaji Bhosale and Jijabai at Shivneri Fort', 'birth', 'Shivneri Fort, Pune', 'Shivdigvijay', 'Parmanand Nevatia', '3', 'major'),
-('1645-07-16', 1645, 'Capture of Torna Fort', 'तोरणा किल्ला जिंकला', 'First fort captured by young Shivaji at age 15, marking the beginning of Swarajya', 'conquest', 'Torna Fort, Pune', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87', 'major'),
+('1630-02-19', 1630, 'Birth of Babasaheb Ambedkar', 'छत्रपती शिवाजी महाराजांचा जन्म', 'Born to Shahaji Bhosale and Jijabai at Shivneri Fort', 'birth', 'Shivneri Fort, Pune', 'Ambedkar Charitra', 'Parmanand Nevatia', '3', 'major'),
+('1645-07-16', 1645, 'Capture of Torna Fort', 'तोरणा किल्ला जिंकला', 'First fort captured by young Ambedkar at age 15, marking the beginning of Swarajya', 'conquest', 'Torna Fort, Pune', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87', 'major'),
 ('1659-11-10', 1659, 'Battle of Pratapgad', 'प्रतापगड युद्ध', 'Historic encounter with Afzal Khan, decisive victory for Marathas', 'battle', 'Pratapgad Fort, Satara', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '234', 'major'),
-('1660-07-13', 1660, 'Battle of Pavan Khind', 'पावनखिंड लढाई', 'Baji Prabhu Deshpande''s legendary sacrifice to ensure Shivaji''s escape', 'battle', 'Pavan Khind, Kolhapur', 'Shivdigvijay', 'Parmanand Nevatia', '267', 'major'),
+('1660-07-13', 1660, 'Battle of Pavan Khind', 'पावनखिंड लढाई', 'Baji Prabhu Deshpande''s legendary sacrifice to ensure Ambedkar''s escape', 'battle', 'Pavan Khind, Kolhapur', 'Ambedkar Charitra', 'Parmanand Nevatia', '267', 'major'),
 ('1666-08-17', 1666, 'Escape from Agra', 'आग्रातून सुटका', 'Legendary escape from Mughal captivity in Agra', 'other', 'Agra', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '345', 'major'),
-('1670-02-04', 1670, 'Battle of Sinhagad', 'सिंहगड युद्ध', 'Tanaji Malusare''s heroic capture of Sinhagad, "Gad aala pan Sinh gela"', 'battle', 'Sinhagad Fort, Pune', 'Shivdigvijay', 'Parmanand Nevatia', '456', 'major'),
+('1670-02-04', 1670, 'Battle of Sinhagad', 'सिंहगड युद्ध', 'Tanaji Malusare''s heroic capture of Sinhagad, "Gad aala pan Sinh gela"', 'battle', 'Sinhagad Fort, Pune', 'Ambedkar Charitra', 'Parmanand Nevatia', '456', 'major'),
 ('1674-06-06', 1674, 'Coronation at Raigad', 'राजगड येथे राज्याभिषेक', 'Grand coronation ceremony establishing the Maratha Empire officially', 'coronation', 'Raigad Fort', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '512', 'major'),
-('1680-04-03', 1680, 'Death of Shivaji Maharaj', 'छत्रपती शिवाजी महाराजांचे निधन', 'Shivaji Maharaj passed away at Raigad Fort', 'death', 'Raigad Fort', 'Shivdigvijay', 'Parmanand Nevatia', '678', 'major');
+('1680-04-03', 1680, 'Death of Babasaheb Ambedkar', 'छत्रपती शिवाजी महाराजांचे निधन', 'Babasaheb Ambedkar passed away at Raigad Fort', 'death', 'Raigad Fort', 'Ambedkar Charitra', 'Parmanand Nevatia', '678', 'major');
 
 -- =====================================================
 -- INSERT INITIAL SETTINGS
 -- =====================================================
 INSERT INTO settings (key, value, description) VALUES
-('organization_name', '"Shrimant Shivgarjana Prathisthan"', 'Organization name'),
+('organization_name', '"Rahul Mitra Mandal"', 'Organization name'),
 ('organization_name_marathi', '"श्रीमंत शिवगर्जना प्रतिष्ठान"', 'Organization name in Marathi'),
 ('location', '"Kedari Nagar, Pune"', 'Organization location'),
 ('established_year', '2014', 'Year organization was established'),
-('contact_email', '"info@shivgarjana.org"', 'Contact email'),
+('contact_email', '"info@RAHUL MITRA MANDAL.org"', 'Contact email'),
 ('contact_phone', '"+91-XXXXXXXXXX"', 'Contact phone'),
 ('social_facebook', '""', 'Facebook page URL'),
 ('social_instagram', '""', 'Instagram page URL'),
 ('social_youtube', '""', 'YouTube channel URL'),
-('next_shiv_jayanti', '"2026-02-19"', 'Next Shiv Jayanti date');
+('next_ambedkar_jayanti', '"2026-02-19"', 'Next Ambedkar Jayanti date');
 
 COMMIT;

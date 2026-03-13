@@ -34,7 +34,7 @@ const Navbar = () => {
                 <Link to="/" className="flex items-center gap-3 group">
                     <img
                         src="/images/logo.png"
-                        alt="Shivgarjana Logo"
+                        alt="RAHUL MITRA MANDAL Logo"
                         className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-lg"
                     />
                     <div className="flex flex-col">

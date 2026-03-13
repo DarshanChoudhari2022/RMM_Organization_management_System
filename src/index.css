@@ -6,28 +6,28 @@
 
 @layer base {
   :root {
-    /* Shivsrushti Theme Colors */
-    --background: 40 33% 98%; /* Cream #FFFBF2 */
-    --foreground: 10 30% 20%; /* Dark Brown #3E2723 */
+    /* Ambedkar Theme Colors */
+    --background: 0 0% 100%; /* Pure White */
+    --foreground: 222 47% 11%; /* Dark Navy #0f172a */
     
     --card: 0 0% 100%;
-    --card-foreground: 10 30% 20%;
+    --card-foreground: 222 47% 11%;
     
-    --primary: 18 75% 48%; /* Terra Cotta Orange #D95D1E - Matches Hero */
+    --primary: 221 83% 53%; /* Royal Blue #1D4ED8 */
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 0 100% 27%; /* Maroon #8B0000 */
-    --secondary-foreground: 40 33% 98%;
+    --secondary: 217 91% 60%; /* Light Blue #3B82F6 */
+    --secondary-foreground: 0 0% 100%;
     
-    --muted: 40 20% 92%;
-    --muted-foreground: 10 10% 40%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     
-    --accent: 18 75% 48%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
     
-    --border: 10 20% 85%;
-    --input: 10 20% 90%;
-    --ring: 18 75% 48%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
     
     --radius: 0.5rem;
   }

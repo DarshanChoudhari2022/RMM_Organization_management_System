@@ -18,7 +18,7 @@ const galleryData: GalleryItem[] = [
   {
     id: 1,
     year: 2024,
-    title: "Shiv Jayanti Celebration 2024",
+    title: "Ambedkar Jayanti Celebration 2024",
     description: "Grand procession through Kedari Nagar with traditional decorations and musical performances.",
     image: "https://images.unsplash.com/photo-1604604296972-1e5a17e3aeae?q=80&w=1000"
   },
@@ -32,22 +32,22 @@ const galleryData: GalleryItem[] = [
   {
     id: 3,
     year: 2023,
-    title: "Shiv Jayanti Miravnuk 2023",
-    description: "Massive Shiv Jayanti procession with decorated floats and community participation.",
+    title: "Ambedkar Jayanti Miravnuk 2023",
+    description: "Massive Ambedkar Jayanti procession with decorated floats and community participation.",
     image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000"
   },
   {
     id: 4,
     year: 2023,
     title: "Community Gathering 2023",
-    description: "Annual meeting of Shivgarjana Prathisthan members at Kedari Nagar.",
+    description: "Annual meeting of Rahul Mitra Mandal members at Kedari Nagar.",
     image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1000"
   },
   {
     id: 5,
     year: 2022,
     title: "Decoration & Stage Setup 2022",
-    description: "Elaborate stage setup with Chhatrapati Shivaji Maharaj theme and traditional artwork.",
+    description: "Elaborate stage setup with Babasaheb Ambedkar theme and traditional artwork.",
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000"
   },
   {
@@ -60,7 +60,7 @@ const galleryData: GalleryItem[] = [
   {
     id: 7,
     year: 2021,
-    title: "Shiv Jayanti 2021",
+    title: "Ambedkar Jayanti 2021",
     description: "Intimate celebration during challenging times, keeping the spirit of Swarajya alive.",
     image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1000"
   },
@@ -111,8 +111,8 @@ const Gallery = () => {
               Photo <span className="text-primary italic">Gallery</span>
             </h1>
             <p className="text-foreground/70 text-base md:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-              Relive the moments from our Shiv Jayanti celebrations, cultural programs, and community
-              events at Shrimant Shivgarjana Prathisthan, Kedari Nagar.
+              Relive the moments from our Ambedkar Jayanti Celebrations, cultural programs, and community
+              events at Rahul Mitra Mandal, Kedari Nagar.
             </p>
           </motion.div>
         </div>

@@ -538,7 +538,7 @@ const VarganiSlipTab = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <div className="w-8 h-8 border-4 border-[#D95D1E]/20 border-t-[#D95D1E] rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-[#1D4ED8]/20 border-t-[#1D4ED8] rounded-full animate-spin" />
             </div>
         );
     }
@@ -565,9 +565,9 @@ const VarganiSlipTab = () => {
                             initial={{ scale: 0.9 }} animate={{ scale: 1 }}
                             className="bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4"
                         >
-                            <Loader2 size={32} className="text-[#D95D1E] animate-spin" />
-                            <div className="text-sm font-black uppercase tracking-widest text-[#2C1810]">Generating Slip...</div>
-                            <div className="text-[10px] text-[#2C1810]/50">Please wait</div>
+                            <Loader2 size={32} className="text-[#1D4ED8] animate-spin" />
+                            <div className="text-sm font-black uppercase tracking-widest text-[#0F172A]">Generating Slip...</div>
+                            <div className="text-[10px] text-[#0F172A]/50">Please wait</div>
                         </motion.div>
                     </motion.div>
                 )}
@@ -576,12 +576,12 @@ const VarganiSlipTab = () => {
             {/* ======= Header ======= */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <div>
-                    <h2 className="text-xl font-display font-black text-[#2C1810]">वर्गणी पावती / Vargani Slips</h2>
-                    <p className="text-[10px] font-bold text-[#2C1810]/50 uppercase tracking-widest mt-1">Generate & manage vargani receipts</p>
+                    <h2 className="text-xl font-display font-black text-[#0F172A]">वर्गणी पावती / Vargani Slips</h2>
+                    <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-widest mt-1">Generate & manage vargani receipts</p>
                 </div>
                 <button
                     onClick={() => { resetForm(); setIsFormOpen(true); }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#D95D1E] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#D95D1E]/20"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1D4ED8] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#1D4ED8]/20"
                 >
                     <Plus size={16} /> New Vargani Entry
                 </button>
@@ -590,8 +590,8 @@ const VarganiSlipTab = () => {
             {/* ======= Stats ======= */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1 md:mb-2">Total Entries</div>
-                    <div className="text-xl md:text-3xl font-black text-[#2C1810]">{stats.total}</div>
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Total Entries</div>
+                    <div className="text-xl md:text-3xl font-black text-[#0F172A]">{stats.total}</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-green-600 mb-1 md:mb-2">Collected</div>
@@ -608,8 +608,8 @@ const VarganiSlipTab = () => {
                     <div className="text-xl md:text-3xl font-black text-green-700">{stats.paidCount}</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-orange-100 rounded-2xl shadow-sm bg-orange-50/30">
-                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#D95D1E] mb-1 md:mb-2">Pending Slips</div>
-                    <div className="text-xl md:text-3xl font-black text-[#D95D1E]">{stats.pendingCount}</div>
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] mb-1 md:mb-2">Pending Slips</div>
+                    <div className="text-xl md:text-3xl font-black text-[#1D4ED8]">{stats.pendingCount}</div>
                 </div>
             </div>
 
@@ -621,8 +621,8 @@ const VarganiSlipTab = () => {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${filter === f
-                                ? 'bg-[#D95D1E] text-white'
-                                : 'text-[#2C1810]/60 hover:text-[#2C1810] hover:bg-[#F5F5F0]'
+                                ? 'bg-[#1D4ED8] text-white'
+                                : 'text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#F5F5F0]'
                                 }`}
                         >
                             {f === 'all' ? `All (${stats.total})` : f === 'paid' ? `✅ Paid (${stats.paidCount})` : `⏳ Pending (${stats.pendingCount})`}
@@ -635,7 +635,7 @@ const VarganiSlipTab = () => {
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 shadow-sm"
+                        className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 shadow-sm"
                         placeholder="Search by name, shop, mobile, slip no..."
                     />
                 </div>
@@ -646,7 +646,7 @@ const VarganiSlipTab = () => {
                 {/* Desktop Header */}
                 <div className="hidden md:block overflow-x-auto">
                     <div className="min-w-[900px]">
-                        <div className="grid grid-cols-12 gap-3 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60">
+                        <div className="grid grid-cols-12 gap-3 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
                             <div className="col-span-1">Slip #</div>
                             <div className="col-span-2">Name / Shop</div>
                             <div className="col-span-1">Amount</div>
@@ -661,10 +661,10 @@ const VarganiSlipTab = () => {
                 {filteredSlips.length === 0 ? (
                     <div className="p-10 text-center">
                         <div className="text-4xl mb-3">📃</div>
-                        <div className="text-[#2C1810]/60 text-sm font-bold">No slips found.</div>
+                        <div className="text-[#0F172A]/60 text-sm font-bold">No slips found.</div>
                         <button
                             onClick={() => { resetForm(); setIsFormOpen(true); }}
-                            className="mt-4 text-[#D95D1E] font-bold text-sm hover:underline"
+                            className="mt-4 text-[#1D4ED8] font-bold text-sm hover:underline"
                         >
                             Create your first vargani entry
                         </button>
@@ -677,16 +677,16 @@ const VarganiSlipTab = () => {
                                 {filteredSlips.map((slip) => (
                                     <div key={slip.id} className="grid grid-cols-12 gap-3 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
                                         <div className="col-span-1">
-                                            <span className="text-[11px] font-bold text-[#D95D1E] font-mono">{slip.slip_number?.split('-').pop()}</span>
+                                            <span className="text-[11px] font-bold text-[#1D4ED8] font-mono">{slip.slip_number?.split('-').pop()}</span>
                                         </div>
                                         <div className="col-span-2">
-                                            <div className="font-bold text-[#2C1810] text-sm">{slip.name}</div>
-                                            <div className="text-[10px] text-[#2C1810]/50 flex items-center gap-1">
+                                            <div className="font-bold text-[#0F172A] text-sm">{slip.name}</div>
+                                            <div className="text-[10px] text-[#0F172A]/50 flex items-center gap-1">
                                                 <Store size={10} /> {slip.shop_name}
                                             </div>
                                         </div>
                                         <div className="col-span-1">
-                                            <div className="font-black text-[#2C1810] text-sm">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
+                                            <div className="font-black text-[#0F172A] text-sm">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
                                         </div>
                                         <div className="col-span-2">
                                             <a
@@ -715,7 +715,7 @@ const VarganiSlipTab = () => {
                                                     <div className="text-[10px] text-green-600 font-bold">
                                                         ✅ {slip.confirmed_by_name}
                                                     </div>
-                                                    <div className="text-[9px] text-[#2C1810]/40">
+                                                    <div className="text-[9px] text-[#0F172A]/40">
                                                         {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleDateString('en-IN')}
                                                     </div>
                                                 </div>
@@ -724,7 +724,7 @@ const VarganiSlipTab = () => {
                                                     <div className="text-[10px] text-amber-600 font-bold flex items-center gap-1">
                                                         <Calendar size={10} /> Tentative
                                                     </div>
-                                                    <div className="text-[11px] text-[#2C1810] font-bold">
+                                                    <div className="text-[11px] text-[#0F172A] font-bold">
                                                         {slip.tentative_date ? new Date(slip.tentative_date).toLocaleDateString('en-IN') : 'Not set'}
                                                     </div>
                                                 </div>
@@ -787,14 +787,14 @@ const VarganiSlipTab = () => {
                                 <div key={slip.id} className="p-4 space-y-3">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <div className="font-bold text-[#2C1810]">{slip.name}</div>
-                                            <div className="text-[10px] text-[#2C1810]/50 flex items-center gap-1 mt-0.5">
+                                            <div className="font-bold text-[#0F172A]">{slip.name}</div>
+                                            <div className="text-[10px] text-[#0F172A]/50 flex items-center gap-1 mt-0.5">
                                                 <Store size={10} /> {slip.shop_name}
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-black text-[#D95D1E] text-lg">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
-                                            <div className="text-[9px] text-[#2C1810]/40 font-mono">{slip.slip_number}</div>
+                                            <div className="font-black text-[#1D4ED8] text-lg">₹{Number(slip.amount).toLocaleString('en-IN')}</div>
+                                            <div className="text-[9px] text-[#0F172A]/40 font-mono">{slip.slip_number}</div>
                                         </div>
                                     </div>
 
@@ -883,51 +883,51 @@ const VarganiSlipTab = () => {
                             {/* Modal Header */}
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-xl font-display font-black text-[#2C1810]">नवीन वर्गणी / New Entry</h3>
-                                    <p className="text-[10px] text-[#2C1810]/50 font-bold uppercase tracking-widest mt-1">Fill in contribution details</p>
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">नवीन वर्गणी / New Entry</h3>
+                                    <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">Fill in contribution details</p>
                                 </div>
                                 <button onClick={() => setIsFormOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                                    <X size={18} className="text-[#2C1810]/60" />
+                                    <X size={18} className="text-[#0F172A]/60" />
                                 </button>
                             </div>
 
                             <div className="space-y-4">
                                 {/* Name */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <User size={10} className="inline mr-1" /> नाव / Name *
                                     </label>
                                     <input
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                         placeholder="Enter full name"
                                     />
                                 </div>
 
                                 {/* Shop Name */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Store size={10} className="inline mr-1" /> दुकान / Shop Name *
                                     </label>
                                     <input
                                         value={formData.shop_name}
                                         onChange={e => setFormData({ ...formData, shop_name: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                         placeholder="Enter shop / business name"
                                     />
                                 </div>
 
                                 {/* Amount */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <IndianRupee size={10} className="inline mr-1" /> रक्कम / Amount (₹) *
                                     </label>
                                     <input
                                         type="number"
                                         value={formData.amount}
                                         onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                         placeholder="e.g. 1500"
                                         min="1"
                                     />
@@ -935,26 +935,26 @@ const VarganiSlipTab = () => {
 
                                 {/* Location */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <MapPin size={10} className="inline mr-1" /> ठिकाण / Location *
                                     </label>
                                     <input
                                         value={formData.location}
                                         onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                         placeholder="e.g. Wanwadi, Pune"
                                     />
                                 </div>
 
                                 {/* Address */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Home size={10} className="inline mr-1" /> पत्ता / Address
                                     </label>
                                     <textarea
                                         value={formData.address}
                                         onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 resize-none"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 resize-none"
                                         placeholder="Full address (optional)"
                                         rows={2}
                                     />
@@ -962,16 +962,16 @@ const VarganiSlipTab = () => {
 
                                 {/* WhatsApp Number */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Phone size={10} className="inline mr-1" /> WhatsApp Number *
                                     </label>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-bold text-[#2C1810]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
+                                        <span className="text-sm font-bold text-[#0F172A]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
                                         <input
                                             type="tel"
                                             value={formData.mobile}
                                             onChange={e => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                                            className="flex-1 bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 font-mono"
+                                            className="flex-1 bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-mono"
                                             placeholder="10 digit WhatsApp number"
                                             maxLength={10}
                                         />
@@ -985,7 +985,7 @@ const VarganiSlipTab = () => {
 
                                 {/* Payment Status */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-3">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-3">
                                         Payment Status *
                                     </label>
                                     <div className="grid grid-cols-2 gap-3">
@@ -1001,7 +1001,7 @@ const VarganiSlipTab = () => {
                                             <div className={`text-xs font-black uppercase tracking-wider ${formData.paymentStatus === 'paid' ? 'text-green-600' : 'text-gray-500'}`}>
                                                 Payment Received
                                             </div>
-                                            <div className="text-[9px] text-[#2C1810]/40 mt-1">Slip will be generated</div>
+                                            <div className="text-[9px] text-[#0F172A]/40 mt-1">Slip will be generated</div>
                                         </button>
                                         <button
                                             type="button"
@@ -1015,7 +1015,7 @@ const VarganiSlipTab = () => {
                                             <div className={`text-xs font-black uppercase tracking-wider ${formData.paymentStatus === 'pending' ? 'text-amber-600' : 'text-gray-500'}`}>
                                                 Pending
                                             </div>
-                                            <div className="text-[9px] text-[#2C1810]/40 mt-1">No slip until paid</div>
+                                            <div className="text-[9px] text-[#0F172A]/40 mt-1">No slip until paid</div>
                                         </button>
                                     </div>
                                 </div>
@@ -1053,7 +1053,7 @@ const VarganiSlipTab = () => {
                             <div className="flex gap-3 mt-8">
                                 <button
                                     onClick={() => setIsFormOpen(false)}
-                                    className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200"
+                                    className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200"
                                 >
                                     Cancel
                                 </button>
@@ -1092,73 +1092,73 @@ const VarganiSlipTab = () => {
                         >
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-xl font-display font-black text-[#2C1810]">✏️ Edit Entry</h3>
-                                    <p className="text-[10px] text-[#2C1810]/50 font-bold uppercase tracking-widest mt-1">
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">✏️ Edit Entry</h3>
+                                    <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">
                                         Slip: {editingSlip.slip_number}
                                     </p>
                                 </div>
                                 <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                                    <X size={18} className="text-[#2C1810]/60" />
+                                    <X size={18} className="text-[#0F172A]/60" />
                                 </button>
                             </div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <User size={10} className="inline mr-1" /> नाव / Name *
                                     </label>
                                     <input value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Store size={10} className="inline mr-1" /> दुकान / Shop Name *
                                     </label>
                                     <input value={editData.shop_name} onChange={e => setEditData({ ...editData, shop_name: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <IndianRupee size={10} className="inline mr-1" /> रक्कम / Amount (₹) *
                                     </label>
                                     <input type="number" value={editData.amount} onChange={e => setEditData({ ...editData, amount: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20" min="1"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20" min="1"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <MapPin size={10} className="inline mr-1" /> ठिकाण / Location *
                                     </label>
                                     <input value={editData.location} onChange={e => setEditData({ ...editData, location: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20"
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Home size={10} className="inline mr-1" /> पत्ता / Address
                                     </label>
                                     <textarea value={editData.address} onChange={e => setEditData({ ...editData, address: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 resize-none" rows={2}
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 resize-none" rows={2}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-1">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
                                         <Phone size={10} className="inline mr-1" /> WhatsApp Number *
                                     </label>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-bold text-[#2C1810]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
+                                        <span className="text-sm font-bold text-[#0F172A]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
                                         <input type="tel" value={editData.mobile}
                                             onChange={e => setEditData({ ...editData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                                            className="flex-1 bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D95D1E]/20 font-mono" maxLength={10}
+                                            className="flex-1 bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-mono" maxLength={10}
                                         />
                                     </div>
                                 </div>
 
                                 {/* Status Toggle */}
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C1810]/60 mb-3">
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-3">
                                         Payment Status *
                                     </label>
                                     <div className="grid grid-cols-2 gap-3">
@@ -1195,9 +1195,9 @@ const VarganiSlipTab = () => {
 
                             <div className="flex gap-3 mt-8">
                                 <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }}
-                                    className="flex-1 py-3 text-[#2C1810]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                                    className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
                                 <button onClick={handleEditSubmit} disabled={updateSlip.isPending}
-                                    className="flex-1 py-3 text-white font-bold text-sm rounded-xl bg-[#D95D1E] hover:bg-[#B94A15] flex items-center justify-center gap-2 disabled:opacity-50">
+                                    className="flex-1 py-3 text-white font-bold text-sm rounded-xl bg-[#1D4ED8] hover:bg-[#B94A15] flex items-center justify-center gap-2 disabled:opacity-50">
                                     {updateSlip.isPending ? <Loader2 size={16} className="animate-spin" /> : <><Edit3 size={16} /> Save Changes</>}
                                 </button>
                             </div>

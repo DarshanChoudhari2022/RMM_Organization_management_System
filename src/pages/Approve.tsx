@@ -116,7 +116,7 @@ const Approve = () => {
               : "Your unavailability has been recorded."}
           </p>
 
-          <p className="text-xs text-gray-300 mt-8 font-bold uppercase tracking-widest">Shiv Garjana Mandal • Kedari Nagar</p>
+          <p className="text-xs text-gray-300 mt-8 font-bold uppercase tracking-widest">Rahul Mitra Mandal • Kedari Nagar</p>
         </motion.div>
       </div>
     );
@@ -143,7 +143,7 @@ const Approve = () => {
               <img src="/images/logo.png" alt="Logo" className="w-20 h-20 object-contain drop-shadow-xl" />
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-shiv-saffron/10 text-shiv-saffron rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
-              <Shield size={12} /> Shiv Garjana Mandal
+              <Shield size={12} /> Rahul Mitra Mandal
             </div>
             <h1 className="text-2xl font-display font-black text-[#1A1A1A] mb-2">{task.title}</h1>
             <p className="text-gray-500 text-sm leading-relaxed">{task.description}</p>

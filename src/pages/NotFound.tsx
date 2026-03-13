@@ -14,7 +14,7 @@ const NotFound = () => {
         <h1 className="text-2xl font-display font-black text-foreground mb-3">Page Not Found</h1>
         <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
           The page you're looking for doesn't exist or has been moved.
-          Return to explore the history of Chhatrapati Shivaji Maharaj.
+          Return to explore the history of Babasaheb Ambedkar.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link

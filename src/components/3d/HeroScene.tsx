@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stars, Environment } from "@react-three/drei";
 import FortScene from "./FortScene";
 import SaffronFlag from "./SaffronFlag";
-import ShivajiSilhouette from "./ShivajiSilhouette";
+import AmbedkarSilhouette from "./AmbedkarSilhouette";
 
 const HeroScene = () => {
   return (
@@ -34,7 +34,7 @@ const HeroScene = () => {
           {/* Scene */}
           <FortScene />
           <SaffronFlag />
-          <ShivajiSilhouette />
+          <AmbedkarSilhouette />
 
           {/* Stars */}
           <Stars radius={50} depth={50} count={1000} factor={3} saturation={0} fade speed={0.5} />

@@ -17,7 +17,7 @@ const YouthWing = () => {
                             The <span className="text-shiv-saffron italic">Yuva</span> Force
                         </h2>
                         <p className="text-lg text-shiv-navy/60 leading-relaxed font-sans mb-12 max-w-xl">
-                            Our youth wing connects the energy of today's volunteers with the timeless discipline and strategic brilliance of Chhatrapati Shivaji Maharaj's administration.
+                            Our youth wing connects the energy of today's volunteers with the timeless discipline and strategic brilliance of Babasaheb Ambedkar's administration.
                         </p>
 
                         <div className="grid sm:grid-cols-2 gap-x-12 gap-y-10">

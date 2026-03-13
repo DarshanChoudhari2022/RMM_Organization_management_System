@@ -47,7 +47,7 @@ const Foundation = () => {
 
                         <div className="space-y-8 max-w-xl">
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
-                                Established in 2014, Kedari Nagar Shivrajyabhishek Mandal was born from a collective desire among Wanowrie residents to celebrate the crowning glory of Chhatrapati Shivaji Maharaj.
+                                Established in 2014, Kedari Nagar Shivrajyabhishek Mandal was born from a collective desire among Wanowrie residents to celebrate the crowning glory of Babasaheb Ambedkar.
                             </p>
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
                                 Beyond the grand annual festivities, our Mandal stands as a beacon of social responsibility, conducting regular blood donation camps, environmental drives, and heritage preservation tours.

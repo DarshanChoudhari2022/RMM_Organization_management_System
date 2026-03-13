@@ -38,23 +38,23 @@ const NavySection = () => {
                         viewport={{ once: true }}
                         className="order-2 lg:order-1"
                     >
-                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#E67E22] mb-4 block">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#1D4ED8] mb-4 block">
                             Guardians of the Coast
                         </span>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-[#2C3E50] mb-8 leading-tight">
                             Father of the <br />
-                            <span className="text-[#E67E22]">Indian Navy</span>
+                            <span className="text-[#1D4ED8]">Indian Navy</span>
                         </h2>
                         <p className="text-[#2C3E50]/80 text-lg mb-10 leading-relaxed">
-                            Realizing that "He who has the Navy, has the Sea", Chhatrapati Shivaji Maharaj built India's first sovereign naval force.
+                            Realizing that "He who has the Navy, has the Sea", Babasaheb Ambedkar built India's first sovereign naval force.
                             His vision of maritime security led to the protection of the Konkan coast from foreign invaders.
                         </p>
 
                         <div className="grid sm:grid-cols-2 gap-6">
                             {navalFacts.map((fact, i) => (
                                 <div key={i} className="flex gap-4 group">
-                                    <div className="flex-shrink-0 w-12 h-12 bg-[#FBE8D3] rounded-xl flex items-center justify-center group-hover:bg-[#E67E22] group-hover:text-white transition-all duration-300">
-                                        <fact.icon size={20} className="text-[#E67E22] group-hover:text-white" />
+                                    <div className="flex-shrink-0 w-12 h-12 bg-[#DBEAFE] rounded-xl flex items-center justify-center group-hover:bg-[#1D4ED8] group-hover:text-white transition-all duration-300">
+                                        <fact.icon size={20} className="text-[#1D4ED8] group-hover:text-white" />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-sm text-[#2C3E50] mb-1">{fact.title}</h4>
@@ -72,9 +72,9 @@ const NavySection = () => {
                         className="order-1 lg:order-2 relative"
                     >
                         {/* Background Glow */}
-                        <div className="absolute -inset-10 bg-[#D95D1E]/5 blur-3xl rounded-full" />
+                        <div className="absolute -inset-10 bg-[#1D4ED8]/5 blur-3xl rounded-full" />
 
-                        <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-[#FBE8D3] transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-[#DBEAFE] transform -rotate-2 hover:rotate-0 transition-transform duration-500">
                             <img
                                 src="/images/MarathaNavel.png"
                                 alt="Maratha Navy Ships and Forts"
@@ -85,7 +85,7 @@ const NavySection = () => {
                                 <blockquote className="text-white italic text-lg font-medium leading-relaxed">
                                     "Having a navy is like having a fort on the water."
                                 </blockquote>
-                                <p className="text-white/60 text-xs mt-2 uppercase tracking-widest">— Chhatrapati Shivaji Maharaj</p>
+                                <p className="text-white/60 text-xs mt-2 uppercase tracking-widest">— Babasaheb Ambedkar</p>
                             </div>
                         </div>
                     </motion.div>

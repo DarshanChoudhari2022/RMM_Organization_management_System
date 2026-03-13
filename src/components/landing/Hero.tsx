@@ -25,14 +25,13 @@ const Hero = () => {
 
                     {/* Main Heading - Playfair Display (Serif) */}
                     <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-foreground leading-tight mb-4">
-                        Shrimant <br />
-                        <span className="text-primary">Shivgarjana</span> <br />
-                        <span className="text-4xl md:text-5xl lg:text-6xl text-highlight font-italic">Prathisthan</span>
+                        <span className="text-primary">Rahul Mitra</span> <br />
+                        <span className="text-4xl md:text-5xl lg:text-6xl text-highlight font-italic">Mandal</span>
                     </h1>
 
                     <p className="text-foreground/80 text-lg md:text-xl font-sans font-light leading-relaxed mb-8 max-w-xl">
-                        Celebrating the eternal legacy of <strong>Chhatrapati Shivaji Maharaj</strong>.
-                        We are dedicated to preserving our history, culture, and the spirit of Swarajya for future generations.
+                        Celebrating the eternal legacy of <strong>Babasaheb Ambedkar</strong>.
+                        We are dedicated to preserving his vision of equality, education, and social justice for future generations.
                     </p>
 
                     {/* Buttons */}
@@ -42,12 +41,6 @@ const Hero = () => {
                             className="btn-primary"
                         >
                             Read History <ArrowRight size={18} />
-                        </Link>
-                        <Link
-                            to="/forts"
-                            className="btn-outline"
-                        >
-                            Explore Forts <Shield size={18} />
                         </Link>
                     </div>
                 </motion.div>
@@ -65,7 +58,7 @@ const Hero = () => {
 
                         <img
                             src="/images/logo.png"
-                            alt="Shivgarjana Prathisthan Logo"
+                            alt="Rahul Mitra Mandal Logo"
                             className="w-full h-full object-contain drop-shadow-xl"
                         />
                     </div>
@@ -79,8 +72,8 @@ const Hero = () => {
                 transition={{ delay: 1, duration: 1 }}
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
             >
-                <span className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#2C1810]/40">Scroll</span>
-                <ChevronDown className="text-[#D95D1E] animate-bounce" size={20} />
+                <span className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#0F172A]/40">Scroll</span>
+                <ChevronDown className="text-[#1D4ED8] animate-bounce" size={20} />
             </motion.div>
         </section>
     );

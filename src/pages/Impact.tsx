@@ -55,7 +55,7 @@ const Impact = () => {
                         Community <span className="text-shiv-saffron italic">Impact</span>
                     </h1>
                     <p className="text-xl text-shiv-navy/60 font-serif max-w-3xl mx-auto italic leading-relaxed">
-                        Beyond the celebrations, Shivgarjana works tirelessly for social welfare and heritage preservation.
+                        Beyond the celebrations, RAHUL MITRA MANDAL works tirelessly for social welfare and heritage preservation.
                     </p>
                 </div>
 

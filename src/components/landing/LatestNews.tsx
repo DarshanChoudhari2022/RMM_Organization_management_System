@@ -7,7 +7,7 @@ const newsItems = [
         date: "Feb 15, 2026",
         title: "Dhol Tasha Pathak Practice Commences",
         titleMarathi: "ढोल ताशा पथकाचा सराव सुरू",
-        excerpt: "Our 100-member strong 'Shivgarjana Dhol Tasha Pathak' has started vigorous daily rehearsals for the upcoming grand procession.",
+        excerpt: "Our 100-member strong 'RAHUL MITRA MANDAL Dhol Tasha Pathak' has started vigorous daily rehearsals for the upcoming grand procession.",
         image: "https://images.unsplash.com/photo-1620766182577-b8a9134a6ee1?q=80&w=2070",
         category: "Utsav Prep"
     },

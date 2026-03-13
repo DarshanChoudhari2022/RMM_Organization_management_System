@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
-const supabaseUrl = 'https://vxuhvsgtmvemynlicvci.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4dWh2c2d0bXZlbXlubGljdmNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2MzMwOTIsImV4cCI6MjA4NjIwOTA5Mn0.ivzN2QJ8RonskTgPphdSvKIb2EbnJdkkreDpwHdthzw';
+const supabaseUrl = 'https://gvozzlovfrdhubsusgyu.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2b3p6bG92ZnJkaHVic3VzZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTI2NTksImV4cCI6MjA4ODk2ODY1OX0.y1BV5IILwf56AkCNdbhxLioptA1teJRnvTWdOV9ebL4';
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
@@ -48,7 +48,7 @@ export const getCurrentUser = async () => {
 // export const fetchApprovals = async (eventId?: string) => { ... }
 */
 
-// Fort data for Chhatrapati Shivaji Maharaj biography section
+// Fort data for Babasaheb Ambedkar biography section
 export const fetchForts = async (category?: string, region?: string) => {
     let query = supabase.from('forts').select('*');
     if (category) {

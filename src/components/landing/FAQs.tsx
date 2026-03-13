@@ -10,7 +10,7 @@ const faqs = [
     },
     {
         question: "Is there an entry fee for the Heritage Expo?",
-        answer: "No, the Maratha Heritage Expo organized by Shivgarjana Mandal is completely free for all residents and visitors to encourage historical awareness."
+        answer: "No, the Maratha Heritage Expo organized by Rahul Mitra Mandal is completely free for all residents and visitors to encourage historical awareness."
     },
     {
         question: "How does the Mandal use my donations?",

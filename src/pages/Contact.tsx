@@ -32,7 +32,7 @@ const Contact = () => {
                             {[
                                 { icon: MapPin, title: "Our Location", detail: "Kedari Nagar, Wanowrie, Pune - 411040" },
                                 { icon: Phone, title: "Hotline", detail: "+91 98765 43210 (10 AM - 8 PM)" },
-                                { icon: Mail, title: "Email Us", detail: "contact@shivgarjana.in" },
+                                { icon: Mail, title: "Email Us", detail: "contact@RAHUL MITRA MANDAL.in" },
                                 { icon: MessageCircle, title: "WhatsApp", detail: "Connect for instant updates" },
                             ].map((item, i) => (
                                 <div key={i} className="p-8 border border-shiv-gold/10 bg-white group hover:border-shiv-saffron/30 transition-all shadow-sm">

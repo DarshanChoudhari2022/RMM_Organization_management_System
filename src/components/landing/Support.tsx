@@ -16,7 +16,7 @@ const Support = () => {
                     <h2 className="text-shiv-navy text-4xl md:text-5xl font-black mb-6">Uphold <span className="text-shiv-saffron italic">The Legacy</span></h2>
                     <div className="w-20 h-1 bg-shiv-saffron mx-auto rounded-full mb-10" />
                     <p className="max-w-2xl mx-auto text-shiv-navy/60 font-sans leading-relaxed">
-                        Every contribution helps us magnify the grand celebrations of Shiv Jayanti and sustain our community welfare programs throughout the year.
+                        Every contribution helps us magnify the grand celebrations of Ambedkar Jayanti and sustain our community welfare programs throughout the year.
                     </p>
                 </motion.div>
 
@@ -109,7 +109,7 @@ const Support = () => {
                         <Users className="text-white mb-8 group-hover:scale-110 transition-transform duration-500 relative z-10" size={48} />
                         <h3 className="text-3xl font-black mb-6 tracking-tight relative z-10">Join the Mandal</h3>
                         <p className="text-white/80 leading-relaxed mb-10 font-sans relative z-10">
-                            Become a registered volunteer of Shivgarjana. Contribute to community leadership and event management at Wanowrie.
+                            Become a registered volunteer of RAHUL MITRA MANDAL. Contribute to community leadership and event management at Wanowrie.
                         </p>
 
                         <div className="space-y-6 mb-12 relative z-10">

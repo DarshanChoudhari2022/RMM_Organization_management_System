@@ -20,8 +20,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "History", path: "/history" },
-    { name: "Forts", path: "/forts" },
+    { name: "About", path: "/history" },
     { name: "Gallery", path: "/gallery" },
   ];
 
@@ -41,7 +40,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-4 group">
             <div className="relative">
               <svg width="42" height="42" viewBox="0 0 100 100" className="group-hover:scale-110 transition-transform duration-300 drop-shadow-md">
-                <circle cx="50" cy="50" r="48" fill="#D95D1E" />
+                <circle cx="50" cy="50" r="48" fill="#1D4ED8" />
                 <circle cx="50" cy="50" r="42" fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="4 2" />
                 <text x="50" y="65" textAnchor="middle" fill="white" fontSize="45" fontWeight="900" fontFamily="Playfair Display">श</text>
                 <path d="M50 5 L55 15 L45 15 Z" fill="white" />
@@ -52,9 +51,9 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-display font-black text-xl tracking-tight leading-none text-[#2C3E50] uppercase">
-                SHIVGARJANA
+                RAHUL MITRA MANDAL
               </span>
-              <span className="text-[10px] font-sans font-bold text-[#D95D1E] uppercase tracking-[0.25em]">
+              <span className="text-[10px] font-sans font-bold text-[#1D4ED8] uppercase tracking-[0.25em]">
                 Kedari Nagar
               </span>
             </div>
@@ -67,15 +66,15 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={`relative px-5 py-2 text-[13px] font-display font-bold uppercase tracking-[0.1em] transition-all duration-300 rounded-sm ${isActive(link.path)
-                  ? "text-[#D95D1E]"
-                  : "text-[#2C3E50] hover:text-[#D95D1E]"
+                  ? "text-[#1D4ED8]"
+                  : "text-[#2C3E50] hover:text-[#1D4ED8]"
                   }`}
               >
                 {link.name}
                 {isActive(link.path) && (
                   <motion.div
                     layoutId="nav-active"
-                    className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#D95D1E]"
+                    className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#1D4ED8]"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -86,7 +85,7 @@ const Navbar = () => {
 
             <Link
               to="/login"
-              className="px-6 py-2 border border-[#D95D1E] text-[#D95D1E] text-[12px] font-display font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-sm hover:bg-[#D95D1E] hover:text-white"
+              className="px-6 py-2 border border-[#1D4ED8] text-[#1D4ED8] text-[12px] font-display font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-sm hover:bg-[#1D4ED8] hover:text-white"
             >
               Portal
             </Link>
@@ -110,7 +109,7 @@ const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden absolute top-[70px] left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-[#D95D1E]/10 shadow-2xl z-[90] overflow-hidden"
+              className="lg:hidden absolute top-[70px] left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-[#1D4ED8]/10 shadow-2xl z-[90] overflow-hidden"
             >
               <div className="flex flex-col p-8 gap-1">
                 {navLinks.map((link) => (
@@ -118,8 +117,8 @@ const Navbar = () => {
                     key={link.path}
                     to={link.path}
                     className={`py-5 px-6 text-[15px] font-display font-black tracking-widest uppercase transition-all rounded-lg ${isActive(link.path)
-                      ? "text-[#D95D1E] bg-[#D95D1E]/5 pl-8"
-                      : "text-[#2C3E50]/70 hover:text-[#D95D1E] hover:pl-8 hover:bg-gray-50"
+                      ? "text-[#1D4ED8] bg-[#1D4ED8]/5 pl-8"
+                      : "text-[#2C3E50]/70 hover:text-[#1D4ED8] hover:pl-8 hover:bg-gray-50"
                       }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -131,7 +130,7 @@ const Navbar = () => {
 
                 <Link
                   to="/login"
-                  className="mx-6 py-5 rounded-xl bg-[#D95D1E] text-white text-center font-display font-black uppercase tracking-widest shadow-lg shadow-[#D95D1E]/20 active:scale-95 transition-all"
+                  className="mx-6 py-5 rounded-xl bg-[#1D4ED8] text-white text-center font-display font-black uppercase tracking-widest shadow-lg shadow-[#1D4ED8]/20 active:scale-95 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Admin Portal Login

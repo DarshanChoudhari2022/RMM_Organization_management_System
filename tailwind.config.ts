@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        // Updated to match Shivsrushti style: Playfair Display for headings, Lato for body
+        // Updated to match Ambedkar Memorial style: Playfair Display for headings, Lato for body
         sans: ["Lato", "sans-serif"],
         display: ["Playfair Display", "serif"],
         marathi: ["Poppins", "sans-serif"],
@@ -26,26 +26,26 @@ export default {
         background: "hsl(var(--background))", // Linked to index.css
         foreground: "hsl(var(--foreground))", // Linked to index.css
         shiv: {
-          cream: "#FFFBF2",
-          saffron: "#D95D1E", // Terra Cotta Orange (Shivsrushti Match)
-          orange: "#D95D1E", // Terra Cotta Orange
-          gold: "#D4AF37", // Metallic Gold
-          brown: "#3E2723", // Deep Brown
+          cream: "#FFFFFF",
+          saffron: "#1D4ED8", // Royal Blue
+          orange: "#1D4ED8", // Royal Blue
+          gold: "#3B82F6", // Light Blue
+          brown: "#0F172A", // Dark Navy
         },
         primary: {
-          DEFAULT: "#D95D1E", // Terra Cotta Orange
+          DEFAULT: "#1D4ED8", // Royal Blue
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#8B0000", // Maroon
-          foreground: "#FFFBF2",
+          DEFAULT: "#3B82F6", // Light Blue
+          foreground: "#FFFFFF",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#D95D1E",
+          DEFAULT: "#1D4ED8",
           foreground: "#FFFFFF",
         }
       },

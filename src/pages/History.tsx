@@ -32,7 +32,7 @@ const timelineData: TimelineEvent[] = [
     description: "Born on 14th April 1891 in Mhow, Central Provinces (now Madhya Pradesh).",
     details: "Born to Ramji Maloji Sakpal and Bhimabai, he was the 14th child in a poor Mahar family. Despite severe caste discrimination, his father's emphasis on education shaped young Bhimrao's determination to fight for social justice and equality.",
     reference: "Keer, 'Dr. Ambedkar: Life and Mission', p. 1",
-    image: "/images/ambedkar-portrait.png"
+    image: "/images/ambedkar_mhow_realistic.png"
   },
   {
     year: "1927",
@@ -41,7 +41,7 @@ const timelineData: TimelineEvent[] = [
     description: "Led thousands of Dalits to the Chavadar Tank to assert their right to public water.",
     details: "The Mahad Satyagraha was a landmark event in the Dalit rights movement. Babasaheb Ambedkar led thousands of Dalits to publicly drink water from the Chavadar Tank in Mahad, Maharashtra, asserting their fundamental right to access public resources. He also publicly burned the Manusmriti as a symbol of rejecting caste oppression.",
     reference: "Keer, 'Dr. Ambedkar: Life and Mission', p. 85",
-    image: "/images/ambedkar-portrait.png"
+    image: "/images/mahad_satyagraha.png"
   },
   {
     year: "1949",

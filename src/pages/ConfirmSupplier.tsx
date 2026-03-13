@@ -88,7 +88,7 @@ const ConfirmSupplier = () => {
                         <div className="text-lg font-bold text-[#0F172A]">{supplier.name}</div>
                         <div className="text-sm text-gray-500 mt-1">{supplier.category} Services</div>
                     </div>
-                    <p className="text-[10px] text-gray-400 mt-12 font-black uppercase tracking-widest">श्रीमंत शिवगर्जना प्रतिष्ठान • पुणे</p>
+                    <p className="text-[10px] text-gray-400 mt-12 font-black uppercase tracking-widest">राहुल मित्र मंडळ • पुणे</p>
                 </motion.div>
             </div>
         );

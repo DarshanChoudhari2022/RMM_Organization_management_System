@@ -239,7 +239,7 @@ const MembersTab = ({ year }: { year: number }) => {
                     <div className="col-span-2 flex justify-end gap-2">
                       <button
                         onClick={() => {
-                          const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - शिवगर्जना मंडळ`;
+                          const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - राहुल मित्र मंडळ`;
                           window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
                         }}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
@@ -487,7 +487,7 @@ const TasksTab = ({ year }: { year: number }) => {
 
   const generateShareText = (task: Task) => {
     const approvalLink = `${window.location.origin}/approve/${task.id}`;
-    return `🚩 *शिवगर्जना मंडळ - नवीन कार्य*\n\n🔹 *${task.title}*\n📅 ${task.date} | 🕐 ${task.time}\n📍 ${task.location}\n\n📝 ${task.description}\n\n✅ खालील लिंकवर क्लिक करून उपस्थिती कळवा:\n${approvalLink}`;
+    return `🚩 *राहुल मित्र मंडळ - नवीन कार्य*\n\n🔹 *${task.title}*\n📅 ${task.date} | 🕐 ${task.time}\n📍 ${task.location}\n\n📝 ${task.description}\n\n✅ खालील लिंकवर क्लिक करून उपस्थिती कळवा:\n${approvalLink}`;
   };
 
   return (
@@ -959,7 +959,7 @@ const SuppliersTab = () => {
 
   const shareConfirmation = (sup: Supplier) => {
     const link = generateConfirmationLink(sup);
-    const msg = `🚩 *शिवगर्जना मंडळ - पुरवठादार करार*\n\nनमस्कार ${sup.name},\n\nआपल्याशी ठरल्याप्रमाणे खालील तपशील तपासा:\n💰 एकूण रक्कम: ₹${sup.total_amount || 0}\n💵 जमा रक्कम: ₹${sup.paid_amount || 0}\n📝 अटी: ${sup.terms || 'नेहमीप्रमाणे'}\n\nकृपया खालील लिंकवर क्लिक करून आपली संमती कळवा:\n${link}`;
+    const msg = `🚩 *राहुल मित्र मंडळ - पुरवठादार करार*\n\nनमस्कार ${sup.name},\n\nआपल्याशी ठरल्याप्रमाणे खालील तपशील तपासा:\n💰 एकूण रक्कम: ₹${sup.total_amount || 0}\n💵 जमा रक्कम: ₹${sup.paid_amount || 0}\n📝 अटी: ${sup.terms || 'नेहमीप्रमाणे'}\n\nकृपया खालील लिंकवर क्लिक करून आपली संमती कळवा:\n${link}`;
     window.open(`https://wa.me/91${sup.contact}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
@@ -1314,7 +1314,7 @@ const SuppliersTab = () => {
 const InvitationsTab = () => {
   const [invitation, setInvitation] = useState({ title: "", date: "", time: "", location: "Kedari Nagar Chowk", message: "" });
   const generateMsg = () => {
-    return `🎉 *ग्रूप निमंत्रण - शिवगर्जना मंडळ*\n\n📣 *${invitation.title}*\n📅 ${invitation.date} | 🕐 ${invitation.time}\n📍 ${invitation.location}\n\n📝 ${invitation.message}\n\nसर्वांनी वेळेवर उपस्थित राहावे!`;
+    return `🎉 *ग्रूप निमंत्रण - राहुल मित्र मंडळ*\n\n📣 *${invitation.title}*\n📅 ${invitation.date} | 🕐 ${invitation.time}\n📍 ${invitation.location}\n\n📝 ${invitation.message}\n\nसर्वांनी वेळेवर उपस्थित राहावे!`;
   };
 
   return (
@@ -1390,7 +1390,7 @@ const LetterheadTab = () => {
     phone: "८२३७१८९९७७",
     subjectLabel: "विषय :-",
     subject: "ध्वनीक्षेपक परवाना मिळण्याबाबत.",
-    content: "आम्ही श्रीमंत शिवगर्जना प्रतिष्ठान केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो.",
+    content: "आम्ही राहुल मित्र मंडळ केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो.",
     closingLabel: "कळावे,",
     signLabel: "आपला विश्वासू",
     footerText: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४११०४०",
@@ -1745,7 +1745,7 @@ const LetterheadTab = () => {
                         </div>
                         <div>
                           <h1 className="text-6xl font-black text-[#1D4ED8] tracking-tighter leading-none mb-2">
-                            श्रीमंत शिवगर्जना प्रतिष्ठान
+                            राहुल मित्र मंडळ
                           </h1>
                           <p className="text-3xl font-bold text-[#0F172A]/80">वानवडी, पुणे</p>
                           <p className="text-base font-bold text-[#1D4ED8] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
@@ -1955,7 +1955,7 @@ const Dashboard = () => {
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
-            <span className="font-display font-black text-sm tracking-tight text-[#0F172A] block leading-none uppercase">श्रीमंत शिवगर्जना</span>
+            <span className="font-display font-black text-sm tracking-tight text-[#0F172A] block leading-none uppercase">राहुल मित्र मंडळ</span>
             <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#1D4ED8]">वानवडी, पुणे</span>
           </div>
         </div>
@@ -1991,7 +1991,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-3">
               <img src="/images/logo.png" className="w-14 h-14 object-contain drop-shadow-lg" alt="Logo" />
               <div>
-                <span className="font-display font-black text-lg tracking-tight text-[#0F172A] block leading-none uppercase text-primary">शिवगर्जना</span>
+                <span className="font-display font-black text-lg tracking-tight text-[#0F172A] block leading-none uppercase text-primary">राहुल मित्र मंडळ</span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#1D4ED8]">वानवडी, पुणे</span>
               </div>
             </div>

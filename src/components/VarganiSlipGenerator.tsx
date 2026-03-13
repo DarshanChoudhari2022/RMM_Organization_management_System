@@ -74,7 +74,7 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
                     fontSize: '26px', fontWeight: 900, letterSpacing: '3px',
                     lineHeight: 1.2, textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                 }}>
-                    श्रीमंत शिवगर्जना प्रतिष्ठान
+                    राहुल मित्र मंडळ
                 </div>
                 <div style={{
                     fontSize: '13px', fontWeight: 700, letterSpacing: '4px',
@@ -507,7 +507,7 @@ const VarganiSlipTab = () => {
                 try {
                     await navigator.share({
                         title: `वर्गणी पावती - ${slip.name}`,
-                        text: `🚩 शिवगर्जना प्रतिष्ठान - वर्गणी पावती\n\nनाव: ${slip.name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nPowered by busyhub.in`,
+                        text: `🚩 राहुल मित्र मंडळ - वर्गणी पावती\n\nनाव: ${slip.name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nPowered by busyhub.in`,
                         files: [file]
                     });
                     toast.success("✅ Shared successfully!");
@@ -523,7 +523,7 @@ const VarganiSlipTab = () => {
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            const msg = `🚩 *शिवगर्जना प्रतिष्ठान - वर्गणी पावती*\n\nनाव: ${slip.name}\nदुकान: ${slip.shop_name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती क्रमांक: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nआपल्या सहकार्याबद्दल धन्यवाद! 🙏\n\n_Powered by busyhub.in_`;
+            const msg = `🚩 *राहुल मित्र मंडळ - वर्गणी पावती*\n\nनाव: ${slip.name}\nदुकान: ${slip.shop_name}\nरक्कम: ₹${Number(slip.amount).toLocaleString('en-IN')}\nपावती क्रमांक: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nआपल्या सहकार्याबद्दल धन्यवाद! 🙏\n\n_Powered by busyhub.in_`;
             window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
 
             toast.success("📥 Slip downloaded! WhatsApp opened.");

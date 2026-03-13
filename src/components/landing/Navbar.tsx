@@ -39,7 +39,7 @@ const Navbar = () => {
                     />
                     <div className="flex flex-col">
                         <span className={`text-xl font-bold tracking-tighter transition-colors font-marathi leading-none ${isScrolled ? "text-foreground" : "text-foreground md:text-white"}`}>
-                            शिवगर्जना
+                            राहुल मित्र मंडळ
                         </span>
                         <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
                             Kedari Nagar

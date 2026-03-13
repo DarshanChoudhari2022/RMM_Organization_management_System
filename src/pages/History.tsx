@@ -32,7 +32,7 @@ const timelineData: TimelineEvent[] = [
     description: "Born on 14th April 1891 in Mhow, Central Provinces (now Madhya Pradesh).",
     details: "Born to Ramji Maloji Sakpal and Bhimabai, he was the 14th child in a poor Mahar family. Despite severe caste discrimination, his father's emphasis on education shaped young Bhimrao's determination to fight for social justice and equality.",
     reference: "Keer, 'Dr. Ambedkar: Life and Mission', p. 1",
-    image: "/images/Photo1.jpg"
+    image: "/images/ambedkar-portrait.png"
   },
   {
     year: "1927",
@@ -41,7 +41,7 @@ const timelineData: TimelineEvent[] = [
     description: "Led thousands of Dalits to the Chavadar Tank to assert their right to public water.",
     details: "The Mahad Satyagraha was a landmark event in the Dalit rights movement. Babasaheb Ambedkar led thousands of Dalits to publicly drink water from the Chavadar Tank in Mahad, Maharashtra, asserting their fundamental right to access public resources. He also publicly burned the Manusmriti as a symbol of rejecting caste oppression.",
     reference: "Keer, 'Dr. Ambedkar: Life and Mission', p. 85",
-    image: "/images/Photo1.jpg"
+    image: "/images/ambedkar-portrait.png"
   },
   {
     year: "1949",
@@ -50,7 +50,7 @@ const timelineData: TimelineEvent[] = [
     description: "Drafted and presented the Constitution of India to the Constituent Assembly.",
     details: "As Chairman of the Drafting Committee, Babasaheb Ambedkar meticulously crafted the Indian Constitution — the world's longest written constitution. It enshrined fundamental rights, abolished untouchability (Article 17), and established a framework for social justice, liberty, equality, and fraternity for all citizens.",
     reference: "Granville Austin, 'The Indian Constitution', p. 15",
-    image: "/images/Photo1.jpg"
+    image: "/images/ambedkar-portrait.png"
   },
   {
     year: "1956",
@@ -59,7 +59,7 @@ const timelineData: TimelineEvent[] = [
     description: "A lifetime dedicated to social reform, education, and empowerment of the marginalized.",
     details: "Babasaheb Ambedkar converted to Buddhism with over 500,000 followers in October 1956, rejecting the caste system. He established institutions like the People's Education Society and wrote extensively on caste, economics, and democracy. He was posthumously awarded the Bharat Ratna in 1990.",
     reference: "Keer, 'Dr. Ambedkar: Life and Mission', p. 498",
-    image: "/images/Photo1.jpg"
+    image: "/images/ambedkar-portrait.png"
   }
 ];
 

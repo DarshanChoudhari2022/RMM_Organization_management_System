@@ -74,7 +74,7 @@ const Login = () => {
                         <h1 className="text-3xl font-display font-black text-foreground mb-2 uppercase tracking-wide">
                             {isSignUp ? "Create Admin" : "Admin Portal"}
                         </h1>
-                        <p className="font-marathi text-secondary font-bold text-lg mb-1">शिवगर्जना प्रतिष्ठान</p>
+                        <p className="font-marathi text-secondary font-bold text-lg mb-1">राहुल मित्र मंडळ</p>
                         <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">Authorized Access Only</p>
                     </div>
 
@@ -161,6 +161,12 @@ const Login = () => {
                     </div>
                 </div>
             </motion.div>
+            {/* Footer / Powered by */}
+            <div className="absolute bottom-6 left-0 right-0 text-center z-10 w-full">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 w-full inline-block">
+                    Powered by PR Digital Services
+                </p>
+            </div>
         </div>
     );
 };

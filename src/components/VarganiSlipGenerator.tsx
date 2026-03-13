@@ -17,180 +17,252 @@ import { toast } from "sonner";
 
 const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
     <div style={{
-        width: '440px',
+        width: '480px',
         background: '#FFFFFF',
         fontFamily: "'Segoe UI', 'Noto Sans Devanagari', Arial, sans-serif",
-        borderRadius: '16px',
         overflow: 'hidden',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-        border: '1px solid #e5e7eb'
+        border: '3px solid #B8860B',
+        position: 'relative'
     }}>
-        {/* Header with Saffron Gradient */}
+        {/* Decorative Gold Double Border */}
         <div style={{
-            background: 'linear-gradient(135deg, #D95D1E 0%, #B94A15 50%, #8B3A10 100%)',
-            padding: '28px 24px 20px',
+            position: 'absolute', inset: '3px',
+            border: '1px solid #DAA520',
+            pointerEvents: 'none',
+            zIndex: 5
+        }} />
+
+        {/* ====== HEADER — Rich Saffron/Maroon with Logo ====== */}
+        <div style={{
+            background: 'linear-gradient(180deg, #8B1A1A 0%, #A0522D 30%, #CD6600 70%, #D2691E 100%)',
+            padding: '20px 20px 16px',
             textAlign: 'center',
             color: 'white',
-            position: 'relative'
+            position: 'relative',
+            overflow: 'hidden'
         }}>
-            {/* Decorative pattern overlay */}
+            {/* Subtle traditional pattern overlay */}
             <div style={{
-                position: 'absolute', inset: 0, opacity: 0.08,
-                backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)'
+                position: 'absolute', inset: 0, opacity: 0.06,
+                backgroundImage: `radial-gradient(circle at 20px 20px, rgba(255,215,0,0.3) 2px, transparent 2px)`,
+                backgroundSize: '30px 30px'
             }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '5px', textTransform: 'uppercase', opacity: 0.85, marginBottom: '4px' }}>
-                    ॥ श्री ॥
+
+            <div style={{ position: 'relative', zIndex: 2 }}>
+                {/* Logo */}
+                <div style={{ marginBottom: '8px' }}>
+                    <img
+                        src="/images/logo.png"
+                        alt="Logo"
+                        style={{
+                            width: '90px', height: '90px', objectFit: 'contain',
+                            margin: '0 auto', display: 'block',
+                            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))'
+                        }}
+                        crossOrigin="anonymous"
+                    />
                 </div>
-                <div style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '2px', lineHeight: 1.3 }}>
-                    श्रीमंत शिवगर्जना
-                </div>
-                <div style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '3px', opacity: 0.9 }}>
-                    प्रतिष्ठान, वानवडी, पुणे
+
+                {/* Mandal Name */}
+                <div style={{
+                    fontSize: '11px', fontWeight: 800, letterSpacing: '6px',
+                    opacity: 0.8, marginBottom: '2px'
+                }}>
+                    ॥ श्री छत्रपती शिवाजी महाराज ॥
                 </div>
                 <div style={{
-                    marginTop: '14px',
-                    borderTop: '1px solid rgba(255,255,255,0.25)',
-                    paddingTop: '14px'
+                    fontSize: '26px', fontWeight: 900, letterSpacing: '3px',
+                    lineHeight: 1.2, textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                 }}>
-                    <div style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '6px' }}>
-                        वर्गणी पावती
+                    श्रीमंत शिवगर्जना प्रतिष्ठान
+                </div>
+                <div style={{
+                    fontSize: '13px', fontWeight: 700, letterSpacing: '4px',
+                    opacity: 0.85, marginTop: '2px'
+                }}>
+                    वानवडी, पुणे ४११०४०
+                </div>
+
+                {/* Receipt Title */}
+                <div style={{
+                    marginTop: '12px',
+                    paddingTop: '10px',
+                    borderTop: '1px solid rgba(255,255,255,0.2)'
+                }}>
+                    <div style={{
+                        fontSize: '22px', fontWeight: 900, letterSpacing: '8px',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                    }}>
+                        • वर्गणी पावती •
                     </div>
-                    <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '5px', textTransform: 'uppercase', opacity: 0.75, marginTop: '2px' }}>
+                    <div style={{
+                        fontSize: '10px', fontWeight: 800, letterSpacing: '6px',
+                        textTransform: 'uppercase', opacity: 0.7, marginTop: '2px'
+                    }}>
                         VARGANI RECEIPT
                     </div>
                 </div>
             </div>
         </div>
 
-        {/* Slip Info Bar */}
+        {/* ====== Indian Tricolor Stripe ====== */}
+        <div style={{ display: 'flex', height: '6px' }}>
+            <div style={{ flex: 1, background: '#FF9933' }} />
+            <div style={{ flex: 1, background: '#FFFFFF' }} />
+            <div style={{ flex: 1, background: '#138808' }} />
+        </div>
+
+        {/* ====== Slip Info Bar ====== */}
         <div style={{
-            padding: '12px 24px',
+            padding: '10px 24px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: '#FFF7ED',
-            borderBottom: '1px solid #FED7AA'
+            background: '#FFF8F0',
+            borderBottom: '2px solid #E8C07A'
         }}>
-            <div style={{ fontSize: '12px', fontWeight: 800, color: '#2C1810' }}>
-                <span style={{ color: '#92400E', opacity: 0.7 }}>Slip No: </span>
-                <span style={{ color: '#D95D1E' }}>{slip.slip_number || 'N/A'}</span>
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#5C3310' }}>
+                पावती क्र.: <span style={{ color: '#CD6600', fontSize: '13px' }}>{slip.slip_number || 'N/A'}</span>
             </div>
-            <div style={{ fontSize: '12px', fontWeight: 800, color: '#2C1810' }}>
-                <span style={{ color: '#92400E', opacity: 0.7 }}>Date: </span>
-                {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
-                    day: '2-digit', month: '2-digit', year: 'numeric'
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#5C3310' }}>
+                दि.: <span style={{ color: '#CD6600' }}>
+                    {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
+                        day: '2-digit', month: '2-digit', year: 'numeric'
+                    })}
+                </span>
+            </div>
+        </div>
+
+        {/* ====== Receipt Details — Traditional Form Style ====== */}
+        <div style={{ padding: '18px 24px 14px', background: '#FFFEFB' }}>
+            {[
+                { label: 'श्री / सौ (Name)', value: slip.name },
+                { label: 'दुकान (Shop)', value: slip.shop_name },
+                { label: 'ठिकाण (Location)', value: slip.location },
+                { label: 'मोबाईल (WhatsApp)', value: slip.mobile },
+            ].map((row, i) => (
+                <div key={i} style={{
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '10px', gap: '8px'
+                }}>
+                    <div style={{
+                        fontSize: '12px', fontWeight: 700, color: '#78716C',
+                        whiteSpace: 'nowrap', minWidth: '145px'
+                    }}>
+                        {row.label}:
+                    </div>
+                    <div style={{
+                        flex: 1, fontSize: '15px', fontWeight: 800, color: '#1C1917',
+                        borderBottom: '1.5px dotted #D4C5A9', paddingBottom: '3px',
+                        paddingLeft: '4px'
+                    }}>
+                        {row.value}
+                    </div>
+                </div>
+            ))}
+
+            {/* Amount — Highlighted */}
+            <div style={{
+                display: 'flex', alignItems: 'center',
+                marginTop: '14px', padding: '12px 16px',
+                background: 'linear-gradient(135deg, #FFF7ED, #FEF3C7)',
+                borderRadius: '10px', border: '2px solid #E8C07A'
+            }}>
+                <div style={{
+                    fontSize: '13px', fontWeight: 800, color: '#92400E',
+                    minWidth: '130px'
+                }}>
+                    💰 रक्कम (Amount):
+                </div>
+                <div style={{
+                    flex: 1, fontSize: '28px', fontWeight: 900, color: '#B45309',
+                    textAlign: 'right', letterSpacing: '1px'
+                }}>
+                    ₹ {Number(slip.amount).toLocaleString('en-IN')}/-
+                </div>
+            </div>
+        </div>
+
+        {/* ====== Payment Status Badge ====== */}
+        <div style={{
+            padding: '14px 24px',
+            background: '#F0FDF4',
+            borderTop: '2px solid #22C55E',
+            borderBottom: '1px solid #BBF7D0',
+            textAlign: 'center'
+        }}>
+            <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'linear-gradient(135deg, #16A34A, #15803D)',
+                color: 'white', padding: '10px 32px', borderRadius: '30px',
+                fontSize: '13px', fontWeight: 900, letterSpacing: '3px',
+                textTransform: 'uppercase',
+                boxShadow: '0 2px 8px rgba(22,163,74,0.3)'
+            }}>
+                ✅ वर्गणी रोख मिळाली
+            </div>
+            <div style={{
+                fontSize: '10px', color: '#15803D', fontWeight: 700,
+                letterSpacing: '2px', marginTop: '4px', textTransform: 'uppercase'
+            }}>
+                PAYMENT RECEIVED
+            </div>
+        </div>
+
+        {/* ====== Confirmed By ====== */}
+        <div style={{
+            padding: '12px 24px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            borderBottom: '1px solid #E5E7EB',
+            background: '#FAFAF5'
+        }}>
+            <div style={{ fontSize: '12px', color: '#57534E' }}>
+                <span style={{ fontWeight: 600 }}>Confirmed by: </span>
+                <strong style={{ color: '#B45309', fontWeight: 900 }}>{slip.confirmed_by_name || 'N/A'}</strong>
+            </div>
+            <div style={{ fontSize: '11px', color: '#78716C', fontWeight: 600 }}>
+                {slip.confirmed_at && new Date(slip.confirmed_at).toLocaleString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', hour12: true
                 })}
             </div>
         </div>
 
-        {/* Details Table */}
-        <div style={{ padding: '20px 24px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                    {[
-                        { label: 'नाव / Name', value: slip.name, icon: '👤' },
-                        { label: 'दुकान / Shop', value: slip.shop_name, icon: '🏪' },
-                        { label: 'रक्कम / Amount', value: `₹ ${Number(slip.amount).toLocaleString('en-IN')}`, icon: '💰', highlight: true },
-                        { label: 'ठिकाण / Location', value: slip.location, icon: '📍' },
-                        { label: 'मोबाईल / Mobile', value: slip.mobile, icon: '📱' },
-                    ].map((row, i) => (
-                        <tr key={i}>
-                            <td style={{
-                                padding: '12px 0',
-                                fontSize: '12px',
-                                fontWeight: 700,
-                                color: '#78716C',
-                                borderBottom: i < 4 ? '1px solid #F3F4F6' : 'none',
-                                width: '42%',
-                                verticalAlign: 'middle'
-                            }}>
-                                <span style={{ marginRight: '6px' }}>{row.icon}</span>
-                                {row.label}
-                            </td>
-                            <td style={{
-                                padding: '12px 0',
-                                fontSize: row.highlight ? '18px' : '14px',
-                                fontWeight: row.highlight ? 900 : 800,
-                                color: row.highlight ? '#D95D1E' : '#1C1917',
-                                borderBottom: i < 4 ? '1px solid #F3F4F6' : 'none',
-                                verticalAlign: 'middle'
-                            }}>
-                                {row.value}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-
-        {/* Payment Status */}
-        <div style={{
-            padding: '16px 24px',
-            background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
-            borderTop: '2px solid #22C55E',
-            textAlign: 'center'
-        }}>
-            <div style={{
-                display: 'inline-block',
-                background: '#22C55E',
-                color: 'white',
-                padding: '8px 28px',
-                borderRadius: '24px',
-                fontSize: '13px',
-                fontWeight: 900,
-                letterSpacing: '3px',
-                textTransform: 'uppercase'
-            }}>
-                ✅ PAYMENT RECEIVED
-            </div>
-        </div>
-
-        {/* Confirmed By */}
+        {/* ====== Thank You Footer ====== */}
         <div style={{
             padding: '14px 24px',
-            borderTop: '1px solid #E5E7EB',
-            fontSize: '12px',
-            color: '#57534E',
             textAlign: 'center',
-            background: '#FAFAF9'
+            background: '#FFFEFB',
+            borderBottom: '1px solid #E5E7EB'
         }}>
-            <span style={{ fontWeight: 600 }}>Confirmed by: </span>
-            <strong style={{ color: '#D95D1E', fontWeight: 800 }}>{slip.confirmed_by_name || 'N/A'}</strong>
-            {slip.confirmed_at && (
-                <span style={{ display: 'block', marginTop: '2px', fontSize: '11px', opacity: 0.7 }}>
-                    on {new Date(slip.confirmed_at).toLocaleString('en-IN', {
-                        day: '2-digit', month: 'short', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit', hour12: true
-                    })}
-                </span>
-            )}
-        </div>
-
-        {/* Footer */}
-        <div style={{
-            padding: '16px 24px',
-            borderTop: '1px solid #E5E7EB',
-            textAlign: 'center',
-            background: '#FAFAF9'
-        }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#2C1810', marginBottom: '6px' }}>
-                आपल्या सहकार्याबद्दल धन्यवाद! 🙏
+            <div style={{
+                fontSize: '14px', fontWeight: 800, color: '#5C3310', marginBottom: '3px'
+            }}>
+                आपल्या सहकार्याबद्दल मनःपूर्वक धन्यवाद! 🙏
             </div>
             <div style={{ fontSize: '11px', color: '#A8A29E', fontWeight: 600 }}>
                 Thank you for your generous contribution!
             </div>
         </div>
 
-        {/* Powered By */}
+        {/* ====== Indian Flag Stripe ====== */}
+        <div style={{ display: 'flex', height: '4px' }}>
+            <div style={{ flex: 1, background: '#FF9933' }} />
+            <div style={{ flex: 1, background: '#FFFFFF' }} />
+            <div style={{ flex: 1, background: '#138808' }} />
+        </div>
+
+        {/* ====== Powered By Footer ====== */}
         <div style={{
             padding: '10px 24px',
-            borderTop: '1px solid #E5E7EB',
             textAlign: 'center',
             background: '#1C1917'
         }}>
-            <div style={{ fontSize: '10px', color: '#A8A29E', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>
-                Powered by <span style={{ color: '#D95D1E', fontWeight: 900 }}>busyhub.in</span>
+            <div style={{
+                fontSize: '10px', color: '#A8A29E', fontWeight: 700,
+                letterSpacing: '3px', textTransform: 'uppercase'
+            }}>
+                Powered by <span style={{ color: '#E8870E', fontWeight: 900 }}>busyhub.in</span>
             </div>
         </div>
     </div>
@@ -325,7 +397,7 @@ const VarganiSlipTab = () => {
             const canvas = await html2canvas(el, {
                 scale: 3,
                 useCORS: true,
-                backgroundColor: '#ffffff',
+                backgroundColor: null,
                 logging: false
             });
 
@@ -362,7 +434,7 @@ const VarganiSlipTab = () => {
             const canvas = await html2canvas(el, {
                 scale: 3,
                 useCORS: true,
-                backgroundColor: '#ffffff',
+                backgroundColor: null,
                 logging: false
             });
 

@@ -26,7 +26,7 @@ const AboutSection = () => {
     ];
 
     return (
-        <section ref={ref} id="about" className="relative bg-[#081221] py-24 md:py-32 overflow-hidden border-t border-primary/10">
+        <section ref={ref} id="about" className="relative bg-muted py-24 md:py-32 overflow-hidden border-t border-primary/10">
             {/* Background Texture & Glow */}
             <div className="absolute inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/ag-square.png')]" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
@@ -41,12 +41,12 @@ const AboutSection = () => {
                     className="grid md:grid-cols-3 gap-8 mb-32"
                 >
                     {missionCards.map((card, idx) => (
-                        <div key={idx} className="bg-card/40 backdrop-blur-md border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-colors group">
+                        <div key={idx} className="bg-white border border-primary/10 rounded-2xl p-8 hover:border-primary/50 transition-colors group shadow-sm">
                             <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                                 <card.icon size={28} className="text-primary" />
                             </div>
                             <h3 className="text-2xl font-display font-bold text-foreground mb-4">{card.title}</h3>
-                            <p className="text-foreground/70 font-sans leading-relaxed">{card.desc}</p>
+                            <p className="text-foreground/80 font-sans leading-relaxed">{card.desc}</p>
                         </div>
                     ))}
                 </motion.div>
@@ -61,11 +61,11 @@ const AboutSection = () => {
                     <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-primary mb-4 block">
                         The Architect of Modern India
                     </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-display font-black text-foreground tracking-tight mb-6">
+                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-display font-black text-secondary tracking-tight mb-6">
                         Babasaheb{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#E5C158] italic">Ambedkar</span>
+                        <span className="text-primary italic">Ambedkar</span>
                     </h2>
-                    <p className="text-foreground/70 text-base md:text-xl max-w-3xl mx-auto font-sans font-light leading-relaxed">
+                    <p className="text-foreground/80 text-base md:text-xl max-w-3xl mx-auto font-sans font-light leading-relaxed">
                         The chief architect of the Indian Constitution, an unparalleled social reformer, and a visionary leader who
                         dedicated his life to justice, equality, and the absolute empowerment of the marginalized.
                     </p>
@@ -80,23 +80,23 @@ const AboutSection = () => {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="relative group xl:col-span-2"
                     >
-                        <div className="absolute -inset-2 bg-gradient-to-br from-primary/30 to-transparent rounded-[2.5rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-                        <div className="relative overflow-hidden rounded-[2rem] border border-primary/30 shadow-2xl shadow-black/60">
+                        <div className="absolute -inset-2 bg-gradient-to-br from-primary/30 to-transparent rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative overflow-hidden rounded-[2rem] border border-primary/30 shadow-2xl shadow-black/10">
                             <img
                                 src="/images/ambedkar-portrait.png"
                                 alt="Dr. B.R. Ambedkar — Historical Portrait"
-                                className="w-full h-[500px] md:h-[600px] object-cover object-top transform group-hover:scale-[1.03] transition-transform duration-700 sepia-[0.2]"
+                                className="w-full h-[500px] md:h-[600px] object-cover object-top transform group-hover:scale-[1.03] transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0B192C] via-[#0B192C]/50 to-transparent opacity-90" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent opacity-90" />
                             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
                                 <div className="w-10 h-1 bg-primary mb-6" />
-                                <p className="text-[10px] text-primary uppercase tracking-[0.3em] font-black mb-2">
+                                <p className="text-[10px] text-white/70 uppercase tracking-[0.3em] font-black mb-2">
                                     Historical Portrait
                                 </p>
-                                <p className="text-foreground font-display font-bold text-2xl md:text-3xl mb-2 drop-shadow-md">
+                                <p className="text-white font-display font-bold text-2xl md:text-3xl mb-2 drop-shadow-md">
                                     Dr. B.R. Ambedkar
                                 </p>
-                                <p className="text-foreground/50 text-xs font-sans">
+                                <p className="text-white/50 text-xs font-sans">
                                     Source: British Museum Collection, London
                                 </p>
                             </div>
@@ -138,7 +138,7 @@ const AboutSection = () => {
                                     initial={{ opacity: 0, y: 15 }}
                                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                                     transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
-                                    className="bg-card/40 backdrop-blur-sm border border-primary/10 hover:border-primary/40 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1"
+                                    className="bg-white border border-primary/10 hover:border-primary/40 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 shadow-sm"
                                 >
                                     <div className="flex gap-4">
                                         <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -146,7 +146,7 @@ const AboutSection = () => {
                                         </div>
                                         <div>
                                             <h4 className="text-foreground font-bold font-sans text-sm mb-2">{item.title}</h4>
-                                            <p className="text-foreground/60 text-xs leading-relaxed font-sans">{item.desc}</p>
+                                            <p className="text-foreground/80 text-xs leading-relaxed font-sans">{item.desc}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -156,7 +156,7 @@ const AboutSection = () => {
                         <div className="pt-6">
                             <Link
                                 to="/history"
-                                className="inline-flex items-center gap-3 text-primary font-black uppercase tracking-[0.2em] hover:text-[#E5C158] transition-colors py-4 group text-sm"
+                                className="inline-flex items-center gap-3 text-primary font-bold uppercase tracking-[0.2em] transition-colors py-4 group text-sm"
                             >
                                 <BookOpen size={18} />
                                 View Full Biography 
@@ -172,25 +172,25 @@ const AboutSection = () => {
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.8, duration: 0.8 }}
                 >
-                    <div className="relative overflow-hidden bg-card/60 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 md:p-16 shadow-2xl">
+                    <div className="relative overflow-hidden bg-white border border-primary/20 rounded-3xl p-8 md:p-16 shadow-xl">
                         {/* Decorative Background for Card */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
                         
                         <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
                             <div>
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4 block">
                                     About Our Organization
                                 </span>
-                                <h3 className="text-3xl md:text-4xl font-display font-black text-foreground mb-6 leading-tight">
+                                <h3 className="text-3xl md:text-4xl font-display font-black text-secondary mb-6 leading-tight">
                                     Rahul Mitra Mandal <br/>
-                                    <span className="text-foreground/50 text-2xl font-sans font-light">Pune</span>
+                                    <span className="text-primary/70 text-2xl font-sans font-black uppercase">Pune</span>
                                 </h3>
-                                <p className="text-foreground/70 text-base font-light leading-relaxed mb-6 font-sans">
+                                <p className="text-foreground/80 text-base leading-relaxed mb-6 font-sans">
                                     Established in 2014, our Mandal in Dapodi Gavthan has been passionately celebrating Ambedkar Jayanti
                                     on <strong className="text-primary font-bold">14th April</strong> every year with grand processions,
                                     educational campaigns, and cultural programs to keep the spirit of social equality brilliantly alive.
                                 </p>
-                                <p className="text-foreground/70 text-base font-light leading-relaxed font-sans">
+                                <p className="text-foreground/80 text-base leading-relaxed font-sans">
                                     Our core mission is to actively educate the youth about the monumental life, achievements, and reform
                                     principles of Babasaheb Ambedkar, ensuring his legacy continues to heavily inspire our generations to come.
                                 </p>
@@ -202,8 +202,8 @@ const AboutSection = () => {
                                     { value: "100+", label: "Active Members" },
                                     { value: "2014", label: "Year Established" },
                                 ].map((s, i) => (
-                                    <div key={i} className="bg-background/40 backdrop-blur-sm rounded-2xl p-6 text-center border border-primary/10 hover:border-primary/40 transition-colors">
-                                        <div className="text-3xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#E5C158] mb-2">{s.value}</div>
+                                    <div key={i} className="bg-muted rounded-2xl p-6 text-center border border-primary/10 hover:border-primary/40 transition-colors">
+                                        <div className="text-3xl font-display font-black text-primary mb-2">{s.value}</div>
                                         <div className="text-[10px] text-foreground/60 uppercase tracking-widest font-black font-sans">{s.label}</div>
                                     </div>
                                 ))}

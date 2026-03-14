@@ -26,18 +26,18 @@ export default {
         background: "hsl(var(--background))", 
         foreground: "hsl(var(--foreground))", 
         shiv: {
-          cream: "#FDFBF7",
-          saffron: "#D4AF37", // Premium Gold
-          orange: "#D4AF37", // Premium Gold
-          gold: "#D4AF37", // Premium Gold
-          brown: "#0B192C", // Deep Royal Navy
+          cream: "#FFFFFF",
+          saffron: "#1D4ED8", // Royal Blue
+          orange: "#1D4ED8", // Royal Blue
+          gold: "#3B82F6", // Light Blue
+          brown: "#0F172A", // Dark Navy
         },
         primary: {
-          DEFAULT: "#D4AF37", // Premium Gold
-          foreground: "#0B192C", // Navy text on gold
+          DEFAULT: "#1D4ED8", // Royal Blue
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#0B192C", // Deep Royal Navy
+          DEFAULT: "#3B82F6", // Light Blue
           foreground: "#FFFFFF",
         },
         muted: {
@@ -45,7 +45,7 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#D4AF37",
+          DEFAULT: "#1D4ED8",
           foreground: "#FFFFFF",
         }
       },

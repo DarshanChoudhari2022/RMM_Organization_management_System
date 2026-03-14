@@ -116,7 +116,7 @@ const Approve = () => {
               : "Your unavailability has been recorded."}
           </p>
 
-          <p className="text-xs text-gray-300 mt-8 font-bold uppercase tracking-widest">Rahul Mitra Mandal • Kedari Nagar</p>
+          <p className="text-xs text-gray-300 mt-8 font-bold uppercase tracking-widest">Rahul Mitra Mandal • Dapodi Gavthan</p>
         </motion.div>
       </div>
     );

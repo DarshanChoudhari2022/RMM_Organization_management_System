@@ -4,7 +4,7 @@ import { Quote } from "lucide-react";
 const testimonials = [
     {
         name: "Vijay Deshpande",
-        role: "Wanowrie Resident",
+        role: "Dapodi Resident",
         content: "The Rahul Mitra Mandal has transformed our neighborhood's spirit. Their discipline during the grand procession is unmatched, and their social work is truly inspiring.",
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?bg=202020&fit=crop&h=150&q=80&w=150"
     },

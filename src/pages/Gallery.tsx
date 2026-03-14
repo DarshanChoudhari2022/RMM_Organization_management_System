@@ -19,7 +19,7 @@ const galleryData: GalleryItem[] = [
     id: 1,
     year: 2024,
     title: "Ambedkar Jayanti Celebration 2024",
-    description: "Grand procession through Kedari Nagar with traditional decorations and musical performances.",
+    description: "Grand procession through Dapodi Gavthan with traditional decorations and musical performances.",
     image: "https://images.unsplash.com/photo-1604604296972-1e5a17e3aeae?q=80&w=1000"
   },
   {
@@ -40,7 +40,7 @@ const galleryData: GalleryItem[] = [
     id: 4,
     year: 2023,
     title: "Community Gathering 2023",
-    description: "Annual meeting of Rahul Mitra Mandal members at Kedari Nagar.",
+    description: "Annual meeting of Rahul Mitra Mandal members at Dapodi Gavthan.",
     image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1000"
   },
   {
@@ -112,7 +112,7 @@ const Gallery = () => {
             </h1>
             <p className="text-foreground/70 text-base md:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
               Relive the moments from our Ambedkar Jayanti Celebrations, cultural programs, and community
-              events at Rahul Mitra Mandal, Kedari Nagar.
+              events at Rahul Mitra Mandal, Dapodi Gavthan.
             </p>
           </motion.div>
         </div>

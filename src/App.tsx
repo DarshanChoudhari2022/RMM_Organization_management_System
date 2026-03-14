@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Landing from "@/pages/Landing";
 import History from "@/pages/History";
-import Forts from "@/pages/Forts";
 import Gallery from "@/pages/Gallery";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
@@ -30,7 +29,6 @@ const MainContent = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/history" element={<History />} />
-        <Route path="/forts" element={<Forts />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />

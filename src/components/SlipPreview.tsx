@@ -1,130 +1,329 @@
 import { VarganiSlip } from "@/types/admin";
 
+/**
+ * Professional cheque-style Vargani Slip.
+ * Pure HTML/CSS — no background image dependency.
+ * Uses Playfair Display (serif) for headers and Inter for body.
+ * Landscape-oriented, compact, cheque-like proportions.
+ */
+
 const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => (
     <div style={{
-        width: '800px',
+        width: '750px',
         background: '#FFFFFF',
-        fontFamily: "'Noto Sans Devanagari', 'Mangal', 'Segoe UI', Arial, sans-serif",
-        overflow: 'visible',
-        border: '5px solid #1a237e',
+        fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif",
         position: 'relative',
-        boxSizing: 'border-box' as const
+        boxSizing: 'border-box' as const,
+        border: '4px solid #0d47a1',
     }}>
-        <div style={{ position: 'absolute', inset: '5px', border: '2px solid #5c6bc0', pointerEvents: 'none' as const, zIndex: 10 }} />
-
-        {/* HEADER */}
+        {/* Inner border */}
         <div style={{
-            background: 'linear-gradient(135deg, #0d1257 0%, #1a237e 20%, #283593 40%, #3949ab 60%, #5c6bc0 80%, #7986cb 100%)',
-            padding: '0', position: 'relative', overflow: 'hidden', height: '180px'
+            position: 'absolute', inset: '3px',
+            border: '1.5px solid #5c6bc0',
+            pointerEvents: 'none' as const, zIndex: 10,
+        }} />
+
+        {/* ==================== HEADER ==================== */}
+        <div style={{
+            background: 'linear-gradient(160deg, #0a1045 0%, #1a237e 35%, #283593 55%, #3949ab 80%, #1a237e 100%)',
+            position: 'relative', overflow: 'hidden',
+            height: '120px',
+            display: 'flex', alignItems: 'stretch',
         }}>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '220px', height: '160px', opacity: 0.08, zIndex: 0, pointerEvents: 'none' as const }}>
-                <img src="/images/deekshabhoomi-stupa.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} crossOrigin="anonymous" />
+            {/* Watermark behind header */}
+            <div style={{
+                position: 'absolute', top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '160px', height: '110px',
+                opacity: 0.06, zIndex: 0,
+                pointerEvents: 'none' as const,
+            }}>
+                <img src="/images/deekshabhoomi-stupa.png" alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    crossOrigin="anonymous" />
             </div>
 
-            <div style={{ position: 'absolute', left: '14px', bottom: '0', width: '120px', height: '160px', zIndex: 3 }}>
-                <img src="/images/ambedkar-formal.png" alt="Dr. B.R. Ambedkar" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom', filter: 'drop-shadow(2px 2px 8px rgba(0,0,0,0.5))' }} crossOrigin="anonymous" />
+            {/* Left portrait — Dr. Ambedkar */}
+            <div style={{
+                width: '100px', flexShrink: 0,
+                display: 'flex', alignItems: 'flex-end',
+                justifyContent: 'center',
+                paddingLeft: '8px', zIndex: 3,
+            }}>
+                <img src="/images/ambedkar-clean.png" alt="Dr. B.R. Ambedkar"
+                    style={{
+                        width: '88px', height: '105px',
+                        objectFit: 'cover', objectPosition: 'top center',
+                        borderRadius: '2px',
+                    }}
+                    crossOrigin="anonymous" />
             </div>
 
-            <div style={{ position: 'absolute', right: '14px', bottom: '0', width: '110px', height: '150px', zIndex: 3 }}>
-                <img src="/images/shivaji-maharaj.png" alt="Chhatrapati Shivaji Maharaj" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom', filter: 'drop-shadow(2px 2px 8px rgba(0,0,0,0.5))' }} crossOrigin="anonymous" />
-            </div>
-
-            <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '20px 150px 0' }}>
-                <div style={{ fontSize: '42px', fontWeight: 900, color: 'white', letterSpacing: '5px', lineHeight: 1.15, textShadow: '0 3px 10px rgba(0,0,0,0.5)', marginBottom: '6px' }}>
-                    {'\u0930\u093E\u0939\u0941\u0932 \u092E\u093F\u0924\u094D\u0930 \u092E\u0902\u0921\u0933'}
+            {/* Center — Title + Address */}
+            <div style={{
+                flex: 1, display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                zIndex: 2, padding: '8px 0',
+            }}>
+                <div style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: '32px', fontWeight: 900, color: 'white',
+                    letterSpacing: '4px', lineHeight: 1.1,
+                    textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                    fontStyle: 'italic', textAlign: 'center',
+                }}>
+                    RAHUL MITRA MANDAL
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: '3px' }}>
-                    {'\u092C\u093E\u0930\u0925\u0947 \u092C\u0938\u094D\u0924\u0940, \u0926\u093E\u092F\u094B\u0921\u0940 \u0917\u093E\u0935\u0920\u093E\u0923, \u092A\u0941\u0923\u0947-\u0967\u0968.'}
+                <div style={{
+                    fontSize: '10.5px', fontWeight: 600,
+                    color: 'rgba(255,255,255,0.8)',
+                    letterSpacing: '2px', marginTop: '4px',
+                    textAlign: 'center',
+                }}>
+                    Barthe Vasti, Dapodi, Pune-12.
                 </div>
             </div>
 
-            <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'linear-gradient(90deg, rgba(13,18,87,0.95), rgba(26,35,126,0.9), rgba(13,18,87,0.95))', padding: '10px 40px', textAlign: 'center', zIndex: 4, borderTop: '1px solid rgba(255,255,255,0.15)' }}>
-                <div style={{ fontSize: '18px', fontWeight: 900, color: 'white', letterSpacing: '4px', lineHeight: 1.3, textShadow: '0 2px 6px rgba(0,0,0,0.4)' }}>
-                    {'\u092D\u093E\u0930\u0924\u0930\u0924\u094D\u0928 \u0921\u0949. \u092C\u093E\u092C\u093E\u0938\u093E\u0939\u0947\u092C \u0906\u0902\u092C\u0947\u0921\u0915\u0930 \u091C\u092F\u0902\u0924\u0940 \u092E\u0939\u094B\u0924\u094D\u0938\u0935'}
-                </div>
+            {/* Right portrait — Chhatrapati Shivaji Maharaj */}
+            <div style={{
+                width: '100px', flexShrink: 0,
+                display: 'flex', alignItems: 'flex-end',
+                justifyContent: 'center',
+                paddingRight: '8px', zIndex: 3,
+            }}>
+                <img src="/images/sambhaji-maharaj.png" alt="Chhatrapati Shivaji Maharaj"
+                    style={{
+                        width: '85px', height: '100px',
+                        objectFit: 'cover', objectPosition: 'top center',
+                        borderRadius: '2px',
+                    }}
+                    crossOrigin="anonymous" />
             </div>
         </div>
 
-        {/* FORM BODY */}
-        <div style={{ position: 'relative', padding: '28px 36px 24px', background: '#FFFFFF', minHeight: '300px' }}>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '300px', height: '220px', opacity: 0.04, zIndex: 0, pointerEvents: 'none' as const }}>
-                <img src="/images/deekshabhoomi-stupa.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} crossOrigin="anonymous" />
+        {/* ========== EVENT BANNER ========== */}
+        <div style={{
+            background: 'linear-gradient(90deg, #0a1045, #1a237e, #0a1045)',
+            padding: '5px 20px', textAlign: 'center',
+        }}>
+            <div style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: '12px', fontWeight: 700, color: 'white',
+                letterSpacing: '3px',
+                textShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            }}>
+                Bharat Ratna Dr. Babasaheb Ambedkar Jayanti Mahotsav
+            </div>
+        </div>
+
+        {/* ==================== BODY ==================== */}
+        <div style={{ padding: '14px 30px 14px', position: 'relative' }}>
+
+            {/* Faint watermark */}
+            <div style={{
+                position: 'absolute', top: '45%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '180px', height: '130px',
+                opacity: 0.035, zIndex: 0,
+                pointerEvents: 'none' as const,
+            }}>
+                <img src="/images/deekshabhoomi-stupa.png" alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    crossOrigin="anonymous" />
             </div>
 
             <div style={{ position: 'relative', zIndex: 2 }}>
-                {/* Row 1 */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a' }}>
-                        {'\u092A\u093E\u0935\u0924\u0940 \u0915\u094D\u0930. : '}<span style={{ fontWeight: 900, color: '#1a237e', fontSize: '18px', borderBottom: '2px solid #333', paddingBottom: '2px', paddingLeft: '10px', paddingRight: '30px', display: 'inline-block', minWidth: '160px' }}>{slip.slip_number || 'N/A'}</span>
+
+                {/* Row 1: Receipt No. + Date */}
+                <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'baseline', marginBottom: '12px',
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                        <span style={{
+                            fontSize: '12px', fontWeight: 700, color: '#333',
+                            marginRight: '4px',
+                        }}>Receipt No. :</span>
+                        <span style={{
+                            fontSize: '13px', fontWeight: 800, color: '#0d47a1',
+                            borderBottom: '1px solid #888',
+                            paddingBottom: '1px', paddingLeft: '6px',
+                            display: 'inline-block', minWidth: '170px',
+                            fontFamily: "'Inter', monospace",
+                        }}>{slip.slip_number || 'N/A'}</span>
                     </div>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a' }}>
-                        {'\u0926\u093F\u0928\u093E\u0902\u0915 : '}<span style={{ fontWeight: 900, color: '#1a237e', fontSize: '18px', borderBottom: '2px solid #333', paddingBottom: '2px', paddingLeft: '10px', paddingRight: '10px', display: 'inline-block', minWidth: '140px' }}>
-                            {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                        <span style={{
+                            fontSize: '12px', fontWeight: 700, color: '#333',
+                            marginRight: '4px',
+                        }}>Date :</span>
+                        <span style={{
+                            fontSize: '13px', fontWeight: 800, color: '#0d47a1',
+                            borderBottom: '1px solid #888',
+                            paddingBottom: '1px', paddingLeft: '6px',
+                            display: 'inline-block', minWidth: '110px',
+                            fontFamily: "'Inter', monospace",
+                        }}>
+                            {new Date(slip.confirmed_at || slip.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit', month: '2-digit', year: 'numeric'
+                            })}
                         </span>
                     </div>
                 </div>
 
-                {/* Row 2 */}
-                <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '28px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingRight: '10px' }}>{'\u0906\u092F\u0941.'}</div>
-                    <div style={{ flex: 1, fontSize: '18px', fontWeight: 900, color: '#111', borderBottom: '2px solid #333', paddingBottom: '4px', paddingLeft: '10px', paddingRight: '10px', textAlign: 'left', minHeight: '24px' }}>{slip.name}</div>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingLeft: '10px' }}>{'\u092F\u093E\u0902\u091C\u0915\u0921\u0942\u0928'}</div>
+                {/* Row 2: Name */}
+                <div style={{
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '12px',
+                }}>
+                    <span style={{
+                        fontSize: '12px', fontWeight: 700, color: '#333',
+                        minWidth: '60px',
+                    }}>Name</span>
+                    <span style={{
+                        flex: 1, fontSize: '14px', fontWeight: 800, color: '#111',
+                        borderBottom: '1px solid #888',
+                        paddingBottom: '1px', paddingLeft: '8px',
+                        minHeight: '18px',
+                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                    }}>{slip.name}</span>
                 </div>
 
-                {/* Row 3 */}
-                <div style={{ marginBottom: '24px' }}>
-                    <div style={{ fontSize: '17px', fontWeight: 800, color: '#111', borderBottom: '2px solid #333', paddingBottom: '4px', paddingLeft: '4px', minHeight: '24px' }}>
-                        {slip.shop_name}{slip.location ? ` ,${slip.location}` : ''}{slip.address ? ` , ${slip.address}` : ''}
+                {/* Row 3: From */}
+                <div style={{
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '12px',
+                }}>
+                    <span style={{
+                        fontSize: '12px', fontWeight: 700, color: '#333',
+                        minWidth: '60px',
+                    }}>From</span>
+                    <span style={{
+                        flex: 1, fontSize: '14px', fontWeight: 800, color: '#111',
+                        borderBottom: '1px solid #888',
+                        paddingBottom: '1px', paddingLeft: '8px',
+                        minHeight: '18px',
+                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                    }}>
+                        {slip.shop_name}{slip.location ? `, ${slip.location}` : ''}{slip.address ? `, ${slip.address}` : ''}
+                    </span>
+                </div>
+
+                {/* Row 4: Address */}
+                <div style={{
+                    display: 'flex', alignItems: 'baseline',
+                    marginBottom: '12px',
+                }}>
+                    <span style={{
+                        fontSize: '12px', fontWeight: 700, color: '#333',
+                        minWidth: '60px',
+                    }}>Address</span>
+                    <span style={{
+                        flex: 1, fontSize: '14px', fontWeight: 800, color: '#111',
+                        borderBottom: '1px solid #888',
+                        paddingBottom: '1px', paddingLeft: '8px',
+                        minHeight: '18px',
+                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                    }}>
+                        {slip.address || ''}{slip.location ? `, ${slip.location}` : ''}
+                    </span>
+                </div>
+
+                {/* Row 5: Mobile + Amount Box */}
+                <div style={{
+                    display: 'flex', alignItems: 'center',
+                    marginBottom: '10px', gap: '14px',
+                }}>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'baseline' }}>
+                        <span style={{
+                            fontSize: '12px', fontWeight: 700, color: '#333',
+                            minWidth: '60px',
+                        }}>Mobile</span>
+                        <span style={{
+                            flex: 1, fontSize: '14px', fontWeight: 800, color: '#111',
+                            borderBottom: '1px solid #888',
+                            paddingBottom: '1px', paddingLeft: '8px',
+                            minHeight: '18px',
+                            fontFamily: "'Inter', 'Consolas', monospace",
+                            letterSpacing: '1.5px',
+                        }}>{slip.mobile}</span>
+                    </div>
+                    {/* Red amount box */}
+                    <div style={{
+                        border: '2px solid #c62828',
+                        borderRadius: '2px',
+                        padding: '4px 12px',
+                        display: 'flex', alignItems: 'center',
+                        gap: '4px', flexShrink: 0,
+                        background: '#fff',
+                    }}>
+                        <span style={{
+                            fontSize: '18px', fontWeight: 900, color: '#c62828',
+                            fontFamily: "'Inter', sans-serif",
+                        }}>₹</span>
+                        <span style={{
+                            fontSize: '18px', fontWeight: 900, color: '#111',
+                            letterSpacing: '0.5px',
+                            fontFamily: "'Inter', sans-serif",
+                        }}>
+                            {Number(slip.amount).toLocaleString('en-IN')}/-
+                        </span>
                     </div>
                 </div>
 
-                {/* Row 4 */}
-                <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '24px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', whiteSpace: 'nowrap', paddingRight: '10px' }}>{'\u092E\u094B\u092C\u093E\u0908\u0932'}</div>
-                    <div style={{ flex: 1, fontSize: '17px', fontWeight: 900, color: '#111', borderBottom: '2px solid #333', paddingBottom: '4px', paddingLeft: '10px', minHeight: '24px', fontFamily: "'Segoe UI', monospace", letterSpacing: '1px' }}>{slip.mobile}</div>
+                {/* Row 6: Occasion text */}
+                <div style={{
+                    fontSize: '10.5px', fontWeight: 600, color: '#444',
+                    marginBottom: '4px', lineHeight: 1.4,
+                    borderBottom: '1px solid #888',
+                    paddingBottom: '3px',
+                }}>
+                    Bharat Ratna Dr. Babasaheb Ambedkar Jayanti Mahotsav donation in words rupees
                 </div>
 
-                {/* Row 5 */}
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', marginBottom: '8px', lineHeight: 1.8, borderBottom: '2px solid #333', paddingBottom: '6px' }}>
-                    {'\u092D\u093E\u0930\u0924\u0930\u0924\u094D\u0928 \u0921\u0949. \u092C\u093E\u092C\u093E\u0938\u093E\u0939\u0947\u092C \u0906\u0902\u092C\u0947\u0921\u0915\u0930 \u091C\u092F\u0902\u0924\u0940 \u092E\u0939\u094B\u0924\u094D\u0938\u0935\u093E\u0928\u093F\u092E\u093F\u0924\u094D\u0924 \u0905\u0915\u094D\u0937\u0930\u0940 \u0930\u0941\u092A\u092F\u0947'}
+                {/* Row 7: Large amount */}
+                <div style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: '28px', fontWeight: 900, color: '#0d47a1',
+                    letterSpacing: '1px', marginBottom: '10px',
+                    lineHeight: 1.2,
+                }}>
+                    {Number(slip.amount).toLocaleString('en-IN')}/-
                 </div>
 
-                {/* Row 6 */}
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '16px', marginBottom: '16px', gap: '16px' }}>
-                    <div style={{ width: '44px', height: '44px', background: 'linear-gradient(135deg, #1a237e, #3949ab)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '22px', fontWeight: 900, boxShadow: '0 3px 10px rgba(26,35,126,0.35)', flexShrink: 0 }}>{'\u20B9'}</div>
-                    <div style={{ flex: 1, fontSize: '34px', fontWeight: 900, color: '#1a237e', letterSpacing: '1px', lineHeight: 1, borderBottom: '2px solid #333', paddingBottom: '4px' }}>
-                        {Number(slip.amount).toLocaleString('en-IN')}/-
+                {/* Row 8: Confirmed by + Seal */}
+                <div style={{
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #ddd',
+                    paddingTop: '6px',
+                }}>
+                    {slip.confirmed_by_name ? (
+                        <div style={{ fontSize: '9px', fontWeight: 600, color: '#666', maxWidth: '300px' }}>
+                            Confirmed by: <span style={{ fontWeight: 800, color: '#0d47a1' }}>{slip.confirmed_by_name}</span>
+                            {slip.confirmed_at && (
+                                <span style={{ marginLeft: '3px', color: '#999', fontSize: '8px' }}>
+                                    ({new Date(slip.confirmed_at).toLocaleString('en-IN', {
+                                        day: '2-digit', month: 'short', year: 'numeric',
+                                        hour: '2-digit', minute: '2-digit', hour12: true
+                                    })})
+                                </span>
+                            )}
+                        </div>
+                    ) : <div />}
+
+                    {/* Organization seal */}
+                    <div style={{
+                        width: '45px', height: '45px',
+                        borderRadius: '50%', overflow: 'hidden',
+                        opacity: 0.8, flexShrink: 0,
+                        border: '1px solid rgba(13,71,161,0.15)',
+                    }}>
+                        <img src="/images/logo.png" alt="Seal"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            crossOrigin="anonymous" />
                     </div>
                 </div>
-
-                {/* Row 7 */}
-                <div style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a1a', marginTop: '12px', marginBottom: '12px', lineHeight: 1.6, paddingTop: '8px' }}>
-                    {'\u0926\u0947\u0923\u0917\u0940 \u0930\u094B\u0916 \u092E\u093F\u0933\u093E\u0932\u0940. \u0906\u092D\u093E\u0930\u0940 \u0906\u0939\u094B\u0924!'}
-                </div>
-
-                {slip.confirmed_by_name && (
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#555', marginTop: '4px' }}>
-                        Confirmed by: <span style={{ fontWeight: 900, color: '#1a237e' }}>{slip.confirmed_by_name}</span>
-                        {slip.confirmed_at && (
-                            <span style={{ marginLeft: '8px', color: '#888' }}>
-                                ({new Date(slip.confirmed_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })})
-                            </span>
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
-
-        {/* FOOTER */}
-        <div style={{ background: 'linear-gradient(90deg, #0d1257, #1a237e, #283593, #1a237e, #0d1257)', padding: '20px 36px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ width: '48px', height: '48px', background: '#FFD700', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1a237e', fontSize: '24px', fontWeight: 900, boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }}>{'\u20B9'}</div>
-            <div style={{ fontSize: '36px', fontWeight: 900, color: '#D32F2F', textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 0 30px rgba(211,47,47,0.3)', fontStyle: 'italic', letterSpacing: '5px' }}>{'\u0927\u0928\u094D\u092F\u0935\u093E\u0926!'}</div>
-            <div style={{ fontSize: '18px', fontWeight: 900, color: 'white', letterSpacing: '4px', textShadow: '0 2px 4px rgba(0,0,0,0.4)' }}>{'\u092A\u094D\u0930\u093E\u0938\u0915\u0930\u094D\u0924\u093E'}</div>
-        </div>
-
-        <div style={{ padding: '10px 36px', textAlign: 'center', background: '#0a0f3a' }}>
-            <div style={{ fontSize: '11px', color: '#AAAACC', fontWeight: 700, letterSpacing: '5px', textTransform: 'uppercase' as const }}>
-                Powered by <span style={{ color: '#FFD700', fontWeight: 900 }}>busyhub.in</span>
             </div>
         </div>
     </div>

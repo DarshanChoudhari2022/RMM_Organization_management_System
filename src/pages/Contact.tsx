@@ -30,8 +30,8 @@ const Contact = () => {
                     >
                         <div className="grid sm:grid-cols-2 gap-8">
                             {[
-                                { icon: MapPin, title: "Our Location", detail: "Kedari Nagar, Wanowrie, Pune - 411040" },
-                                { icon: Phone, title: "Hotline", detail: "+91 98765 43210 (10 AM - 8 PM)" },
+                                { icon: MapPin, title: "Our Location", detail: "बाराथे वस्ती, दापोडी गावठाण, पुणे - ४११०१२" },
+                                { icon: Phone, title: "Hotline", detail: "+91 9284729592 (10 AM - 8 PM)" },
                                 { icon: Mail, title: "Email Us", detail: "contact@RAHUL MITRA MANDAL.in" },
                                 { icon: MessageCircle, title: "WhatsApp", detail: "Connect for instant updates" },
                             ].map((item, i) => (

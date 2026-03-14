@@ -19,7 +19,7 @@ const Hero = () => {
                     {/* Est Badge */}
                     <div className="inline-flex items-center gap-3 mb-6 border-b border-primary/30 pb-2">
                         <span className="text-primary font-sans font-bold text-sm uppercase tracking-[0.2em]">
-                            Est. 2014 · Kedari Nagar, Pune
+                            · Dapodi, Pune
                         </span>
                     </div>
 

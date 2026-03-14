@@ -16,7 +16,6 @@ const Navbar = () => {
 
     const navLinks = [
         { name: "The Legend", path: "/history" },
-        { name: "Forts", path: "/forts" },
         { name: "Archives", path: "/gallery" },
         { name: "Celebrations", path: "/events" },
         { name: "Committee", path: "/members" },
@@ -42,7 +41,7 @@ const Navbar = () => {
                             राहुल मित्र मंडळ
                         </span>
                         <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                            Kedari Nagar
+                            Dapodi Gavthan
                         </span>
                     </div>
                 </Link>

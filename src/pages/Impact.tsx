@@ -4,13 +4,13 @@ import Footer from "@/components/landing/Footer";
 
 const initiatives = [
     {
-        title: "Fort Conservation Project",
-        titleMarathi: "किल्ले संवर्धन मोहीम",
-        category: "Heritage",
+        title: "Ambedkarite Literature Drive",
+        titleMarathi: "आंबेडकरवादी साहित्य प्रसार",
+        category: "Education",
         icon: Landmark,
-        description: "Active cleanup and minor restoration work at 25+ local forts across Maharashtra.",
-        metrics: "120+ Drives completed",
-        impact: "Removing plastic and maintaining trails for future generations."
+        description: "Distributing books and literature about Babasaheb Ambedkar's philosophy to local libraries.",
+        metrics: "50+ Libraries supported",
+        impact: "Promoting the vision of educated and informed community."
     },
     {
         title: "Rural Education Sponsorship",
@@ -26,7 +26,7 @@ const initiatives = [
         titleMarathi: "आरोग्य शिबिर",
         category: "Health",
         icon: Heart,
-        description: "Quarterly free health checkup camps and blood donation drives in Kedari Nagar.",
+        description: "Quarterly free health checkup camps and blood donation drives in Dapodi Gavthan.",
         metrics: "2.5k Beneficiaries",
         impact: "Early diagnosis and medical support for daily wage workers."
     },
@@ -35,9 +35,9 @@ const initiatives = [
         titleMarathi: "युवा नेतृत्व",
         category: "Community",
         icon: Users,
-        description: "Training the next generation in traditional martial arts and leadership skills.",
+        description: "Training the next generation in constitutional rights and leadership skills.",
         metrics: "150+ Volunteers",
-        impact: "Creating responsible citizens rooted in Maratha values."
+        impact: "Creating responsible citizens rooted in Constitutional values."
     }
 ];
 

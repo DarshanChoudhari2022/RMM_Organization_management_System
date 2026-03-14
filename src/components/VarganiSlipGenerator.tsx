@@ -27,6 +27,7 @@ const VarganiSlipTab = () => {
     const [activeSlip, setActiveSlip] = useState<VarganiSlip | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [confirmingId, setConfirmingId] = useState<string | null>(null);
+    const [groupBy, setGroupBy] = useState<'none' | 'location' | 'date' | 'admin'>('none');
 
     // Form State
     const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ const VarganiSlipTab = () => {
 
     // Filtered + searched slips
     const filteredSlips = useMemo(() => {
-        let result = slips || [];
+        let result = slips ? [...slips] : [];
         if (filter !== 'all') result = result.filter(s => s.status === filter);
         if (search) {
             const q = search.toLowerCase();
@@ -67,6 +68,10 @@ const VarganiSlipTab = () => {
                 (s.slip_number || '').toLowerCase().includes(q)
             );
         }
+
+        // Sort date-wise (newest first)
+        result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+
         return result;
     }, [slips, filter, search]);
 
@@ -77,7 +82,26 @@ const VarganiSlipTab = () => {
         const pending = all.filter(s => s.status === 'pending');
         const totalCollected = paid.reduce((sum, s) => sum + Number(s.amount), 0);
         const totalPending = pending.reduce((sum, s) => sum + Number(s.amount), 0);
-        return { total: all.length, paidCount: paid.length, pendingCount: pending.length, totalCollected, totalPending };
+        
+        const locMap: Record<string, number> = {};
+        pending.forEach(s => {
+            const loc = s.location?.trim() || 'Other';
+            locMap[loc] = (locMap[loc] || 0) + Number(s.amount);
+        });
+        const locationPendingArray = Object.entries(locMap)
+            .map(([location, amount]) => ({ location, amount }))
+            .sort((a, b) => b.amount - a.amount);
+
+        const adminMap: Record<string, number> = {};
+        all.forEach(s => {
+            const admin = s.created_by_name?.trim() || 'Main Admin';
+            adminMap[admin] = (adminMap[admin] || 0) + 1;
+        });
+        const adminStatsArray = Object.entries(adminMap)
+            .map(([admin, count]) => ({ admin, count }))
+            .sort((a, b) => b.count - a.count);
+
+        return { total: all.length, paidCount: paid.length, pendingCount: pending.length, totalCollected, totalPending, locationPendingArray, adminStatsArray };
     }, [slips]);
 
     // Reset form
@@ -194,7 +218,7 @@ const VarganiSlipTab = () => {
             if (!el) throw new Error("Slip preview not found");
 
             const canvas = await html2canvas(el, {
-                scale: 3, useCORS: true, backgroundColor: null, logging: false
+                scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false
             });
 
             const link = document.createElement('a');
@@ -226,36 +250,30 @@ const VarganiSlipTab = () => {
             if (!el) throw new Error("Slip preview not found");
 
             const canvas = await html2canvas(el, {
-                scale: 3, useCORS: true, backgroundColor: null, logging: false
+                scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false
             });
 
-            const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
-
-            if (blob && navigator.share) {
-                const file = new File([blob], `Vargani_${slip.slip_number}.png`, { type: 'image/png' });
-                try {
-                    await navigator.share({
-                        title: `Vargani Pavti - ${slip.name}`,
-                        text: `Rahul Mitra Mandal - Vargani Pavti\n\nName: ${slip.name}\nAmount: ${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nPowered by busyhub.in`,
-                        files: [file]
-                    });
-                    toast.success("Shared successfully!");
-                    return;
-                } catch {
-                    // User cancelled or API not supported
+            try {
+                const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
+                if (blob) {
+                    await navigator.clipboard.write([
+                        new window.ClipboardItem({ 'image/png': blob })
+                    ]);
                 }
+            } catch (err) {
+                console.warn("Clipboard copy failed:", err);
             }
 
-            // Fallback: Download + open WhatsApp
+            // Download image
             const link = document.createElement('a');
             link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            const msg = `*Rahul Mitra Mandal - Vargani Pavti*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nThank you!\n\n_Powered by busyhub.in_`;
+            const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nदेणगी रोख मिळाली. आभारी आहोत!`;
             window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
 
-            toast.success("Slip downloaded! WhatsApp opened.");
+            toast.success("Slip downloaded & copied! Just PASTE (Ctrl+V) it in the WhatsApp chat.");
         } catch (err) {
             console.error("Share error:", err);
             toast.error("Sharing failed. Please try again.");
@@ -263,6 +281,21 @@ const VarganiSlipTab = () => {
             setIsGenerating(false);
         }
     }, []);
+
+    const groupedSlips = useMemo(() => {
+        if (groupBy === 'none') return [['All Slips', filteredSlips]] as const;
+        const groups: Record<string, typeof filteredSlips> = {};
+        filteredSlips.forEach(s => {
+            let key = 'Other';
+            if (groupBy === 'location') key = s.location?.trim() || 'Other';
+            else if (groupBy === 'date') key = s.created_at ? new Date(s.created_at).toLocaleDateString('en-IN') : 'Unknown Date';
+            else if (groupBy === 'admin') key = s.created_by_name?.trim() || 'Main Admin';
+            
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(s);
+        });
+        return Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
+    }, [filteredSlips, groupBy]);
 
     if (isLoading) {
         return (
@@ -342,6 +375,40 @@ const VarganiSlipTab = () => {
                 </div>
             </div>
 
+            {/* Location & Admin Wise Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {stats.locationPendingArray.length > 0 && (
+                    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 shadow-sm">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-amber-800 mb-3 flex items-center gap-2">
+                            <MapPin size={14} /> Pending Location-Wise ({'\u20B9'}{stats.totalPending.toLocaleString('en-IN')})
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {stats.locationPendingArray.map((loc) => (
+                                <div key={loc.location} className="bg-white px-3 py-2 rounded-xl border border-amber-200 flex items-center gap-2 shadow-sm">
+                                    <span className="font-bold text-[#0F172A] text-xs">{loc.location}</span>
+                                    <span className="text-amber-600 font-black text-xs bg-amber-100 px-2 py-0.5 rounded-full">{'\u20B9'}{loc.amount.toLocaleString('en-IN')}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {stats.adminStatsArray.length > 0 && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 shadow-sm">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-800 mb-3 flex items-center gap-2">
+                            <User size={14} /> Slips Generated By Admin
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {stats.adminStatsArray.map((admin) => (
+                                <div key={admin.admin} className="bg-white px-3 py-2 rounded-xl border border-blue-200 flex items-center gap-2 shadow-sm">
+                                    <span className="font-bold text-[#0F172A] text-xs">{admin.admin}</span>
+                                    <span className="text-blue-600 font-black text-xs bg-blue-100 px-2 py-0.5 rounded-full">{admin.count} Slips</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Filter + Search */}
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
@@ -358,6 +425,20 @@ const VarganiSlipTab = () => {
                         </button>
                     ))}
                 </div>
+                <div className="flex bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm items-center px-4 w-full sm:w-auto">
+                    <Filter size={14} className="text-[#0F172A]/40 mr-2 shrink-0" />
+                    <select
+                        value={groupBy}
+                        onChange={e => setGroupBy(e.target.value as any)}
+                        className="w-full py-2.5 text-[10px] font-black uppercase tracking-widest text-[#0F172A]/80 bg-transparent outline-none cursor-pointer"
+                    >
+                        <option value="none">Group By: None</option>
+                        <option value="location">Group: Location</option>
+                        <option value="date">Group: Date</option>
+                        <option value="admin">Group: Admin</option>
+                    </select>
+                </div>
+
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -403,7 +484,15 @@ const VarganiSlipTab = () => {
                         {/* Desktop Table */}
                         <div className="hidden md:block overflow-x-auto">
                             <div className="min-w-[900px]">
-                                {filteredSlips.map((slip) => (
+                                {groupedSlips.map(([groupName, groupList]) => (
+                                    <div key={groupName}>
+                                        {groupBy !== 'none' && (
+                                            <div className="bg-[#1D4ED8]/5 border-b border-gray-50 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] flex justify-between items-center sticky left-0">
+                                                <span>{groupName}</span>
+                                                <span className="opacity-60">{groupList.length} Entries</span>
+                                            </div>
+                                        )}
+                                        {groupList.map((slip) => (
                                     <div key={slip.id} className="grid grid-cols-12 gap-3 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
                                         <div className="col-span-1">
                                             <span className="text-[11px] font-bold text-[#1D4ED8] font-mono">{slip.slip_number?.split('-').pop()}</span>
@@ -473,6 +562,8 @@ const VarganiSlipTab = () => {
                                                 <Trash2 size={14} />
                                             </button>
                                         </div>
+                                        </div>
+                                    ))}
                                     </div>
                                 ))}
                             </div>
@@ -480,7 +571,15 @@ const VarganiSlipTab = () => {
 
                         {/* Mobile Cards */}
                         <div className="md:hidden divide-y divide-gray-50">
-                            {filteredSlips.map((slip) => (
+                            {groupedSlips.map(([groupName, groupList]) => (
+                                <div key={groupName}>
+                                    {groupBy !== 'none' && (
+                                        <div className="bg-[#1D4ED8]/5 border-y border-gray-50 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] flex justify-between items-center">
+                                            <span>{groupName}</span>
+                                            <span className="opacity-60">{groupList.length} Entries</span>
+                                        </div>
+                                    )}
+                                    {groupList.map((slip) => (
                                 <div key={slip.id} className="p-4 space-y-3">
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -552,6 +651,8 @@ const VarganiSlipTab = () => {
                                             <Trash2 size={14} />
                                         </button>
                                     </div>
+                                    </div>
+                                ))}
                                 </div>
                             ))}
                         </div>
@@ -603,7 +704,7 @@ const VarganiSlipTab = () => {
                                         <MapPin size={10} className="inline mr-1" /> Location *
                                     </label>
                                     <input value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20" placeholder="e.g. Wanwadi, Pune" />
+                                        className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20" placeholder="e.g. Dapodi, Pune" />
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">

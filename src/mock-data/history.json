@@ -1,80 +1,80 @@
 [
   {
     "id": "h1",
-    "year": 1630,
-    "titleMarathi": "शिवनेरी — जन्मस्थान",
-    "titleEnglish": "Shivneri — The Birthplace",
-    "description": "Babasaheb Ambedkar was born at Shivneri Fort on February 19, 1630. This hill fort in Junnar became the cradle of the Maratha Empire.",
-    "category": "fort",
+    "year": 1891,
+    "titleMarathi": "जन्म (महू)",
+    "titleEnglish": "Birth in Mhow",
+    "description": "Babasaheb Ambedkar was born in Mhow, Central Provinces (now Madhya Pradesh) on April 14, 1891. He was the 14th child of Ramji Sakpal and Bhimabai.",
+    "category": "birth",
     "image": "https://images.unsplash.com/photo-1627998672583-050f53198084?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Babasaheb Ambedkar: The Great Maratha",
-      "page": 12
+      "book": "Dr. Ambedkar: Life and Mission",
+      "page": 1
     }
   },
   {
     "id": "h2",
-    "year": 1645,
-    "titleMarathi": "तोरणा किल्ला विजय",
-    "titleEnglish": "Conquest of Torna Fort",
-    "description": "At the age of 15, Babasaheb Ambedkar captured Torna Fort, marking the beginning of Swarajya. This was the first fort taken under his independent command.",
-    "category": "fort",
+    "year": 1927,
+    "titleMarathi": "महाड सत्याग्रह",
+    "titleEnglish": "Mahad Satyagraha",
+    "description": "Led the historic Mahad Satyagraha to assert the right of Dalits to use water from public tanks. This marked a turning point in the struggle for social justice.",
+    "category": "social_reform",
     "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Rise of the Maratha Power",
-      "page": 45
+      "book": "Dr. Ambedkar: Life and Mission",
+      "page": 85
     }
   },
   {
     "id": "h3",
-    "year": 1646,
-    "titleMarathi": "राजगड — राजधानी",
-    "titleEnglish": "Rajgad — The Capital",
-    "description": "Rajgad served as the capital of the Maratha Empire for nearly 26 years. Its strategic location in the Sahyadri range made it nearly impregnable.",
-    "category": "fort",
+    "year": 1930,
+    "titleMarathi": "काळाराम मंदिर सत्याग्रह",
+    "titleEnglish": "Kalaram Temple Satyagraha",
+    "description": "Organized the Satyagraha for entry into the Kalaram Temple in Nashik, asserting religious equality and the right to worship.",
+    "category": "social_reform",
     "image": "https://images.unsplash.com/photo-1566417730635-f02737604f81?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Forts of Maharashtra",
-      "page": 78
+      "book": "Dr. Ambedkar: Life and Mission",
+      "page": 142
     }
   },
   {
     "id": "h4",
-    "year": 1659,
-    "titleMarathi": "अफजलखान वध — प्रतापगड",
-    "titleEnglish": "Battle of Pratapgad",
-    "description": "The legendary encounter between Babasaheb Ambedkar and Afzal Khan at Pratapgad Fort demonstrated unmatched courage and strategic brilliance.",
-    "category": "battle",
+    "year": 1947,
+    "titleMarathi": "मसुदा समितीचे अध्यक्ष",
+    "titleEnglish": "Chairman of Drafting Committee",
+    "description": "Appointed as the Chairman of the Drafting Committee of the Indian Constitution, shaping the foundation of modern India's legal and social framework.",
+    "category": "political",
     "image": "https://images.unsplash.com/photo-1623838385002-2334863f6955?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Struggles of Ambedkar",
-      "page": 102
+      "book": "The Indian Constitution",
+      "page": 15
     }
   },
   {
     "id": "h5",
-    "year": 1665,
-    "titleMarathi": "पुरंदरचा तह",
-    "titleEnglish": "Treaty of Purandar",
-    "description": "The Treaty of Purandar was signed between Babasaheb Ambedkar and Jai Singh I, representing Mughal Emperor Aurangzeb. It was a strategic diplomatic maneuver.",
-    "category": "treaty",
+    "year": 1956,
+    "titleMarathi": "धम्मचक्र प्रवर्तन",
+    "titleEnglish": "Conversion to Buddhism",
+    "description": "Converted to Buddhism along with hundreds of thousands of followers in Nagpur, seeking a path of liberation based on liberty, equality, and fraternity.",
+    "category": "conversion",
     "image": "https://images.unsplash.com/photo-1532417302055-3a67d5594b29?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Diplomatic History of Marathas",
-      "page": 156
+      "book": "Dr. Ambedkar: Life and Mission",
+      "page": 490
     }
   },
   {
     "id": "h6",
-    "year": 1674,
-    "titleMarathi": "राज्याभिषेक — रायगड",
-    "titleEnglish": "Coronation at Raigad",
-    "description": "On June 6, 1674, Babasaheb Ambedkar was crowned at Raigad Fort, establishing an independent Hindu sovereignty after centuries of foreign rule.",
-    "category": "event",
+    "year": 1956,
+    "titleMarathi": "महापरिनिर्वाण",
+    "titleEnglish": "Mahaparinirvan",
+    "description": "Passed away on December 6, 1956. His legacy continues to inspire millions as a symbol of knowledge, courage, and social justice.",
+    "category": "legacy",
     "image": "https://images.unsplash.com/photo-1572948622722-1d54625b1285?auto=format&fit=crop&q=80",
     "source": {
-      "book": "Legacy of Ambedkar",
-      "page": 201
+      "book": "Dr. Ambedkar: Life and Mission",
+      "page": 512
     }
   }
 ]

@@ -461,7 +461,7 @@ const TasksTab = ({ year }: { year: number }) => {
   const { data: tasks, addTask, updateTask, deleteTask } = useTasks();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+  const [newTask, setNewTask] = useState<Partial<Task>>({ title: "", description: "", date: "", time: "", location: "Dapodi Gavthan Chowk" });
   const [showAttendees, setShowAttendees] = useState<string | null>(null);
 
   const filteredTasks = tasks?.filter(t => t.year === year) || [];
@@ -475,7 +475,7 @@ const TasksTab = ({ year }: { year: number }) => {
     } else {
       if (!newTask.title || !newTask.date) return;
       addTask.mutate({ ...(newTask as any), year });
-      setNewTask({ title: "", description: "", date: "", time: "", location: "Kedari Nagar Chowk" });
+      setNewTask({ title: "", description: "", date: "", time: "", location: "Dapodi Gavthan Chowk" });
       setIsAddOpen(false);
     }
   };
@@ -1312,7 +1312,7 @@ const SuppliersTab = () => {
 }
 
 const InvitationsTab = () => {
-  const [invitation, setInvitation] = useState({ title: "", date: "", time: "", location: "Kedari Nagar Chowk", message: "" });
+  const [invitation, setInvitation] = useState({ title: "", date: "", time: "", location: "Dapodi Gavthan Chowk", message: "" });
   const generateMsg = () => {
     return `🎉 *ग्रूप निमंत्रण - राहुल मित्र मंडळ*\n\n📣 *${invitation.title}*\n📅 ${invitation.date} | 🕐 ${invitation.time}\n📍 ${invitation.location}\n\n📝 ${invitation.message}\n\nसर्वांनी वेळेवर उपस्थित राहावे!`;
   };
@@ -1379,21 +1379,21 @@ const LetterheadTab = () => {
     dateLabel: "दिनांक :",
     date: new Date().toLocaleDateString('mr-IN'),
     toLabel: "प्रति,",
-    toName: "मा. पोलीस निरीक्षक साहेब, वानवडी",
-    toDept: "पोलीस स्टेशन, वानवडी विभाग, पुणे शहर.",
+    toName: "मा. पोलीस निरीक्षक साहेब, दापोडी",
+    toDept: "पोलीस स्टेशन, दापोडी विभाग, पुणे शहर.",
     applicantLabel: "अर्जदार:",
-    applicant: "हांडे योगेश राजेंद्र",
-    address: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४११०४०",
+    applicant: "",
+    address: "बाराथे वस्ती, दापोडी गावठाण, पुणे-१२.",
     festival: "श्री. छत्रपती शिवाजी महाराज जयंती",
     festDate: "१९ फेब्रुवारी २०२६",
     phoneLabel: "फोन:",
-    phone: "८२३७१८९९७७",
+    phone: "+91 9284729592",
     subjectLabel: "विषय :-",
     subject: "ध्वनीक्षेपक परवाना मिळण्याबाबत.",
-    content: "आम्ही राहुल मित्र मंडळ केदारी नगर, वानवडीच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो.",
+    content: "आम्ही राहुल मित्र मंडळ दापोडी गावठाणच्या वतीने सालाबादप्रमाणे आगामी उत्सवासाठी ध्वनीक्षेपक परवाना मिळावा ही नम्र विनंती. आमचे मंडळ शासनाने घालून दिलेल्या सर्व नियमांचे पालन करेल याची आम्ही ग्वाही देतो.",
     closingLabel: "कळावे,",
     signLabel: "आपला विश्वासू",
-    footerText: "सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४११०४०",
+    footerText: "बाराथे वस्ती, दापोडी गावठाण, पुणे-१२.",
     establishmentLabel: "स्थापना :- २०१५"
   });
 
@@ -1563,35 +1563,53 @@ const LetterheadTab = () => {
               <div className="text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] bg-[#1D4ED8]/5 px-2 py-1 rounded">Editor</div>
             </div>
 
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Festival Name</label>
-              <input
-                value={data.festival}
-                onChange={e => setData({ ...data, festival: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-bold"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-4">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Today's Date</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Festival Name</label>
                 <input
-                  value={data.date}
-                  onChange={e => setData({ ...data, date: e.target.value })}
+                  value={data.festival}
+                  onChange={e => setData({ ...data, festival: e.target.value })}
+                  className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Festival Date</label>
+                <input
+                  value={data.festDate}
+                  onChange={e => setData({ ...data, festDate: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
+
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Phone No</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Establishment Text</label>
                 <input
-                  value={data.phone}
-                  onChange={e => setData({ ...data, phone: e.target.value })}
+                  value={data.establishmentLabel}
+                  onChange={e => setData({ ...data, establishmentLabel: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Date Label</label>
+                  <input
+                    value={data.dateLabel}
+                    onChange={e => setData({ ...data, dateLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Today's Date</label>
+                  <input
+                    value={data.date}
+                    onChange={e => setData({ ...data, date: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">To Label</label>
                 <input
@@ -1600,106 +1618,127 @@ const LetterheadTab = () => {
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
+
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Date Label</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">To Name</label>
                 <input
-                  value={data.dateLabel}
-                  onChange={e => setData({ ...data, dateLabel: e.target.value })}
+                  value={data.toName}
+                  onChange={e => setData({ ...data, toName: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Applicant Label</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">To Dept</label>
                 <input
-                  value={data.applicantLabel}
-                  onChange={e => setData({ ...data, applicantLabel: e.target.value })}
+                  value={data.toDept}
+                  onChange={e => setData({ ...data, toDept: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Applicant Label</label>
+                  <input
+                    value={data.applicantLabel}
+                    onChange={e => setData({ ...data, applicantLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Applicant Name</label>
+                  <input
+                    value={data.applicant}
+                    onChange={e => setData({ ...data, applicant: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-bold"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Subject Label</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Address & Pincode</label>
                 <input
-                  value={data.subjectLabel}
-                  onChange={e => setData({ ...data, subjectLabel: e.target.value })}
+                  value={data.address}
+                  onChange={e => setData({ ...data, address: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">To Name</label>
-              <input
-                value={data.toName}
-                onChange={e => setData({ ...data, toName: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Subject Label</label>
+                  <input
+                    value={data.subjectLabel}
+                    onChange={e => setData({ ...data, subjectLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Subject Text</label>
+                  <input
+                    value={data.subject}
+                    onChange={e => setData({ ...data, subject: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-bold"
+                  />
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">To Dept</label>
-              <input
-                value={data.toDept}
-                onChange={e => setData({ ...data, toDept: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Closing Label</label>
+                  <input
+                    value={data.closingLabel}
+                    onChange={e => setData({ ...data, closingLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Sign Label</label>
+                  <input
+                    value={data.signLabel}
+                    onChange={e => setData({ ...data, signLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Address & Pincode</label>
-              <input
-                value={data.address}
-                onChange={e => setData({ ...data, address: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Phone Label</label>
+                  <input
+                    value={data.phoneLabel}
+                    onChange={e => setData({ ...data, phoneLabel: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Phone No</label>
+                  <input
+                    value={data.phone}
+                    onChange={e => setData({ ...data, phone: e.target.value })}
+                    className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 font-bold"
+                  />
+                </div>
+              </div>
 
-            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Closing Label</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Footer Text</label>
                 <input
-                  value={data.closingLabel}
-                  onChange={e => setData({ ...data, closingLabel: e.target.value })}
+                  value={data.footerText}
+                  onChange={e => setData({ ...data, footerText: e.target.value })}
                   className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
                 />
               </div>
+
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Sign Label</label>
-                <input
-                  value={data.signLabel}
-                  onChange={e => setData({ ...data, signLabel: e.target.value })}
-                  className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
+                <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Letter Content</label>
+                <textarea
+                  value={data.content}
+                  onChange={e => setData({ ...data, content: e.target.value })}
+                  className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 min-h-[200px]"
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Footer Text</label>
-              <input
-                value={data.footerText}
-                onChange={e => setData({ ...data, footerText: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Subject Text</label>
-              <input
-                value={data.subject}
-                onChange={e => setData({ ...data, subject: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">Letter Content</label>
-              <textarea
-                value={data.content}
-                onChange={e => setData({ ...data, content: e.target.value })}
-                className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 min-h-[200px]"
-              />
             </div>
 
             <button
@@ -1747,8 +1786,8 @@ const LetterheadTab = () => {
                           <h1 className="text-6xl font-black text-[#1D4ED8] tracking-tighter leading-none mb-2">
                             राहुल मित्र मंडळ
                           </h1>
-                          <p className="text-3xl font-bold text-[#0F172A]/80">वानवडी, पुणे</p>
-                          <p className="text-base font-bold text-[#1D4ED8] mt-1 uppercase tracking-widest">पोस्टमन चाळ, केदारी नगर</p>
+                          <p className="text-3xl font-bold text-[#0F172A]/80">दापोडी, पुणे</p>
+                          <p className="text-base font-bold text-[#1D4ED8] mt-1 uppercase tracking-widest">बाराथे वस्ती, दापोडी गावठाण</p>
                         </div>
                       </div>
                       <div className="text-right space-y-2 pt-4">
@@ -1956,7 +1995,7 @@ const Dashboard = () => {
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
             <span className="font-display font-black text-sm tracking-tight text-[#0F172A] block leading-none uppercase">राहुल मित्र मंडळ</span>
-            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#1D4ED8]">वानवडी, पुणे</span>
+            <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#1D4ED8]">दापोडी, पुणे</span>
           </div>
         </div>
         <button
@@ -1992,7 +2031,7 @@ const Dashboard = () => {
               <img src="/images/logo.png" className="w-14 h-14 object-contain drop-shadow-lg" alt="Logo" />
               <div>
                 <span className="font-display font-black text-lg tracking-tight text-[#0F172A] block leading-none uppercase text-primary">राहुल मित्र मंडळ</span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#1D4ED8]">वानवडी, पुणे</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#1D4ED8]">दापोडी, पुणे</span>
               </div>
             </div>
             <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#0F172A]/60 hover:text-red-500 transition-colors">
@@ -2003,11 +2042,11 @@ const Dashboard = () => {
           <div className="bg-[#FDFBF7] p-3 rounded-xl border border-primary/10">
             <div className="flex items-start gap-2 text-[10px] font-bold text-[#0F172A]/70 leading-tight">
               <MapPin size={10} className="text-[#1D4ED8] shrink-0 mt-0.5" />
-              <span>सर्व्हे नं. ६३/४ पोस्टमन चाळ केदारी नगर वानवडी पुणे ४१११८४०</span>
+              <span>बाराथे वस्ती, दापोडी गावठाण, पुणे-१२.</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-bold text-[#0F172A]/70 mt-2">
               <Phone size={10} className="text-[#1D4ED8] shrink-0" />
-              <span>८२३७१८९९७७</span>
+              <span>+91 9284729592</span>
             </div>
           </div>
         </div>

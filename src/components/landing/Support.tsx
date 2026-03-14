@@ -66,7 +66,7 @@ const Support = () => {
                         <Heart className="text-shiv-saffron mb-8 group-hover:scale-110 transition-transform duration-500" size={48} />
                         <h3 className="text-3xl font-black text-shiv-navy mb-6 tracking-tight">Make a Donation</h3>
                         <p className="text-shiv-navy/60 leading-relaxed mb-10 font-sans">
-                            Your donation directly funds heritage weapons exhibitions, Dhol Tasha logistics, and grand decorative lighting for Kedari Nagar.
+                            Your donation directly funds heritage weapons exhibitions, Dhol Tasha logistics, and grand decorative lighting for Dapodi.
                         </p>
 
                         <div className="space-y-4 mb-12">
@@ -109,7 +109,7 @@ const Support = () => {
                         <Users className="text-white mb-8 group-hover:scale-110 transition-transform duration-500 relative z-10" size={48} />
                         <h3 className="text-3xl font-black mb-6 tracking-tight relative z-10">Join the Mandal</h3>
                         <p className="text-white/80 leading-relaxed mb-10 font-sans relative z-10">
-                            Become a registered volunteer of RAHUL MITRA MANDAL. Contribute to community leadership and event management at Wanowrie.
+                            Become a registered volunteer of RAHUL MITRA MANDAL. Contribute to community leadership and event management at Dapodi.
                         </p>
 
                         <div className="space-y-6 mb-12 relative z-10">
@@ -138,7 +138,7 @@ const Support = () => {
                 <div className="pt-24 mt-20 border-t border-shiv-saffron/10">
                     <div className="text-[10px] font-black uppercase tracking-[0.4em] text-shiv-navy/30 mb-10 text-center">Patrons of Swarajya</div>
                     <div className="flex flex-wrap justify-center gap-16 opacity-40 hover:opacity-100 transition-opacity duration-700">
-                        {["K. Deshmukh", "S. Wanowrie", "P. Kedari", "R. More", "M. Jagtap"].map(name => (
+                        {["K. Deshmukh", "S. Dhone", "P. Barathe", "R. More", "M. Jagtap"].map(name => (
                             <div key={name} className="text-[12px] font-black uppercase tracking-[0.2em] text-shiv-navy">{name}</div>
                         ))}
                     </div>

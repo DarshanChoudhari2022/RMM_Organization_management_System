@@ -164,7 +164,7 @@ const AboutSection = () => {
                                     Rahul Mitra Mandal
                                 </h3>
                                 <p className="text-foreground/80 text-sm leading-relaxed mb-4">
-                                    Since 2014, our Mandal in Kedari Nagar, Pune has been celebrating Ambedkar Jayanti
+                                    Since 2014, our Mandal in Dapodi Gavthan, Pune has been celebrating Ambedkar Jayanti
                                     on <strong className="text-primary">14th April</strong> every year with grand processions,
                                     educational events, and cultural programs to keep the spirit of social equality alive.
                                 </p>

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     date DATE NOT NULL,
     time TEXT NOT NULL,
-    location TEXT DEFAULT 'Kedari Nagar Chowk',
+    location TEXT DEFAULT 'Dapodi Gavthan Chowk',
     year INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

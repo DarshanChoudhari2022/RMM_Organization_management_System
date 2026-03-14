@@ -14,7 +14,7 @@ const faqs = [
     },
     {
         question: "How does the Mandal use my donations?",
-        answer: "Donations are used for event logistics (lighting, sound, security), social initiatives like medical camps, and educational aid for underprivileged students in Wanowrie."
+        answer: "Donations are used for event logistics (lighting, sound, security), social initiatives like medical camps, and educational aid for underprivileged students in Dapodi."
     },
     {
         question: "Can I join the Dhol Tasha Pathak?",

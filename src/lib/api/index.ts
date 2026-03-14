@@ -1,4 +1,4 @@
-import type { HistoryEntry, EventEntry, GalleryAlbum, Task, BudgetItem, Expense, Fort, MandaIMember, Invitation, Photo } from "@/types";
+import type { HistoryEntry, EventEntry, GalleryAlbum, Task, BudgetItem, Expense, MandaIMember, Invitation, Photo } from "@/types";
 import historyData from "@/mock-data/history.json";
 import eventsData from "@/mock-data/events.json";
 import galleryData from "@/mock-data/gallery.json";
@@ -55,13 +55,4 @@ export async function getInvitations(): Promise<Invitation[]> {
 
 export async function getPhotos(): Promise<Photo[]> {
   return safeFetch<Photo[]>("/dashboard/photos", async () => dashboardData.photos as Photo[]);
-}
-
-export async function getForts(params?: { region?: string; type?: "hill" | "sea" | "land" }): Promise<Fort[]> {
-  const query = new URLSearchParams();
-  if (params?.region) query.set("region", params.region);
-  if (params?.type) query.set("type", params.type);
-  const suffix = query.toString() ? `/forts?${query.toString()}` : "/forts";
-  const fallback = async () => (await import("@/mock-data/forts.json")).default as Fort[];
-  return safeFetch<Fort[]>(suffix, fallback);
 }

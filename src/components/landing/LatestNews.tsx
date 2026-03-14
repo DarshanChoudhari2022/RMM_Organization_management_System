@@ -13,15 +13,15 @@ const newsItems = [
     },
     {
         date: "Jan 28, 2026",
-        title: "Fort Restoration Visit: Rajgad Expedition",
-        titleMarathi: "किल्ले संवर्धन : राजगड मोहीम",
-        excerpt: "Successful clean-up and heritage awareness drive at the capital of Swarajya, Rajgad, with over 60 volunteers participating.",
-        image: "https://images.unsplash.com/photo-1605141203590-7f93ea9cc255?q=80&w=2070",
-        category: "Heritage"
+        title: "Constitution Awareness Drive",
+        titleMarathi: "संविधान जागृती अभियान",
+        excerpt: "Our Mandal organized a grand rally through Dapodi to spread awareness about the fundamental rights and duties enshrined in the Indian Constitution.",
+        image: "https://images.unsplash.com/photo-1627998672583-050f53198084?auto=format&fit=crop&q=80",
+        category: "Awareness"
     },
     {
         date: "Jan 10, 2026",
-        title: "Winter Blankets Distribution at Wanowrie",
+        title: "Winter Blankets Distribution at Dapodi",
         titleMarathi: "थंडीत ऊब : कंबल वाटप उपक्रम",
         excerpt: "Our Mandal distributed 200 high-quality blankets to the needy residents and senior citizens in our community context.",
         image: "https://images.unsplash.com/photo-1576091160550-217359f4b84c?q=80&w=2070",

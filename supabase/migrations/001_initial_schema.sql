@@ -258,40 +258,7 @@ CREATE TABLE IF NOT EXISTS approvals (
 );
 
 -- =====================================================
--- 10. FORTS TABLE (For Babasaheb Ambedkar Biography)
--- =====================================================
-CREATE TABLE IF NOT EXISTS forts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    
-    name_english VARCHAR(255) NOT NULL,
-    name_marathi VARCHAR(255) NOT NULL,
-    category VARCHAR(50) NOT NULL CHECK (category IN ('sea_fort', 'hill_fort', 'land_fort')),
-    region VARCHAR(100),
-    
-    conquest_date DATE,
-    conquest_year INTEGER,
-    strategic_importance TEXT,
-    
-    gps_coordinates VARCHAR(100),
-    current_status VARCHAR(255),
-    visit_info TEXT,
-    
-    -- Historical References
-    historical_reference TEXT,
-    book_name VARCHAR(255),
-    author VARCHAR(255),
-    chapter VARCHAR(50),
-    page_number VARCHAR(50),
-    
-    images TEXT[],
-    has_3d_model BOOLEAN DEFAULT false,
-    
-    description TEXT,
-    description_marathi TEXT
-);
-
--- =====================================================
--- 11. TIMELINE EVENTS TABLE (For Biography)
+-- 10. TIMELINE EVENTS TABLE (For Biography)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS timeline_events (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -302,7 +269,7 @@ CREATE TABLE IF NOT EXISTS timeline_events (
     title_marathi VARCHAR(255) NOT NULL,
     description TEXT,
     description_marathi TEXT,
-    category VARCHAR(50) NOT NULL CHECK (category IN ('birth', 'conquest', 'battle', 'treaty', 'coronation', 'administration', 'death', 'other')),
+    category VARCHAR(50) NOT NULL CHECK (category IN ('birth', 'education', 'social_reform', 'political', 'constitution', 'conversion', 'death', 'other')),
     location VARCHAR(255),
     
     -- Historical References
@@ -313,12 +280,11 @@ CREATE TABLE IF NOT EXISTS timeline_events (
     page_number VARCHAR(50),
     
     images TEXT[],
-    related_fort_id UUID REFERENCES forts(id) ON DELETE SET NULL,
     importance VARCHAR(20) DEFAULT 'minor' CHECK (importance IN ('major', 'minor'))
 );
 
 -- =====================================================
--- 12. NOTIFICATIONS TABLE
+-- 11. NOTIFICATIONS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -333,7 +299,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 -- =====================================================
--- 13. SETTINGS TABLE
+-- 12. SETTINGS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS settings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -361,7 +327,6 @@ CREATE INDEX IF NOT EXISTS idx_expenses_category ON expenses(category);
 CREATE INDEX IF NOT EXISTS idx_photos_year ON photos(year);
 CREATE INDEX IF NOT EXISTS idx_photos_category ON photos(category);
 CREATE INDEX IF NOT EXISTS idx_approvals_event ON approvals(event_id);
-CREATE INDEX IF NOT EXISTS idx_forts_category ON forts(category);
 CREATE INDEX IF NOT EXISTS idx_timeline_year ON timeline_events(year);
 CREATE INDEX IF NOT EXISTS idx_notifications_member ON notifications(member_id);
 
@@ -397,13 +362,11 @@ ALTER TABLE vargani_payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE photos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE approvals ENABLE ROW LEVEL SECURITY;
-ALTER TABLE forts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE timeline_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
--- Public read access for forts, timeline_events (historical data)
-CREATE POLICY "Public read access for forts" ON forts FOR SELECT USING (true);
+-- Public read access for timeline_events (historical data)
 CREATE POLICY "Public read access for timeline" ON timeline_events FOR SELECT USING (true);
 
 -- Public read access for published events
@@ -427,32 +390,14 @@ CREATE POLICY "Super admins full access tasks" ON tasks FOR ALL TO authenticated
     USING (EXISTS (SELECT 1 FROM members WHERE auth_user_id = auth.uid() AND role = 'super_admin'));
 
 -- =====================================================
--- INSERT SAMPLE DATA FOR FORTS
+-- INSERT SAMPLE TIMELINE EVENTS (Ambedkar History)
 -- =====================================================
-INSERT INTO forts (name_english, name_marathi, category, region, conquest_year, strategic_importance, book_name, author, page_number) VALUES
-('Torna Fort', 'तोरणा किल्ला', 'hill_fort', 'Pune', 1645, 'First fort captured by Babasaheb Ambedkar at age 15', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87'),
-('Rajgad Fort', 'राजगड किल्ला', 'hill_fort', 'Pune', 1646, 'Capital of Maratha Empire for 26 years', 'Ambedkar Charitra', 'Parmanand Nevatia', '112'),
-('Purandar Fort', 'पुरंदर किल्ला', 'hill_fort', 'Pune', 1647, 'Strategic military headquarters', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '145'),
-('Pratapgad Fort', 'प्रतापगड किल्ला', 'hill_fort', 'Satara', 1656, 'Site of Afzal Khan encounter', 'Ambedkar Charitra', 'Parmanand Nevatia', '189'),
-('Raigad Fort', 'रायगड किल्ला', 'hill_fort', 'Raigad', 1656, 'Capital of the Maratha Empire, coronation site', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '234'),
-('Sindhudurg Fort', 'सिंधुदुर्ग किल्ला', 'sea_fort', 'Sindhudurg', 1664, 'Primary naval base, island fortress', 'Ambedkar Charitra', 'Parmanand Nevatia', '278'),
-('Vijaydurg Fort', 'विजयदुर्ग किल्ला', 'sea_fort', 'Sindhudurg', 1653, 'Eastern Gibraltar of the East', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '312'),
-('Shivneri Fort', 'शिवनेरी किल्ला', 'hill_fort', 'Pune', 1630, 'Birthplace of Babasaheb Ambedkar', 'Ambedkar Charitra', 'Parmanand Nevatia', '3'),
-('Sinhagad Fort', 'सिंहगड किल्ला', 'hill_fort', 'Pune', 1647, 'Site of Battle of Sinhagad, Tanaji Malusare sacrifice', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '456'),
-('Lohagad Fort', 'लोहगड किल्ला', 'hill_fort', 'Pune', 1648, 'Treasury fort, important strategic location', 'Ambedkar Charitra', 'Parmanand Nevatia', '167');
-
--- =====================================================
--- INSERT SAMPLE TIMELINE EVENTS
--- =====================================================
-INSERT INTO timeline_events (event_date, year, title_english, title_marathi, description, category, location, book_name, author, page_number, importance) VALUES
-('1630-02-19', 1630, 'Birth of Babasaheb Ambedkar', 'छत्रपती शिवाजी महाराजांचा जन्म', 'Born to Shahaji Bhosale and Jijabai at Shivneri Fort', 'birth', 'Shivneri Fort, Pune', 'Ambedkar Charitra', 'Parmanand Nevatia', '3', 'major'),
-('1645-07-16', 1645, 'Capture of Torna Fort', 'तोरणा किल्ला जिंकला', 'First fort captured by young Ambedkar at age 15, marking the beginning of Swarajya', 'conquest', 'Torna Fort, Pune', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '87', 'major'),
-('1659-11-10', 1659, 'Battle of Pratapgad', 'प्रतापगड युद्ध', 'Historic encounter with Afzal Khan, decisive victory for Marathas', 'battle', 'Pratapgad Fort, Satara', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '234', 'major'),
-('1660-07-13', 1660, 'Battle of Pavan Khind', 'पावनखिंड लढाई', 'Baji Prabhu Deshpande''s legendary sacrifice to ensure Ambedkar''s escape', 'battle', 'Pavan Khind, Kolhapur', 'Ambedkar Charitra', 'Parmanand Nevatia', '267', 'major'),
-('1666-08-17', 1666, 'Escape from Agra', 'आग्रातून सुटका', 'Legendary escape from Mughal captivity in Agra', 'other', 'Agra', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '345', 'major'),
-('1670-02-04', 1670, 'Battle of Sinhagad', 'सिंहगड युद्ध', 'Tanaji Malusare''s heroic capture of Sinhagad, "Gad aala pan Sinh gela"', 'battle', 'Sinhagad Fort, Pune', 'Ambedkar Charitra', 'Parmanand Nevatia', '456', 'major'),
-('1674-06-06', 1674, 'Coronation at Raigad', 'राजगड येथे राज्याभिषेक', 'Grand coronation ceremony establishing the Maratha Empire officially', 'coronation', 'Raigad Fort', 'Raja Shivchhatrapati', 'Babasaheb Purandare', '512', 'major'),
-('1680-04-03', 1680, 'Death of Babasaheb Ambedkar', 'छत्रपती शिवाजी महाराजांचे निधन', 'Babasaheb Ambedkar passed away at Raigad Fort', 'death', 'Raigad Fort', 'Ambedkar Charitra', 'Parmanand Nevatia', '678', 'major');
+INSERT INTO timeline_events (event_date, year, title_english, title_marathi, description, category, location, book_name, author, importance) VALUES
+('1891-04-14', 1891, 'Birth of Babasaheb Ambedkar', 'डॉ. बाबासाहेब आंबेडकरांचा जन्म', 'Born in Mhow, Central Provinces (now Madhya Pradesh)', 'birth', 'Mhow', 'Ambedkar Life', 'Keer', 'major'),
+('1927-03-20', 1927, 'Mahad Satyagraha', 'महाड सत्याग्रह', 'Led the movement to drink water from Chavadar Tank', 'social_reform', 'Mahad', 'Ambedkar Life', 'Keer', 'major'),
+('1947-08-29', 1947, 'Chairman of Drafting Committee', 'मसुदा समितीचे अध्यक्ष', 'Appointed as Chairman of the Constitution Drafting Committee', 'constitution', 'New Delhi', 'Ambedkar Life', 'Keer', 'major'),
+('1956-10-14', 1956, 'Conversion to Buddhism', 'धम्मचक्र प्रवर्तन', 'Converted to Buddhism with lakhs of followers', 'conversion', 'Nagpur', 'Ambedkar Life', 'Keer', 'major'),
+('1956-12-06', 1956, 'Mahaparinirvan', 'महापरिनिर्वाण', 'Passed away in New Delhi', 'death', 'New Delhi', 'Ambedkar Life', 'Keer', 'major');
 
 -- =====================================================
 -- INSERT INITIAL SETTINGS
@@ -460,7 +405,7 @@ INSERT INTO timeline_events (event_date, year, title_english, title_marathi, des
 INSERT INTO settings (key, value, description) VALUES
 ('organization_name', '"Rahul Mitra Mandal"', 'Organization name'),
 ('organization_name_marathi', '"श्रीमंत शिवगर्जना प्रतिष्ठान"', 'Organization name in Marathi'),
-('location', '"Kedari Nagar, Pune"', 'Organization location'),
+('location', '"Dapodi Gavthan "', 'Organization location'),
 ('established_year', '2014', 'Year organization was established'),
 ('contact_email', '"info@RAHUL MITRA MANDAL.org"', 'Contact email'),
 ('contact_phone', '"+91-XXXXXXXXXX"', 'Contact phone'),

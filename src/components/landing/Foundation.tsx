@@ -39,7 +39,7 @@ const Foundation = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
                     >
-                        <span className="text-shiv-saffron font-bold text-[11px] uppercase tracking-[0.3em] mb-6 block">Our Legacy at Kedari Nagar</span>
+                        <span className="text-shiv-saffron font-bold text-[11px] uppercase tracking-[0.3em] mb-6 block">Our Legacy at Dapodi</span>
                         <h2 className="text-shiv-navy text-4xl md:text-5xl lg:text-6xl mb-10 leading-tight font-display font-black">
                             Preserving the <br />
                             <span className="text-shiv-saffron italic">Swarajya</span> Spirit
@@ -47,7 +47,7 @@ const Foundation = () => {
 
                         <div className="space-y-8 max-w-xl">
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
-                                Established in 2014, Kedari Nagar Shivrajyabhishek Mandal was born from a collective desire among Wanowrie residents to celebrate the crowning glory of Babasaheb Ambedkar.
+                                Established in 2014, Rahul Mitra Mandal was born from a collective desire among Dapodi residents to celebrate the legacy of Babasaheb Ambedkar and Chhatrapati Shivaji Maharaj.
                             </p>
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
                                 Beyond the grand annual festivities, our Mandal stands as a beacon of social responsibility, conducting regular blood donation camps, environmental drives, and heritage preservation tours.

@@ -8,13 +8,13 @@ const Footer = () => {
                 {/* About */}
                 <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-3">
-                        <span className="text-[32px] font-display font-black text-[#1D4ED8] leading-none">श</span>
+                        <img src="/images/logo.png" alt="RMM Logo" className="w-10 h-10 object-contain" />
                         <div className="flex flex-col">
                             <span className="text-[14px] font-display font-bold text-[#1D4ED8] uppercase tracking-widest leading-none">RAHUL MITRA MANDAL</span>
                         </div>
                     </div>
                     <p className="text-[13px] text-[#2C3E50] leading-[1.6] max-w-[280px]">
-                        Celebrating the legacy of Babasaheb Ambedkar through education, culture, and community engagement at Wanowrie, Pune.
+                        Celebrating the legacy of Babasaheb Ambedkar through education, culture, and community engagement at Dapodi, Pune.
                     </p>
                     <div className="flex gap-4 mt-2">
                         <a href="https://instagram.com/rahulmitramandal_wanowrie" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
@@ -70,11 +70,11 @@ const Footer = () => {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-start gap-3 text-[13px] text-[#2C3E50]">
                             <MapPin size={16} className="text-[#1D4ED8] shrink-0 mt-0.5" />
-                            <span>Kedari Nagar, Wanowrie,<br />Pune 411040, Maharashtra</span>
+                            <span>बाराथे वस्ती, दापोडी गावठाण,<br />पुणे ४११०१२, महाराष्ट्र</span>
                         </div>
                         <div className="flex items-start gap-3 text-[13px] text-[#2C3E50]">
                             <Mail size={16} className="text-[#1D4ED8] shrink-0 mt-0.5" />
-                            <span>info@rahulmitramandal.org</span>
+                            <span>digitalwithpr@gmail.com</span>
                         </div>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ export interface HistoryEntry {
   titleMarathi: string;
   titleEnglish: string;
   description: string;
-  category: "fort" | "battle" | "treaty" | "event";
+  category: "birth" | "education" | "social_reform" | "political" | "conversion" | "legacy" | "event";
   image: string;
   source: {
     book: string;
@@ -28,7 +28,7 @@ export interface GalleryAlbum {
   name: string;
   nameMarathi: string;
   cover: string;
-  category: "forts" | "ceremonies" | "rallies";
+  category: "ambedkar_jayanti" | "social_work" | "meetings" | "ceremonies";
   images: GalleryImage[];
 }
 
@@ -103,20 +103,6 @@ export interface Photo {
   category: string;
   year: number;
   uploadDate: string;
-}
-
-export interface Fort {
-  id: string;
-  name: string;
-  nameMarathi?: string;
-  conquestDate?: string;
-  region?: string;
-  type?: "hill" | "sea" | "land";
-  latitude?: number;
-  longitude?: number;
-  strategicNotes?: string;
-  currentStatus?: string;
-  imageUrl?: string;
 }
 
 export interface Member {

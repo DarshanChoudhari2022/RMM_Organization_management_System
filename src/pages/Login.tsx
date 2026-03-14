@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Lock, Mail, ArrowRight, ChevronLeft, AlertCircle, UserPlus } from "lucide-react";
+import { Shield, Lock, Mail, ArrowRight, ChevronLeft, AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const Login = () => {
-    const [isSignUp, setIsSignUp] = useState(false);
+    const [searchParams] = useSearchParams();
+    const [isSignUp, setIsSignUp] = useState(searchParams.get('mode') === 'signup');
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +30,8 @@ const Login = () => {
                 if (data.user) {
                     setMessage("Account created! You can now log in.");
                     setIsSignUp(false);
+                    // Clear the URL parameter after successful signup
+                    navigate("/login", { replace: true });
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
@@ -144,26 +147,21 @@ const Login = () => {
                         </button>
                     </form>
 
-                    <div className="mt-8 pt-6 border-t border-secondary/5 text-center relative z-10">
-                        <button
-                            onClick={() => setIsSignUp(!isSignUp)}
-                            className="text-muted-foreground hover:text-primary text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 mx-auto"
-                        >
-                            {isSignUp ? (
-                                <>Already have an account? Login</>
-                            ) : (
-                                <>
-                                    <UserPlus size={14} />
-                                    No account? Create one
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    {isSignUp && (
+                        <div className="mt-8 pt-6 border-t border-secondary/5 text-center relative z-10">
+                            <button
+                                onClick={() => { setIsSignUp(false); navigate("/login", { replace: true }); }}
+                                className="text-muted-foreground hover:text-primary text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 mx-auto"
+                            >
+                                Already have an account? Login
+                            </button>
+                        </div>
+                    )}
                 </div>
             </motion.div>
-            {/* Footer / Powered by */}
+            
             <div className="absolute bottom-6 left-0 right-0 text-center z-10 w-full">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 w-full inline-block">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 w-full inline-block text-center">
                     Powered by PR Digital Services
                 </p>
             </div>

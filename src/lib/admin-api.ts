@@ -1,6 +1,7 @@
 import { Member, Task, Expense, Invitation, TaskResponse, Supplier, SystemLog } from "@/types/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase as supabaseClient } from "@/lib/supabase";
+import { toast } from "sonner"; // For elegant error feedbacks
 
 const supabase = supabaseClient as any;
 

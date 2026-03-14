@@ -1949,17 +1949,13 @@ const LogsTab = () => {
 const Dashboard = () => {
   const { data: userProfile, isLoading: profileLoading } = useUserProfile();
   const isSubAdmin = userProfile?.role === 'sub_admin';
-  const [activeTab, setActiveTab] = useState("members");
+  const [activeTabState, setActiveTab] = useState("members");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect sub-admin to vargani-slips tab on load
-  useEffect(() => {
-    if (userProfile?.role === 'sub_admin' && activeTab !== 'vargani-slips') {
-      setActiveTab('vargani-slips');
-    }
-  }, [userProfile]);
+  // Computes tab instantly without needing a post-render useEffect (fixes flicker bug)
+  const activeTab = isSubAdmin ? "vargani-slips" : activeTabState;
 
   useEffect(() => {
     const checkAuth = async () => {

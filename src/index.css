@@ -6,28 +6,28 @@
 
 @layer base {
   :root {
-    /* Ambedkar Theme Colors */
-    --background: 0 0% 100%; /* Pure White */
-    --foreground: 222 47% 11%; /* Dark Navy #0f172a */
+    /* Ambedkar Theme Colors - Premium Dark Mode */
+    --background: 216 60% 10%; /* Deep Navy #0B192C */
+    --foreground: 0 0% 100%; /* Pure White */
     
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 216 60% 15%; /* Slightly lighter navy for cards */
+    --card-foreground: 0 0% 100%;
     
-    --primary: 221 83% 53%; /* Royal Blue #1D4ED8 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 66% 53%; /* Premium Gold #D4AF37 */
+    --primary-foreground: 216 60% 10%; /* Navy text on gold */
     
-    --secondary: 217 91% 60%; /* Light Blue #3B82F6 */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 43 66% 53%; /* Premium Gold */
+    --secondary-foreground: 216 60% 10%; /* Navy text */
     
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 216 60% 20%;
+    --muted-foreground: 0 0% 70%;
     
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 66% 53%;
+    --accent-foreground: 216 60% 10%;
     
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --border: 216 60% 20%;
+    --input: 216 60% 20%;
+    --ring: 43 66% 53%;
     
     --radius: 0.5rem;
   }

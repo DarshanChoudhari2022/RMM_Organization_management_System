@@ -23,21 +23,21 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))", // Linked to index.css
-        foreground: "hsl(var(--foreground))", // Linked to index.css
+        background: "hsl(var(--background))", 
+        foreground: "hsl(var(--foreground))", 
         shiv: {
-          cream: "#FFFFFF",
-          saffron: "#1D4ED8", // Royal Blue
-          orange: "#1D4ED8", // Royal Blue
-          gold: "#3B82F6", // Light Blue
-          brown: "#0F172A", // Dark Navy
+          cream: "#FDFBF7",
+          saffron: "#D4AF37", // Premium Gold
+          orange: "#D4AF37", // Premium Gold
+          gold: "#D4AF37", // Premium Gold
+          brown: "#0B192C", // Deep Royal Navy
         },
         primary: {
-          DEFAULT: "#1D4ED8", // Royal Blue
-          foreground: "#FFFFFF",
+          DEFAULT: "#D4AF37", // Premium Gold
+          foreground: "#0B192C", // Navy text on gold
         },
         secondary: {
-          DEFAULT: "#3B82F6", // Light Blue
+          DEFAULT: "#0B192C", // Deep Royal Navy
           foreground: "#FFFFFF",
         },
         muted: {
@@ -45,7 +45,7 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#1D4ED8",
+          DEFAULT: "#D4AF37",
           foreground: "#FFFFFF",
         }
       },

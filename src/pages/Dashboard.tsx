@@ -1987,6 +1987,17 @@ const Dashboard = () => {
     setIsMobileOpen(false);
   };
 
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-[#1D4ED8]/20 border-t-[#1D4ED8] rounded-full animate-spin"></div>
+          <p className="text-xs font-black uppercase tracking-widest text-gray-400">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col md:flex-row font-sans overflow-hidden">
       {/* Mobile Header */}

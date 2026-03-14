@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Plus, Trash2, Search, CheckCircle2, XCircle, Calendar,
@@ -29,17 +29,32 @@ const VarganiSlipTab = () => {
     const [confirmingId, setConfirmingId] = useState<string | null>(null);
     const [groupBy, setGroupBy] = useState<'none' | 'location' | 'date' | 'admin'>('none');
 
-    // Form State
-    const [formData, setFormData] = useState({
-        name: '',
-        shop_name: '',
-        amount: '',
-        location: '',
-        address: '',
-        mobile: '',
-        paymentStatus: 'paid' as 'paid' | 'pending',
-        tentative_date: ''
+    // Form State with Persistence
+    const [formData, setFormData] = useState(() => {
+        const saved = localStorage.getItem('vargani_form_cache');
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.error("Error parsing form cache:", e);
+            }
+        }
+        return {
+            name: '',
+            shop_name: '',
+            amount: '',
+            location: '',
+            address: '',
+            mobile: '',
+            paymentStatus: 'paid' as 'paid' | 'pending',
+            tentative_date: ''
+        };
     });
+
+    // Save form to cache whenever it changes
+    useEffect(() => {
+        localStorage.setItem('vargani_form_cache', JSON.stringify(formData));
+    }, [formData]);
 
     // Edit Form State
     const [editData, setEditData] = useState({
@@ -104,9 +119,10 @@ const VarganiSlipTab = () => {
         return { total: all.length, paidCount: paid.length, pendingCount: pending.length, totalCollected, totalPending, locationPendingArray, adminStatsArray };
     }, [slips]);
 
-    // Reset form
+    // Reset form and clear cache
     const resetForm = () => {
         setFormData({ name: '', shop_name: '', amount: '', location: '', address: '', mobile: '', paymentStatus: 'paid', tentative_date: '' });
+        localStorage.removeItem('vargani_form_cache');
     };
 
     // Validate WhatsApp number
@@ -342,10 +358,10 @@ const VarganiSlipTab = () => {
                     <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-widest mt-1">Generate & manage vargani receipts</p>
                 </div>
                 <button
-                    onClick={() => { resetForm(); setIsFormOpen(true); }}
+                    onClick={() => { setIsFormOpen(true); }}
                     className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1D4ED8] text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#B94A15] transition-all shadow-lg shadow-[#1D4ED8]/20"
                 >
-                    <Plus size={16} /> New Vargani Entry
+                    <Plus size={16} /> {formData.name || formData.shop_name || formData.amount ? 'Resume Vargani Entry' : 'New Vargani Entry'}
                 </button>
             </div>
 

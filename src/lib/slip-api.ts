@@ -84,7 +84,36 @@ export const useAllProfiles = () => {
             if (error) throw error;
             await createLog("User Role Changed", `Changed user role to ${role}${display_name ? ` (Name: ${display_name})` : ''}`);
         },
-        onSuccess: () => {
+        // Optimistic Update
+        onMutate: async (newUserData) => {
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            await queryClient.cancelQueries({ queryKey: ["all-profiles"] });
+
+            // Snapshot the previous value
+            const previousProfiles = queryClient.getQueryData<UserProfile[]>(["all-profiles"]);
+
+            // Optimistically update to the new value
+            if (previousProfiles) {
+                queryClient.setQueryData<UserProfile[]>(["all-profiles"], (old) =>
+                    old?.map((profile) =>
+                        profile.id === newUserData.id
+                            ? { ...profile, ...newUserData }
+                            : profile
+                    )
+                );
+            }
+
+            // Return a context object with the snapshotted value
+            return { previousProfiles };
+        },
+        // If the mutation fails, use the context returned from onMutate to roll back
+        onError: (err, newUserData, context) => {
+            if (context?.previousProfiles) {
+                queryClient.setQueryData(["all-profiles"], context.previousProfiles);
+            }
+        },
+        // Always refetch after error or success to ensure we're in sync with the server
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ["all-profiles"] });
             queryClient.invalidateQueries({ queryKey: ["user-profile"] });
         },

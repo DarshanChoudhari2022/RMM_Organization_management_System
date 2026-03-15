@@ -290,7 +290,7 @@ const VarganiSlipTab = () => {
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nदेणगी रोख मिळाली. आभारी आहोत!`;
+            const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nदेणगी रोख मिळाली. आभारी आहोत!\n\nPowered by https://buzyhub.in/`;
             window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
 
             toast.success("Slip downloaded & copied! Just PASTE (Ctrl+V) it in the WhatsApp chat.");

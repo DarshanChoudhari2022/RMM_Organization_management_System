@@ -274,11 +274,11 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => {
             {/* Powered By buzyhub.in */}
             <div style={{ 
                 background: '#fff', 
-                padding: '6px 12px', 
+                padding: '8px 16px', 
                 textAlign: 'center' as const, 
                 borderTop: '1px solid #f1f5f9' 
             }}>
-                <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600, letterSpacing: '0.5px' }}>
+                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, letterSpacing: '0.5px' }}>
                     Powered by <a href="https://buzyhub.in/" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 800 }}>buzyhub.in</a>
                 </span>
             </div>

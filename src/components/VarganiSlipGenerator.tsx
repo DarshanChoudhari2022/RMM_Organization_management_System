@@ -419,10 +419,14 @@ const VarganiSlipTab = () => {
                         </h3>
                         <div className="flex flex-wrap gap-2">
                             {stats.adminStatsArray.map((admin) => (
-                                <div key={admin.admin} className="bg-white px-3 py-2 rounded-xl border border-blue-200 flex items-center gap-2 shadow-sm">
+                                <button 
+                                    key={admin.admin} 
+                                    onClick={() => setSearch(admin.admin === 'Main Admin' ? '' : admin.admin)}
+                                    className="bg-white px-3 py-2 rounded-xl border border-blue-200 flex items-center gap-2 shadow-sm hover:bg-blue-50 transition-colors"
+                                >
                                     <span className="font-bold text-[#0F172A] text-xs">{admin.admin}</span>
                                     <span className="text-blue-600 font-black text-xs bg-blue-100 px-2 py-0.5 rounded-full">{admin.count} Slips</span>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     </div>

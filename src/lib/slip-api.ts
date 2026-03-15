@@ -160,18 +160,7 @@ export const useVarganiSlips = () => {
     const query = useQuery({
         queryKey: ["vargani-slips"],
         queryFn: async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            const { data: profile } = await supabase.from('user_profiles').select('role').eq('auth_user_id', session?.user?.id).single();
-            const isAdmin = profile?.role === 'admin';
-
-            let query = supabase.from('vargani_slips').select('*').order('created_at', { ascending: false });
-
-            // Sub-admins only see their own slips!
-            if (!isAdmin && session?.user?.id) {
-                query = query.eq('created_by_user_id', session.user.id);
-            }
-
-            const { data, error } = await query;
+            const { data, error } = await supabase.from('vargani_slips').select('*').order('created_at', { ascending: false });
 
             if (error) {
                 if (error.code === '42P01') return [];

@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, ComponentType } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,15 +7,38 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import Navbar from "@/components/Navbar";
 
-// Lazy Loaded Pages for performance (Code Splitting)
-const Landing = lazy(() => import("@/pages/Landing"));
-const History = lazy(() => import("@/pages/History"));
-const Gallery = lazy(() => import("@/pages/Gallery"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Login = lazy(() => import("@/pages/Login"));
-const Approve = lazy(() => import("@/pages/Approve"));
-const ConfirmSupplier = lazy(() => import("@/pages/ConfirmSupplier"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
+// Helper: Retry dynamic imports to handle chunk load failures after deployment
+const lazyRetry = (componentImport: () => Promise<{ default: ComponentType<any> }>) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
+    );
+    try {
+      const component = await componentImport();
+      window.sessionStorage.setItem('page-has-been-force-refreshed', 'false');
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        // Assuming the error is due to a chunk hash mismatch after a new deployment
+        window.sessionStorage.setItem('page-has-been-force-refreshed', 'true');
+        window.location.reload();
+        // Return a dummy component while reloading
+        return { default: () => null };
+      }
+      // The page has already been reloaded, rethrow the error
+      throw error;
+    }
+  });
+
+// Lazy Loaded Pages with retry logic
+const Landing = lazyRetry(() => import("@/pages/Landing"));
+const History = lazyRetry(() => import("@/pages/History"));
+const Gallery = lazyRetry(() => import("@/pages/Gallery"));
+const Dashboard = lazyRetry(() => import("@/pages/Dashboard"));
+const Login = lazyRetry(() => import("@/pages/Login"));
+const Approve = lazyRetry(() => import("@/pages/Approve"));
+const ConfirmSupplier = lazyRetry(() => import("@/pages/ConfirmSupplier"));
+const NotFound = lazyRetry(() => import("@/pages/NotFound"));
 
 // Robust React Query Configuration
 import { toast } from "sonner"; // For elegant global error feedbacks
@@ -38,24 +61,43 @@ const queryClient = new QueryClient({
 });
 
 const GlobalFallback = ({ error, resetErrorBoundary }: any) => {
+  const isChunkError = error?.message?.includes('dynamically imported module') ||
+    error?.message?.includes('Loading chunk') ||
+    error?.message?.includes('Failed to fetch');
+
+  const handleRetry = () => {
+    if (isChunkError) {
+      window.sessionStorage.setItem('page-has-been-force-refreshed', 'false');
+      window.location.reload();
+    } else {
+      resetErrorBoundary();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center font-sans">
-      <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-6">
+      <div className={`w-16 h-16 ${isChunkError ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'} rounded-2xl flex items-center justify-center mb-6`}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
       </div>
-      <h1 className="text-2xl font-black text-gray-900 mb-2">Something went wrong</h1>
+      <h1 className="text-2xl font-black text-gray-900 mb-2">
+        {isChunkError ? 'New Update Available' : 'Something went wrong'}
+      </h1>
       <p className="text-gray-500 mb-8 max-w-sm">
-        We've encountered an unexpected error. Don't worry, your data is safe.
+        {isChunkError
+          ? 'A new version of the app has been deployed. Please reload the page to get the latest version.'
+          : "We've encountered an unexpected error. Don't worry, your data is safe."}
       </p>
       <button 
-        onClick={resetErrorBoundary} 
+        onClick={handleRetry} 
         className="px-6 py-3 bg-[#1D4ED8] text-white font-bold text-sm uppercase tracking-wider rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
       >
-        Try Again
+        {isChunkError ? 'Reload Page' : 'Try Again'}
       </button>
-      <div className="mt-8 p-4 bg-gray-50 rounded-xl max-w-lg w-full text-left overflow-auto border border-gray-100">
-        <p className="text-xs text-red-500 font-mono font-medium">{error.message}</p>
-      </div>
+      {!isChunkError && (
+        <div className="mt-8 p-4 bg-gray-50 rounded-xl max-w-lg w-full text-left overflow-auto border border-gray-100">
+          <p className="text-xs text-red-500 font-mono font-medium">{error.message}</p>
+        </div>
+      )}
     </div>
   );
 };

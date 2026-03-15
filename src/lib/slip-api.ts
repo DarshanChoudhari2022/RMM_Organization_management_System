@@ -180,6 +180,7 @@ export const useVarganiSlips = () => {
             mobile: string;
             status: 'paid' | 'pending';
             tentative_date?: string | null;
+            payment_mode?: 'cash' | 'online' | null;
         }) => {
             const { userId, userName } = await getCurrentUserName();
             const slipNumber = await generateSlipNumber();
@@ -195,6 +196,7 @@ export const useVarganiSlips = () => {
                 slip_number: slipNumber,
                 created_by_user_id: userId,
                 created_by_name: userName,
+                payment_mode: newSlip.payment_mode || 'cash'
             };
 
             if (newSlip.status === 'paid') {
@@ -231,6 +233,7 @@ export const useVarganiSlips = () => {
             mobile?: string;
             status?: 'paid' | 'pending';
             tentative_date?: string | null;
+            payment_mode?: 'cash' | 'online' | null;
         }) => {
             const { userId, userName } = await getCurrentUserName();
 
@@ -243,6 +246,7 @@ export const useVarganiSlips = () => {
             if (update.address !== undefined) updateData.address = update.address;
             if (update.mobile !== undefined) updateData.mobile = update.mobile;
             if (update.tentative_date !== undefined) updateData.tentative_date = update.tentative_date;
+            if (update.payment_mode !== undefined) updateData.payment_mode = update.payment_mode;
 
             // Handle status change
             if (update.status !== undefined) {
@@ -274,17 +278,23 @@ export const useVarganiSlips = () => {
     });
 
     const confirmPayment = useMutation({
-        mutationFn: async (id: string) => {
+        mutationFn: async ({ id, payment_mode }: { id: string; payment_mode?: 'cash' | 'online' }) => {
             const { userId, userName } = await getCurrentUserName();
+
+            const updateData: any = {
+                status: 'paid',
+                confirmed_by_user_id: userId,
+                confirmed_by_name: userName,
+                confirmed_at: new Date().toISOString()
+            };
+
+            if (payment_mode) {
+                updateData.payment_mode = payment_mode;
+            }
 
             const { data, error } = await supabase
                 .from('vargani_slips')
-                .update({
-                    status: 'paid',
-                    confirmed_by_user_id: userId,
-                    confirmed_by_name: userName,
-                    confirmed_at: new Date().toISOString()
-                })
+                .update(updateData)
                 .eq('id', id)
                 .select()
                 .single();

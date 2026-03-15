@@ -265,6 +265,17 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => {
                             letterSpacing: '0.5px',
                         }}>{slip.confirmed_by_name}</div>
                     )}
+                    {slip.payment_mode && (
+                        <div style={{
+                            fontSize: '6.5px', color: '#1d4ed8', fontWeight: 800,
+                            marginTop: '2px', textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                            background: 'rgba(29, 78, 216, 0.05)',
+                            padding: '2px 4px',
+                            borderRadius: '2px',
+                            display: 'inline-block'
+                        }}>Mode: {slip.payment_mode}</div>
+                    )}
                 </div>
             </div>
 

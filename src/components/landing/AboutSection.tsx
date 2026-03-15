@@ -32,7 +32,7 @@ const AboutSection = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                
+
                 {/* Mission Statements (From Stitch Generation) */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -159,7 +159,7 @@ const AboutSection = () => {
                                 className="inline-flex items-center gap-3 text-primary font-bold uppercase tracking-[0.2em] transition-colors py-4 group text-sm"
                             >
                                 <BookOpen size={18} />
-                                View Full Biography 
+                                View Full Biography
                                 <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                             </Link>
                         </div>
@@ -175,14 +175,14 @@ const AboutSection = () => {
                     <div className="relative overflow-hidden bg-white border border-primary/20 rounded-3xl p-8 md:p-16 shadow-xl">
                         {/* Decorative Background for Card */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-                        
+
                         <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
                             <div>
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4 block">
                                     About Our Organization
                                 </span>
                                 <h3 className="text-3xl md:text-4xl font-display font-black text-secondary mb-6 leading-tight">
-                                    Rahul Mitra Mandal <br/>
+                                    Rahul Mitra Mandal <br />
                                     <span className="text-primary/70 text-2xl font-sans font-black uppercase">Pune</span>
                                 </h3>
                                 <p className="text-foreground/80 text-base leading-relaxed mb-6 font-sans">
@@ -199,7 +199,7 @@ const AboutSection = () => {
                                 {[
                                     { value: "50+", label: "Years Active" },
                                     { value: "14 Apr", label: "Jayanti Celebration" },
-                                    { value: "100+", label: "Active Members" },
+                                    { value: "50+", label: "Active Members" },
                                     { value: "1972", label: "Year Established" },
                                 ].map((s, i) => (
                                     <div key={i} className="bg-muted rounded-2xl p-6 text-center border border-primary/10 hover:border-primary/40 transition-colors">

@@ -47,7 +47,8 @@ const VarganiSlipTab = () => {
             address: '',
             mobile: '',
             paymentStatus: 'paid' as 'paid' | 'pending',
-            tentative_date: ''
+            tentative_date: '',
+            paymentMode: 'cash' as 'cash' | 'online'
         };
     });
 
@@ -65,7 +66,8 @@ const VarganiSlipTab = () => {
         address: '',
         mobile: '',
         status: 'paid' as 'paid' | 'pending',
-        tentative_date: ''
+        tentative_date: '',
+        payment_mode: 'cash' as 'cash' | 'online'
     });
 
     const slipRef = useRef<HTMLDivElement>(null);
@@ -125,7 +127,7 @@ const VarganiSlipTab = () => {
 
     // Reset form and clear cache
     const resetForm = () => {
-        setFormData({ name: '', shop_name: '', amount: '', location: '', address: '', mobile: '', paymentStatus: 'paid', tentative_date: '' });
+        setFormData({ name: '', shop_name: '', amount: '', location: '', address: '', mobile: '', paymentStatus: 'paid', tentative_date: '', paymentMode: 'cash' });
         localStorage.removeItem('vargani_form_cache');
     };
 
@@ -146,7 +148,8 @@ const VarganiSlipTab = () => {
             address: slip.address || '',
             mobile: slip.mobile,
             status: slip.status,
-            tentative_date: slip.tentative_date || ''
+            tentative_date: slip.tentative_date || '',
+            payment_mode: slip.payment_mode || 'cash'
         });
         setIsEditOpen(true);
     };
@@ -169,7 +172,8 @@ const VarganiSlipTab = () => {
                 address: editData.address.trim(),
                 mobile: (editData.mobile || "").toString().replace(/\s/g, ''),
                 status: editData.status,
-                tentative_date: editData.status === 'pending' ? editData.tentative_date : null
+                tentative_date: editData.status === 'pending' ? editData.tentative_date : null,
+                payment_mode: editData.payment_mode
             });
             toast.success("Slip updated successfully!");
             setIsEditOpen(false);
@@ -197,7 +201,8 @@ const VarganiSlipTab = () => {
                 address: formData.address.trim(),
                 mobile: (formData.mobile || "").toString().replace(/\s/g, ''),
                 status: formData.paymentStatus,
-                tentative_date: formData.paymentStatus === 'pending' ? formData.tentative_date : null
+                tentative_date: formData.paymentStatus === 'pending' ? formData.tentative_date : null,
+                payment_mode: formData.paymentMode
             });
 
             toast.success(formData.paymentStatus === 'paid'
@@ -220,7 +225,7 @@ const VarganiSlipTab = () => {
     const handleConfirmPayment = async (id: string) => {
         setConfirmingId(id);
         try {
-            const result = await confirmPayment.mutateAsync(id);
+            const result = await confirmPayment.mutateAsync({ id, payment_mode: 'cash' }); // Default to cash on quick confirm
             toast.success(`Payment confirmed for ${result.name}!`);
             setTimeout(() => handleDownloadSlip(result), 500);
         } catch (err: any) {
@@ -493,7 +498,8 @@ const VarganiSlipTab = () => {
                             <div className="col-span-2">Mobile</div>
                             <div className="col-span-1">Status</div>
                             <div className="col-span-2">Date / Info</div>
-                            <div className="col-span-3 text-right">Actions</div>
+                            <div className="col-span-1">Mode</div>
+                            <div className="col-span-2 text-right">Actions</div>
                         </div>
                     </div>
                 </div>
@@ -570,7 +576,14 @@ const VarganiSlipTab = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="col-span-3 flex justify-end gap-2">
+                                        <div className="col-span-1">
+                                            {slip.payment_mode && (
+                                                <span className="text-[10px] font-bold text-[#1D4ED8] bg-blue-50 px-2 py-1 rounded-md uppercase tracking-wider">
+                                                    {slip.payment_mode}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="col-span-2 flex justify-end gap-2">
                                             <button onClick={() => openEditModal(slip)} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-amber-100 transition-all">
                                                 <Edit3 size={12} /> Edit
                                             </button>
@@ -644,6 +657,11 @@ const VarganiSlipTab = () => {
                                         ) : (
                                             <span className="px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-100 text-amber-700 flex items-center gap-1">
                                                 <Clock size={10} /> Pending
+                                            </span>
+                                        )}
+                                        {slip.payment_mode && (
+                                            <span className="text-[9px] font-bold text-[#1D4ED8] bg-blue-50 px-2 py-0.5 rounded-md uppercase">
+                                                {slip.payment_mode}
                                             </span>
                                         )}
                                     </div>
@@ -787,6 +805,21 @@ const VarganiSlipTab = () => {
                                         </button>
                                     </div>
                                 </div>
+                                
+                                {/* Payment Mode */}
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-2">Payment Mode *</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button type="button" onClick={() => setFormData({ ...formData, paymentMode: 'cash' })}
+                                            className={`py-2.5 rounded-xl border-2 text-center transition-all text-xs font-bold ${formData.paymentMode === 'cash' ? 'border-[#1D4ED8] bg-blue-50 text-[#1D4ED8]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                            Cash
+                                        </button>
+                                        <button type="button" onClick={() => setFormData({ ...formData, paymentMode: 'online' })}
+                                            className={`py-2.5 rounded-xl border-2 text-center transition-all text-xs font-bold ${formData.paymentMode === 'online' ? 'border-[#1D4ED8] bg-blue-50 text-[#1D4ED8]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                            Online
+                                        </button>
+                                    </div>
+                                </div>
 
                                 {/* Tentative Date */}
                                 <AnimatePresence>
@@ -886,6 +919,21 @@ const VarganiSlipTab = () => {
                                             className={`p-3 rounded-xl border-2 text-center transition-all ${editData.status === 'pending' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
                                             <Clock size={24} className={`mx-auto mb-1 ${editData.status === 'pending' ? 'text-amber-500' : 'text-gray-300'}`} />
                                             <div className={`text-xs font-black uppercase ${editData.status === 'pending' ? 'text-amber-600' : 'text-gray-500'}`}>Pending</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Edit Payment Mode */}
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-2">Payment Mode *</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button type="button" onClick={() => setEditData({ ...editData, payment_mode: 'cash' })}
+                                            className={`py-2.5 rounded-xl border-2 text-center transition-all text-xs font-bold ${editData.payment_mode === 'cash' ? 'border-[#1D4ED8] bg-blue-50 text-[#1D4ED8]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                            Cash
+                                        </button>
+                                        <button type="button" onClick={() => setEditData({ ...editData, payment_mode: 'online' })}
+                                            className={`py-2.5 rounded-xl border-2 text-center transition-all text-xs font-bold ${editData.payment_mode === 'online' ? 'border-[#1D4ED8] bg-blue-50 text-[#1D4ED8]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                            Online
                                         </button>
                                     </div>
                                 </div>

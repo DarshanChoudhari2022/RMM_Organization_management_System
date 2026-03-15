@@ -108,4 +108,5 @@ export interface VarganiSlip {
     created_by_user_id?: string;
     created_by_name?: string;
     created_at: string;
+    payment_mode?: 'cash' | 'online' | null;
 }

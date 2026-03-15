@@ -35,7 +35,7 @@ import {
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers, useLogs } from "@/lib/admin-api";
-import { useUserProfile } from "@/lib/slip-api";
+import { useUserProfile, useVarganiSlips } from "@/lib/slip-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory, Supplier, SystemLog } from "@/types/admin";
@@ -89,6 +89,7 @@ const MembersTab = ({ year }: { year: number }) => {
   const [editingVargani, setEditingVargani] = useState<{ id: string, amount: number } | null>(null);
 
   const { data: expenses } = useExpenses();
+  const { data: slips } = useVarganiSlips();
 
   const stats = useMemo(() => {
     const total = members?.length || 0;
@@ -102,10 +103,18 @@ const MembersTab = ({ year }: { year: number }) => {
       .filter(e => e.year === year && e.paidBy === 'Mandal')
       .reduce((sum, e) => sum + e.amount, 0);
 
-    const remainingBalance = collected - mandalExpenses;
+    // Calculate Vargani collected from slips
+    const slipCollected = (slips || [])
+      .filter(s => s.status === 'paid' && (s.confirmed_at || s.created_at).includes(year.toString()))
+      .reduce((sum, s) => sum + Number(s.amount), 0);
 
-    return { total, paid, collected, pending, mandalExpenses, remainingBalance };
-  }, [members, year, expenses]);
+    const slipEntriesCount = (slips || [])
+      .filter(s => s.status === 'paid' && (s.confirmed_at || s.created_at).includes(year.toString())).length;
+
+    const remainingBalance = collected + slipCollected - mandalExpenses;
+
+    return { total, paid, collected, pending, mandalExpenses, slipCollected, slipEntriesCount, remainingBalance };
+  }, [members, year, expenses, slips]);
 
   const handleAdd = () => {
     if (!newMember.name || !newMember.phone) return;
@@ -136,18 +145,23 @@ const MembersTab = ({ year }: { year: number }) => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Total Members</div>
           <div className="text-xl md:text-3xl font-black text-[#0F172A]">{stats.total}</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Vargani Collected</div>
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Member Vargani</div>
           <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
           <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.paid} Members Paid</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
-          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Pending Vargani</div>
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Slip Vargani</div>
+          <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.slipCollected.toLocaleString()}</div>
+          <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.slipEntriesCount} Slips Paid</div>
+        </div>
+        <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Pending (Members)</div>
           <div className="text-xl md:text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
           <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.total - stats.paid} Pending</div>
         </div>

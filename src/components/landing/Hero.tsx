@@ -58,18 +58,19 @@ const Hero = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="relative flex justify-center lg:justify-end"
                 >
-                    <div className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px] rounded-full border-[1px] border-primary/10 p-8 flex items-center justify-center bg-white shadow-2xl shadow-primary/5 group">
-                        {/* Spinning decorative ring */}
-                        <div className="absolute inset-0 border border-dashed border-primary/40 rounded-full animate-spin-slow pointer-events-none" style={{ animationDuration: '60s' }} />
-                        <div className="absolute inset-4 border border-primary/10 rounded-full pointer-events-none" />
+                    <div className="relative w-[280px] h-[280px] md:w-[400px] md:h-[400px] rounded-full flex items-center justify-center bg-white shadow-2xl shadow-primary/20 group mx-auto lg:mr-0 z-10">
+                        {/* Spinning decorative rings outside */}
+                        <div className="absolute -inset-4 md:-inset-6 border-2 border-dashed border-primary/30 rounded-full animate-spin-slow pointer-events-none" style={{ animationDuration: '40s' }} />
+                        <div className="absolute -inset-8 md:-inset-12 border border-primary/10 rounded-full pointer-events-none" />
                         
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                        <img
-                            src="/images/logo.png"
-                            alt="Rahul Mitra Mandal Logo"
-                            className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(212,175,55,0.15)] relative z-10 scale-95 group-hover:scale-100 transition-transform duration-700"
-                        />
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center relative">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-20 pointer-events-none" />
+                            <img
+                                src="/images/logo.png"
+                                alt="Rahul Mitra Mandal Logo"
+                                className="w-[110%] h-[110%] max-w-[110%] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 relative z-10"
+                            />
+                        </div>
                     </div>
                 </motion.div>
             </div>

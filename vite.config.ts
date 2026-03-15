@@ -18,6 +18,16 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000, 
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+          'ui': ['framer-motion', 'lucide-react', 'recharts'],
+          'pdf': ['html2canvas', 'jspdf']
+        }
+      }
+    }
   }
 }));

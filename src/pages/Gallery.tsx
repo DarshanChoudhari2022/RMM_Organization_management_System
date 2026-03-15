@@ -105,7 +105,7 @@ const Gallery = () => {
         <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 block">
-              Our Memories · Since 2014
+              Our Memories · Since 1972
             </span>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-secondary tracking-tight mb-6">
               Photo <span className="text-primary italic">Gallery</span>

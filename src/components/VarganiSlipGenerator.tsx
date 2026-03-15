@@ -130,7 +130,7 @@ const VarganiSlipTab = () => {
     };
 
     // Validate WhatsApp number
-    const isValidMobile = (num: string) => /^[6-9]\d{9}$/.test(num.replace(/\s/g, ''));
+    const isValidMobile = (num: string) => !num || /^[6-9]\d{9}$/.test(num.replace(/\s/g, ''));
 
     // Open edit modal
     const openEditModal = (slip: VarganiSlip) => {
@@ -153,7 +153,7 @@ const VarganiSlipTab = () => {
         if (!editingSlip) return;
         if (!editData.name.trim()) return toast.error("Name is required");
         if (!editData.amount || parseFloat(editData.amount) <= 0) return toast.error("Valid amount required");
-        if (!isValidMobile(editData.mobile)) return toast.error("Valid 10-digit mobile required");
+        if (editData.mobile && !isValidMobile(editData.mobile)) return toast.error("Valid 10-digit mobile required");
         if (editData.status === 'pending' && !editData.tentative_date) return toast.error("Tentative date required for pending");
 
         try {
@@ -182,7 +182,7 @@ const VarganiSlipTab = () => {
         if (!formData.shop_name.trim()) return toast.error("Please enter shop name");
         if (!formData.amount || parseFloat(formData.amount) <= 0) return toast.error("Please enter valid amount");
         if (!formData.location.trim()) return toast.error("Please enter location");
-        if (!isValidMobile(formData.mobile)) return toast.error("Please enter valid 10-digit WhatsApp number");
+        if (formData.mobile && !isValidMobile(formData.mobile)) return toast.error("Please enter valid 10-digit WhatsApp number");
         if (formData.paymentStatus === 'pending' && !formData.tentative_date) return toast.error("Please enter tentative date");
 
         try {
@@ -291,9 +291,12 @@ const VarganiSlipTab = () => {
             link.click();
 
             const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nदेणगी रोख मिळाली. आभारी आहोत!\n\nPowered by https://buzyhub.in/`;
-            window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
-
-            toast.success("Slip downloaded & copied! Just PASTE (Ctrl+V) it in the WhatsApp chat.");
+            if (slip.mobile) {
+                window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
+                toast.success("Slip downloaded & copied! Just PASTE (Ctrl+V) it in the WhatsApp chat.");
+            } else {
+                toast.success("Slip downloaded & copied to clipboard!");
+            }
         } catch (err) {
             console.error("Share error:", err);
             toast.error("Sharing failed. Please try again.");
@@ -531,10 +534,14 @@ const VarganiSlipTab = () => {
                                             <div className="font-black text-[#0F172A] text-sm">{'\u20B9'}{Number(slip.amount).toLocaleString('en-IN')}</div>
                                         </div>
                                         <div className="col-span-2">
-                                            <a href={`https://wa.me/91${slip.mobile}`} target="_blank" rel="noreferrer"
-                                                className="text-sm text-green-600 font-mono hover:underline flex items-center gap-1">
-                                                <Phone size={12} /> {slip.mobile}
-                                            </a>
+                                            {slip.mobile ? (
+                                                <a href={`https://wa.me/91${slip.mobile}`} target="_blank" rel="noreferrer"
+                                                    className="text-sm text-green-600 font-mono hover:underline flex items-center gap-1">
+                                                    <Phone size={12} /> {slip.mobile}
+                                                </a>
+                                            ) : (
+                                                <span className="text-xs text-gray-400 italic">No mobile</span>
+                                            )}
                                         </div>
                                         <div className="col-span-1">
                                             {slip.status === 'paid' ? (
@@ -619,10 +626,14 @@ const VarganiSlipTab = () => {
                                     </div>
 
                                     <div className="flex items-center justify-between">
-                                        <a href={`https://wa.me/91${slip.mobile}`} target="_blank" rel="noreferrer"
-                                            className="text-xs text-green-600 font-mono flex items-center gap-1">
-                                            <Phone size={12} /> {slip.mobile}
-                                        </a>
+                                        {slip.mobile ? (
+                                            <a href={`https://wa.me/91${slip.mobile}`} target="_blank" rel="noreferrer"
+                                                className="text-xs text-green-600 font-mono flex items-center gap-1">
+                                                <Phone size={12} /> {slip.mobile}
+                                            </a>
+                                        ) : (
+                                            <span className="text-[10px] text-gray-400 italic">No mobile</span>
+                                        )}
                                         {slip.status === 'paid' ? (
                                             <span className="px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-green-100 text-green-700 flex items-center gap-1">
                                                 <CheckCircle2 size={10} /> Paid
@@ -739,7 +750,7 @@ const VarganiSlipTab = () => {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1">
-                                        <Phone size={10} className="inline mr-1" /> WhatsApp Number *
+                                        <Phone size={10} className="inline mr-1" /> WhatsApp Number
                                     </label>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-bold text-[#0F172A]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
@@ -851,7 +862,7 @@ const VarganiSlipTab = () => {
                                         className="w-full bg-[#F5F5F0] border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 resize-none" rows={2} />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1"><Phone size={10} className="inline mr-1" /> WhatsApp Number *</label>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1"><Phone size={10} className="inline mr-1" /> WhatsApp Number</label>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-bold text-[#0F172A]/60 bg-[#F5F5F0] border border-gray-200 rounded-xl px-3 py-3">+91</span>
                                         <input type="tel" value={editData.mobile}

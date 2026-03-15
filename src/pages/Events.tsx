@@ -37,7 +37,7 @@ const Events = () => {
             <span className="text-[10px] text-white font-black uppercase tracking-[0.5em]">Event Archives</span>
           </div>
           <h1 className="text-white mt-8 mb-4">
-            Celebrations <span className="italic text-shiv-orange">2014–2025</span>
+            Celebrations <span className="italic text-shiv-orange">1972–2025</span>
           </h1>
           <p className="text-white/60 font-serif italic text-lg max-w-3xl leading-shiv">
             Year-wise archives with highlights, location, and photo sets. (Mock data today; backend-ready service layer.)

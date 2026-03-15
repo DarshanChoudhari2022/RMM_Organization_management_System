@@ -5,7 +5,7 @@ const Foundation = () => {
     const stats = [
         {
             icon: Calendar,
-            value: "2014",
+            value: "1972",
             label: "Mandal Founded",
             marathi: "स्थापना वर्ष"
         },
@@ -47,7 +47,7 @@ const Foundation = () => {
 
                         <div className="space-y-8 max-w-xl">
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
-                                Established in 2014, Rahul Mitra Mandal was born from a collective desire among Dapodi residents to celebrate the legacy of Babasaheb Ambedkar and Chhatrapati Shivaji Maharaj.
+                                Established in 1972, Rahul Mitra Mandal was born from a collective desire among Dapodi residents to celebrate the legacy of Babasaheb Ambedkar and Chhatrapati Shivaji Maharaj.
                             </p>
                             <p className="text-lg text-shiv-navy/70 leading-relaxed font-sans">
                                 Beyond the grand annual festivities, our Mandal stands as a beacon of social responsibility, conducting regular blood donation camps, environmental drives, and heritage preservation tours.

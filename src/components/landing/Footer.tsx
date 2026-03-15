@@ -14,13 +14,13 @@ const Footer = () => {
                         </div>
                     </div>
                     <p className="text-[13px] text-[#2C3E50] leading-[1.6] max-w-[280px]">
-                        Celebrating the legacy of Babasaheb Ambedkar through education, culture, and community engagement at Dapodi, Pune.
+                        Celebrating the legacy of Babasaheb Ambedkar through education, culture, and community engagement at Dapodi Gavthan, Pune.
                     </p>
                     <div className="flex gap-4 mt-2">
-                        <a href="https://instagram.com/rahulmitramandal_wanowrie" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
+                        <a href="https://www.instagram.com/r_m_m_group/" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
                             <Instagram size={18} />
                         </a>
-                        <a href="https://facebook.com/rahulmitramandal.wanowrie" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
+                        <a href="https://facebook.com/rahulmitramandal" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
                             <Facebook size={18} />
                         </a>
                     </div>

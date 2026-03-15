@@ -404,14 +404,14 @@ INSERT INTO timeline_events (event_date, year, title_english, title_marathi, des
 -- =====================================================
 INSERT INTO settings (key, value, description) VALUES
 ('organization_name', '"Rahul Mitra Mandal"', 'Organization name'),
-('organization_name_marathi', '"श्रीमंत शिवगर्जना प्रतिष्ठान"', 'Organization name in Marathi'),
+('organization_name_marathi', '"राहुल मित्र मंडळ"', 'Organization name in Marathi'),
 ('location', '"Dapodi Gavthan "', 'Organization location'),
-('established_year', '2014', 'Year organization was established'),
-('contact_email', '"info@RAHUL MITRA MANDAL.org"', 'Contact email'),
+('established_year', '1972', 'Year organization was established'),
+('contact_email', '"info@rahulmitramandal.org"', 'Contact email'),
 ('contact_phone', '"+91-XXXXXXXXXX"', 'Contact phone'),
 ('social_facebook', '""', 'Facebook page URL'),
 ('social_instagram', '""', 'Instagram page URL'),
 ('social_youtube', '""', 'YouTube channel URL'),
-('next_ambedkar_jayanti', '"2026-02-19"', 'Next Ambedkar Jayanti date');
+('next_ambedkar_jayanti', '"2026-04-14"', 'Next Ambedkar Jayanti date');
 
 COMMIT;

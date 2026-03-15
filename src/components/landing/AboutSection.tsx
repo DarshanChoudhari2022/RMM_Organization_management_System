@@ -186,7 +186,7 @@ const AboutSection = () => {
                                     <span className="text-primary/70 text-2xl font-sans font-black uppercase">Pune</span>
                                 </h3>
                                 <p className="text-foreground/80 text-base leading-relaxed mb-6 font-sans">
-                                    Established in 2014, our Mandal in Dapodi Gavthan has been passionately celebrating Ambedkar Jayanti
+                                    Established in 1972, our Mandal in Dapodi Gavthan has been passionately celebrating Ambedkar Jayanti
                                     on <strong className="text-primary font-bold">14th April</strong> every year with grand processions,
                                     educational campaigns, and cultural programs to keep the spirit of social equality brilliantly alive.
                                 </p>
@@ -197,10 +197,10 @@ const AboutSection = () => {
                             </div>
                             <div className="grid sm:grid-cols-2 gap-4">
                                 {[
-                                    { value: "12+", label: "Years Active" },
+                                    { value: "50+", label: "Years Active" },
                                     { value: "14 Apr", label: "Jayanti Celebration" },
                                     { value: "100+", label: "Active Members" },
-                                    { value: "2014", label: "Year Established" },
+                                    { value: "1972", label: "Year Established" },
                                 ].map((s, i) => (
                                     <div key={i} className="bg-muted rounded-2xl p-6 text-center border border-primary/10 hover:border-primary/40 transition-colors">
                                         <div className="text-3xl font-display font-black text-primary mb-2">{s.value}</div>

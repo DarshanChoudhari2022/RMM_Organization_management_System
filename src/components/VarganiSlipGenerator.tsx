@@ -130,7 +130,10 @@ const VarganiSlipTab = () => {
     };
 
     // Validate WhatsApp number
-    const isValidMobile = (num: string) => !num || /^[6-9]\d{9}$/.test(num.replace(/\s/g, ''));
+    const isValidMobile = (num: any) => {
+        const cleaned = (num || "").toString().replace(/\s/g, '');
+        return cleaned === "" || /^[6-9]\d{9}$/.test(cleaned);
+    };
 
     // Open edit modal
     const openEditModal = (slip: VarganiSlip) => {
@@ -153,7 +156,7 @@ const VarganiSlipTab = () => {
         if (!editingSlip) return;
         if (!editData.name.trim()) return toast.error("Name is required");
         if (!editData.amount || parseFloat(editData.amount) <= 0) return toast.error("Valid amount required");
-        if (editData.mobile && !isValidMobile(editData.mobile)) return toast.error("Valid 10-digit mobile required");
+        if (!isValidMobile(editData.mobile)) return toast.error("Valid 10-digit mobile required");
         if (editData.status === 'pending' && !editData.tentative_date) return toast.error("Tentative date required for pending");
 
         try {
@@ -164,7 +167,7 @@ const VarganiSlipTab = () => {
                 amount: parseFloat(editData.amount),
                 location: editData.location.trim(),
                 address: editData.address.trim(),
-                mobile: editData.mobile.replace(/\s/g, ''),
+                mobile: (editData.mobile || "").toString().replace(/\s/g, ''),
                 status: editData.status,
                 tentative_date: editData.status === 'pending' ? editData.tentative_date : null
             });
@@ -182,7 +185,7 @@ const VarganiSlipTab = () => {
         if (!formData.shop_name.trim()) return toast.error("Please enter shop name");
         if (!formData.amount || parseFloat(formData.amount) <= 0) return toast.error("Please enter valid amount");
         if (!formData.location.trim()) return toast.error("Please enter location");
-        if (formData.mobile && !isValidMobile(formData.mobile)) return toast.error("Please enter valid 10-digit WhatsApp number");
+        if (!isValidMobile(formData.mobile)) return toast.error("Please enter valid 10-digit WhatsApp number");
         if (formData.paymentStatus === 'pending' && !formData.tentative_date) return toast.error("Please enter tentative date");
 
         try {
@@ -192,7 +195,7 @@ const VarganiSlipTab = () => {
                 amount: parseFloat(formData.amount),
                 location: formData.location.trim(),
                 address: formData.address.trim(),
-                mobile: formData.mobile.replace(/\s/g, ''),
+                mobile: (formData.mobile || "").toString().replace(/\s/g, ''),
                 status: formData.paymentStatus,
                 tentative_date: formData.paymentStatus === 'pending' ? formData.tentative_date : null
             });
@@ -827,7 +830,7 @@ const VarganiSlipTab = () => {
                             className="bg-white rounded-2xl w-full max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-xl font-display font-black text-[#0F172A]">Edit Entry</h3>
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">Edit Vargani Entry</h3>
                                     <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">Slip: {editingSlip.slip_number}</p>
                                 </div>
                                 <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">

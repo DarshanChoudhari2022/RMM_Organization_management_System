@@ -54,13 +54,13 @@ const UserManagementTab = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <h2 className="text-xl font-display font-black text-[#0F172A]">User Management</h2>
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="pl-9 pr-4 py-2 bg-[#F5F5F0] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 w-64"
+                        className="pl-9 pr-4 py-2 bg-[#F5F5F0] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 w-full sm:w-64"
                         placeholder="Search users..."
                     />
                 </div>
@@ -84,58 +84,52 @@ const UserManagementTab = () => {
 
             {/* User List */}
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <div className="min-w-[600px]">
-                        <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
-                            <div className="col-span-4">User</div>
-                            <div className="col-span-3">Email</div>
-                            <div className="col-span-2">Role</div>
-                            <div className="col-span-3 text-right">Actions</div>
-                        </div>
-                    </div>
+                <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
+                    <div className="col-span-4">User</div>
+                    <div className="col-span-3">Email</div>
+                    <div className="col-span-2">Role</div>
+                    <div className="col-span-3 text-right">Actions</div>
                 </div>
 
                 {filteredProfiles.length === 0 ? (
                     <div className="p-10 text-center text-[#0F172A]/60 text-sm">No users found.</div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <div className="min-w-[600px]">
-                            {filteredProfiles.map((profile) => (
-                                <div key={profile.id} className="grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
-                                    <div className="col-span-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm ${profile.role === 'admin' ? 'bg-[#1D4ED8]' : 'bg-blue-500'}`}>
-                                                {(profile.display_name || profile.email)[0].toUpperCase()}
-                                            </div>
-                                            <div>
-                                                <div className="font-bold text-[#0F172A]">{profile.display_name || 'Unnamed'}</div>
-                                                <div className="text-[10px] text-[#0F172A]/50">
-                                                    Joined {new Date(profile.created_at).toLocaleDateString('en-IN')}
-                                                </div>
+                    <div className="flex flex-col">
+                        {filteredProfiles.map((profile) => (
+                            <div key={profile.id} className="flex flex-col md:grid md:grid-cols-12 gap-4 p-4 border-b border-gray-50 md:items-center hover:bg-[#FDFBF7] transition-colors">
+                                <div className="md:col-span-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 ${profile.role === 'admin' ? 'bg-[#1D4ED8]' : 'bg-blue-500'}`}>
+                                            {(profile.display_name || profile.email)[0].toUpperCase()}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="font-bold text-[#0F172A] truncate">{profile.display_name || 'Unnamed'}</div>
+                                            <div className="text-[10px] text-[#0F172A]/50">
+                                                Joined {new Date(profile.created_at).toLocaleDateString('en-IN')}
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-span-3 text-sm text-[#0F172A]/70 font-mono truncate">{profile.email}</div>
-                                    <div className="col-span-2">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${profile.role === 'admin'
-                                            ? 'bg-[#1D4ED8]/10 text-[#1D4ED8]'
-                                            : 'bg-blue-100 text-blue-600'
-                                            }`}>
-                                            {profile.role === 'admin' ? '🛡️ Admin' : '👤 Sub-Admin'}
-                                        </span>
-                                    </div>
-                                    <div className="col-span-3 flex justify-end">
-                                        <button
-                                            onClick={() => openEdit(profile)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-[#F5F5F0] hover:bg-[#1D4ED8]/10 text-[#0F172A]/70 hover:text-[#1D4ED8] rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-gray-200 hover:border-[#1D4ED8]/20"
-                                        >
-                                            <UserCog size={14} />
-                                            Edit Role
-                                        </button>
-                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="md:col-span-3 text-sm text-[#0F172A]/70 font-mono truncate">{profile.email}</div>
+                                <div className="md:col-span-2">
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex ${profile.role === 'admin'
+                                        ? 'bg-[#1D4ED8]/10 text-[#1D4ED8]'
+                                        : 'bg-blue-100 text-blue-600'
+                                        }`}>
+                                        {profile.role === 'admin' ? '🛡️ Admin' : '👤 Sub-Admin'}
+                                    </span>
+                                </div>
+                                <div className="md:col-span-3 flex md:justify-end mt-2 md:mt-0">
+                                    <button
+                                        onClick={() => openEdit(profile)}
+                                        className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-3 md:py-2 bg-[#F5F5F0] hover:bg-[#1D4ED8]/10 text-[#0F172A]/70 hover:text-[#1D4ED8] rounded-xl text-[10px] md:text-[10px] font-black uppercase tracking-widest transition-all border border-gray-200 hover:border-[#1D4ED8]/20"
+                                    >
+                                        <UserCog size={16} className="md:w-3.5 md:h-3.5" />
+                                        Edit Role
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>
@@ -149,7 +143,7 @@ const UserManagementTab = () => {
                     >
                         <motion.div
                             initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-                            className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl"
+                            className="bg-white rounded-2xl w-full max-w-md p-5 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
                         >
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-xl font-display font-black text-[#0F172A]">Edit User</h3>
@@ -205,17 +199,17 @@ const UserManagementTab = () => {
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 mt-8">
+                            <div className="flex flex-col sm:flex-row gap-3 mt-8">
                                 <button
                                     onClick={() => setEditingUser(null)}
-                                    className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200"
+                                    className="w-full sm:flex-1 py-3.5 sm:py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 order-2 sm:order-1"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleSave}
                                     disabled={updateProfile.isPending}
-                                    className="flex-1 py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#B94A15] disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="w-full sm:flex-1 py-3.5 sm:py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#B94A15] disabled:opacity-50 flex items-center justify-center gap-2 order-1 sm:order-2"
                                 >
                                     {updateProfile.isPending ? (
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

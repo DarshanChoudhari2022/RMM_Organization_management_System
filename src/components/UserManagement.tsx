@@ -12,6 +12,7 @@ const UserManagementTab = () => {
     const [editName, setEditName] = useState("");
     const [editRole, setEditRole] = useState<'admin' | 'sub_admin'>('sub_admin');
     const [search, setSearch] = useState("");
+    const [viewingUserSlips, setViewingUserSlips] = useState<UserProfile | null>(null);
 
     // Count entries per user (by auth_user_id)
     const entryCountMap = new Map<string, number>();
@@ -119,8 +120,8 @@ const UserManagementTab = () => {
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 ${profile.role === 'admin' ? 'bg-[#1D4ED8]' : 'bg-blue-500'}`}>
                                             {(profile.display_name || profile.email)[0].toUpperCase()}
                                         </div>
-                                        <div className="min-w-0 flex-1">
-                                            <div className="font-bold text-[#0F172A] truncate">{profile.display_name || 'Unnamed'}</div>
+                                        <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setViewingUserSlips(profile)}>
+                                            <div className="font-bold text-[#1D4ED8] hover:underline truncate">{profile.display_name || 'Unnamed'}</div>
                                             <div className="text-[10px] text-[#0F172A]/50">
                                                 Joined {new Date(profile.created_at).toLocaleDateString('en-IN')}
                                             </div>
@@ -138,7 +139,7 @@ const UserManagementTab = () => {
                                 </div>
                                 <div className="md:col-span-2 flex items-center md:justify-center">
                                     <div className="flex items-center gap-2">
-                                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-black ${
+                                        <div onClick={() => setViewingUserSlips(profile)} className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-black hover:opacity-80 transition-opacity ${
                                             userEntries > 0
                                                 ? 'bg-green-50 text-green-700 border border-green-200'
                                                 : 'bg-gray-50 text-gray-400 border border-gray-200'
@@ -164,6 +165,50 @@ const UserManagementTab = () => {
                     </div>
                 )}
             </div>
+
+            {/* View Slips Modal */}
+            <AnimatePresence>
+                {viewingUserSlips && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+                            className="bg-white rounded-2xl w-full max-w-2xl p-5 sm:p-8 shadow-2xl max-h-[90vh] flex flex-col"
+                        >
+                            <div className="flex justify-between items-center mb-6 shrink-0">
+                                <div>
+                                    <h3 className="text-xl font-display font-black text-[#0F172A]">Slips Generated</h3>
+                                    <p className="text-[10px] text-[#0F172A]/50 font-bold uppercase tracking-widest mt-1">By {viewingUserSlips.display_name}</p>
+                                </div>
+                                <button onClick={() => setViewingUserSlips(null)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <X size={18} className="text-[#0F172A]/60" />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto min-h-0 space-y-3 custom-scrollbar pr-2">
+                                {slips?.filter(s => s.created_by_user_id === viewingUserSlips.auth_user_id).length === 0 ? (
+                                    <div className="text-center p-10 text-[#0F172A]/50 text-sm font-bold">No slips generated yet by this user.</div>
+                                ) : (
+                                    slips?.filter(s => s.created_by_user_id === viewingUserSlips.auth_user_id).map(slip => (
+                                        <div key={slip.id} className="bg-[#F5F5F0] border border-gray-200 rounded-xl p-4 flex justify-between items-center">
+                                            <div>
+                                                <div className="font-bold text-[#0F172A]">{slip.name}</div>
+                                                <div className="text-xs text-[#0F172A]/60">{slip.shop_name}</div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-black text-[#1D4ED8]">{'\u20B9'}{Number(slip.amount).toLocaleString('en-IN')}</div>
+                                                <div className="text-[10px] font-mono text-[#0F172A]/40">{slip.slip_number}</div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Edit Modal */}
             <AnimatePresence>

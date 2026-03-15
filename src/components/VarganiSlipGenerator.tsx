@@ -76,12 +76,16 @@ const VarganiSlipTab = () => {
         if (filter !== 'all') result = result.filter(s => s.status === filter);
         if (search) {
             const q = search.toLowerCase();
-            result = result.filter(s =>
-                s.name.toLowerCase().includes(q) ||
-                s.shop_name.toLowerCase().includes(q) ||
-                s.mobile.includes(q) ||
-                (s.slip_number || '').toLowerCase().includes(q)
-            );
+            result = result.filter(s => {
+                const dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString('en-IN') : '';
+                return s.name.toLowerCase().includes(q) ||
+                    s.shop_name.toLowerCase().includes(q) ||
+                    s.mobile.includes(q) ||
+                    (s.slip_number || '').toLowerCase().includes(q) ||
+                    (s.location || '').toLowerCase().includes(q) ||
+                    (s.created_by_name || '').toLowerCase().includes(q) ||
+                    dateStr.includes(q);
+            });
         }
 
         // Sort date-wise (newest first)
@@ -462,7 +466,7 @@ const VarganiSlipTab = () => {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 shadow-sm"
-                        placeholder="Search by name, shop, mobile, slip no..."
+                        placeholder="Search by name, location, admin, date (DD/MM/YYYY)..."
                     />
                 </div>
             </div>

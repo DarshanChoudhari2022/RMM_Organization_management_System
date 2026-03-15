@@ -56,7 +56,7 @@ const Hero = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="relative flex justify-center lg:justify-end"
+                    className="relative flex justify-center lg:justify-end py-12 lg:py-0"
                 >
                     <div className="relative w-[280px] h-[280px] md:w-[400px] md:h-[400px] rounded-full flex items-center justify-center bg-white shadow-2xl shadow-primary/20 group mx-auto lg:mr-0 z-10">
                         {/* Spinning decorative rings outside */}

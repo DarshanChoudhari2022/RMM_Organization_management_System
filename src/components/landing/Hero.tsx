@@ -68,7 +68,7 @@ const Hero = () => {
                             <img
                                 src="/images/logo.png"
                                 alt="Rahul Mitra Mandal Logo"
-                                className="w-[110%] h-[110%] max-w-[110%] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 relative z-10"
+                                className="w-[98%] h-[98%] object-contain scale-100 group-hover:scale-105 transition-transform duration-700 relative z-10"
                             />
                         </div>
                     </div>

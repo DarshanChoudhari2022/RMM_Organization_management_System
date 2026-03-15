@@ -46,12 +46,14 @@ import { toast } from "sonner"; // For elegant global error feedbacks
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 2, // Auto retry failing requests up to 2 times
-      staleTime: 5 * 60 * 1000, 
-      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 10 * 60 * 1000,  // 10 min — data considered fresh
+      gcTime: 30 * 60 * 1000,     // 30 min — keep unused data in cache
+      refetchOnWindowFocus: true,  // Auto-refresh when user comes back to tab
+      refetchOnReconnect: true,
     },
     mutations: {
-      retry: 1,
+      retry: 0,  // Don't retry mutations — show error immediately
       onError: (error) => {
         console.error("Mutation failed:", error);
         toast.error(`Action Failed: ${error.message || 'Please check your connection and try again.'}`);

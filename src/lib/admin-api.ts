@@ -65,7 +65,7 @@ export const useMembers = () => {
 
             if (varganiError) console.error("Failed to init vargani", varganiError); // Non-critical
 
-            await createLog("Member Added", `Added member ${newMember.name} with role ${newMember.role}`);
+            createLog("Member Added", `Added member ${newMember.name} with role ${newMember.role}`);
 
             return memberData;
         },
@@ -86,7 +86,7 @@ export const useMembers = () => {
                 }, { onConflict: 'member_id, year' });
 
             if (error) throw error;
-            await createLog("Vargani Updated", `Updated vargani for member ID ${id} (Year: ${year}, Amount: ₹${amount})`);
+            createLog("Vargani Updated", `Updated vargani for member ID ${id} (Year: ${year}, Amount: ₹${amount})`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
     });
@@ -95,7 +95,7 @@ export const useMembers = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('members').delete().eq('id', id);
             if (error) throw error;
-            await createLog("Member Deleted", `Deleted member with ID ${id}`);
+            createLog("Member Deleted", `Deleted member with ID ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
     });
@@ -138,7 +138,7 @@ export const useTasks = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Task Added", `Added task: ${newTask.title}`);
+            createLog("Task Added", `Added task: ${newTask.title}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
@@ -160,7 +160,7 @@ export const useTasks = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Task Updated", `Updated task: ${task.title || task.id}`);
+            createLog("Task Updated", `Updated task: ${task.title || task.id}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
@@ -170,7 +170,7 @@ export const useTasks = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('tasks').delete().eq('id', id);
             if (error) throw error;
-            await createLog("Task Deleted", `Deleted task ID: ${id}`);
+            createLog("Task Deleted", `Deleted task ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
     });
@@ -282,7 +282,7 @@ export const useExpenses = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Expense Added", `Added expense: ${newExpense.description} (Amount: ₹${newExpense.amount})`);
+            createLog("Expense Added", `Added expense: ${newExpense.description} (Amount: ₹${newExpense.amount})`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
@@ -303,7 +303,7 @@ export const useExpenses = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('expenses').delete().eq('id', id);
             if (error) throw error;
-            await createLog("Expense Deleted", `Deleted expense ID: ${id}`);
+            createLog("Expense Deleted", `Deleted expense ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
     });
@@ -373,7 +373,7 @@ export const useSuppliers = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Supplier Added", `Added supplier: ${newSup.name}`);
+            createLog("Supplier Added", `Added supplier: ${newSup.name}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
@@ -400,7 +400,7 @@ export const useSuppliers = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Supplier Updated", `Updated supplier: ${sup.name || sup.id}`);
+            createLog("Supplier Updated", `Updated supplier: ${sup.name || sup.id}`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
@@ -410,7 +410,7 @@ export const useSuppliers = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('suppliers').delete().eq('id', id);
             if (error) throw error;
-            await createLog("Supplier Deleted", `Deleted supplier ID: ${id}`);
+            createLog("Supplier Deleted", `Deleted supplier ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
     });
@@ -427,7 +427,7 @@ export const useSuppliers = () => {
                 .select()
                 .single();
             if (error) throw error;
-            await createLog("Supplier Confirmed", `Supplier ${data.name} confirmed the agreement`);
+            createLog("Supplier Confirmed", `Supplier ${data.name} confirmed the agreement`);
             return data;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
@@ -509,25 +509,32 @@ export const useLogs = () => {
     });
 };
 
-export const createLog = async (action: string, details: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
+// Fire-and-forget: don't await this — mutations should not wait for logging
+export const createLog = (action: string, details: string) => {
+    // Run in background, never block the caller
+    (async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const user = session?.user;
 
-    // Get member name if available
-    let userName = user?.email;
-    if (user) {
-        const { data: member } = await supabase
-            .from('members')
-            .select('name')
-            .eq('auth_user_id', user.id)
-            .single();
-        if (member) userName = member.name;
-    }
+            let userName = user?.email;
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('user_profiles')
+                    .select('display_name')
+                    .eq('auth_user_id', user.id)
+                    .single();
+                if (profile?.display_name) userName = profile.display_name;
+            }
 
-    await supabase.from('audit_logs').insert([{
-        action,
-        details,
-        user_id: user?.id,
-        user_name: userName
-    }]);
+            await supabase.from('audit_logs').insert([{
+                action,
+                details,
+                user_id: user?.id,
+                user_name: userName
+            }]);
+        } catch (e) {
+            console.warn('Audit log failed (non-critical):', e);
+        }
+    })();
 };

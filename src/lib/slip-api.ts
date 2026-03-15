@@ -82,7 +82,7 @@ export const useAllProfiles = () => {
                 .eq('id', id);
 
             if (error) throw error;
-            await createLog("User Role Changed", `Changed user role to ${role}${display_name ? ` (Name: ${display_name})` : ''}`);
+            createLog("User Role Changed", `Changed user role to ${role}${display_name ? ` (Name: ${display_name})` : ''}`);
         },
         // Optimistic Update
         onMutate: async (newUserData) => {
@@ -217,7 +217,7 @@ export const useVarganiSlips = () => {
                 .single();
 
             if (error) throw error;
-            await createLog("Vargani Slip Created", `Slip ${slipNumber} for ${newSlip.name} - ₹${newSlip.amount} (${newSlip.status})`);
+            createLog("Vargani Slip Created", `Slip ${slipNumber} for ${newSlip.name} - ₹${newSlip.amount} (${newSlip.status})`);
             return data as VarganiSlip;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
@@ -270,7 +270,7 @@ export const useVarganiSlips = () => {
                 .single();
 
             if (error) throw error;
-            await createLog("Vargani Slip Updated", `Updated slip ${data.slip_number} - ${data.name} - ₹${data.amount} (${data.status})`);
+            createLog("Vargani Slip Updated", `Updated slip ${data.slip_number} - ${data.name} - ₹${data.amount} (${data.status})`);
             return data as VarganiSlip;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
@@ -293,7 +293,7 @@ export const useVarganiSlips = () => {
                 .single();
 
             if (error) throw error;
-            await createLog("Payment Confirmed", `Confirmed payment for slip ${data.slip_number} - ${data.name} - ₹${data.amount}`);
+            createLog("Payment Confirmed", `Confirmed payment for slip ${data.slip_number} - ${data.name} - ₹${data.amount}`);
             return data as VarganiSlip;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
@@ -303,7 +303,7 @@ export const useVarganiSlips = () => {
         mutationFn: async (id: string) => {
             const { error } = await supabase.from('vargani_slips').delete().eq('id', id);
             if (error) throw error;
-            await createLog("Vargani Slip Deleted", `Deleted slip ID: ${id}`);
+            createLog("Vargani Slip Deleted", `Deleted slip ID: ${id}`);
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });

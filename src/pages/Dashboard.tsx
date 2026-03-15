@@ -36,6 +36,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useMembers, useTasks, useExpenses, useInvitations, useTaskResponses, useSuppliers, useLogs } from "@/lib/admin-api";
 import { useUserProfile } from "@/lib/slip-api";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory, Supplier, SystemLog } from "@/types/admin";
 import { toast } from "sonner";
@@ -1953,6 +1954,7 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Computes tab instantly without needing a post-render useEffect (fixes flicker bug)
   const activeTab = isSubAdmin ? "vargani-slips" : activeTabState;
@@ -1973,9 +1975,13 @@ const Dashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    // Navigate immediately for instant feedback
     navigate("/login");
+    // Clear all cached data so stale queries don't refetch with invalid session
+    queryClient.clear();
+    // Sign out in background (non-blocking)
+    supabase.auth.signOut().catch(() => {});
   };
 
   const handleTabChange = (tab: string) => {

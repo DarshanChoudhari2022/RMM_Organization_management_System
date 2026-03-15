@@ -270,6 +270,18 @@ const SlipPreviewContent = ({ slip }: { slip: VarganiSlip }) => {
 
             {/* Bottom accent */}
             <div style={{ height: '3px', background: `linear-gradient(90deg, #1e3a8a, ${BLUE}, #1e3a8a)` }} />
+            
+            {/* Powered By busyhub.in */}
+            <div style={{ 
+                background: '#fff', 
+                padding: '4px 12px', 
+                textAlign: 'right' as const, 
+                borderTop: '1px solid #f1f5f9' 
+            }}>
+                <span style={{ fontSize: '7px', color: '#94a3b8', fontWeight: 600, letterSpacing: '0.5px' }}>
+                    Powered by <a href="http://busyhub.in/" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 800 }}>busyhub.in</a>
+                </span>
+            </div>
         </div>
     );
 };

@@ -459,7 +459,7 @@ const VarganiSlipTab = () => {
                     <Filter size={14} className="text-[#0F172A]/40 mr-2 shrink-0" />
                     <select
                         value={groupBy}
-                        onChange={e => setGroupBy(e.target.value as any)}
+                        onChange={e => { setGroupBy(e.target.value as any); setFilter('all'); }}
                         className="w-full py-2.5 text-[10px] font-black uppercase tracking-widest text-[#0F172A]/80 bg-transparent outline-none cursor-pointer"
                     >
                         <option value="none">Group By: None</option>

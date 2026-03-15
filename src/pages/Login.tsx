@@ -20,22 +20,27 @@ const Login = () => {
         setError("");
         setMessage("");
 
+        // Support simple usernames by appending a hidden domain
+        const finalEmail = email.includes('@') ? email : `${email.trim().toLowerCase()}@rmm.auth`;
+
         try {
             if (isSignUp) {
                 const { error, data } = await supabase.auth.signUp({
-                    email,
+                    email: finalEmail,
                     password,
                 });
                 if (error) throw error;
-                if (data.user) {
-                    setMessage("Account created! You can now log in.");
-                    setIsSignUp(false);
-                    // Clear the URL parameter after successful signup
-                    navigate("/login", { replace: true });
+                
+                // If email confirmation is off in Supabase, data.session will be present
+                if (data.session) {
+                    navigate("/dashboard");
+                } else if (data.user) {
+                    setMessage("Account created successfully!");
+                    setTimeout(() => setIsSignUp(false), 2000);
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
-                    email,
+                    email: finalEmail,
                     password,
                 });
                 if (error) throw error;
@@ -102,14 +107,14 @@ const Login = () => {
                         )}
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">Email Address</label>
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">Username or Email</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
                                 <input
-                                    type="email"
+                                    type="text"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@example.com"
+                                    placeholder="Enter your username or email"
                                     className="input-clean pl-12"
                                     required
                                 />

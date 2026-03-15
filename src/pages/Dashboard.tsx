@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -40,8 +40,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Task, Expense, Invitation, Member, TaskCategory, Supplier, SystemLog } from "@/types/admin";
 import { toast } from "sonner";
-import VarganiSlipTab from "@/components/VarganiSlipGenerator";
-import UserManagementTab from "@/components/UserManagement";
+const VarganiSlipTab = lazy(() => import("@/components/VarganiSlipGenerator"));
+const UserManagementTab = lazy(() => import("@/components/UserManagement"));
 
 // --- Components ---
 
@@ -1972,8 +1972,19 @@ const Dashboard = () => {
       if (!session) navigate("/login");
     });
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    // Live Portal Updates: Subscribe to Realtime DB changes
+    const publicChannel = supabase.channel('dashboard-live-updates')
+      .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+        // Invalidate all queries on almost any change so the user instantly sees updates
+        queryClient.invalidateQueries();
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      supabase.removeChannel(publicChannel);
+    };
+  }, [navigate, queryClient]);
 
   const handleLogout = () => {
     // Navigate immediately for instant feedback
@@ -2104,23 +2115,25 @@ const Dashboard = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-12 scrollbar-hide">
-          <motion.div
-            key={`${activeTab}-${selectedYear}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
-          >
-            {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} />}
-            {activeTab === "tasks" && !isSubAdmin && <TasksTab year={selectedYear} />}
-            {activeTab === "expenses" && !isSubAdmin && <ExpensesTab year={selectedYear} />}
-            {activeTab === "invitations" && !isSubAdmin && <InvitationsTab />}
-            {activeTab === "suppliers" && !isSubAdmin && <SuppliersTab />}
-            {activeTab === "letterhead" && !isSubAdmin && <LetterheadTab />}
-            {activeTab === "vargani-slips" && <VarganiSlipTab />}
-            {activeTab === "user-management" && !isSubAdmin && <UserManagementTab />}
-            {activeTab === "logs" && !isSubAdmin && <LogsTab />}
-          </motion.div>
+          <Suspense fallback={<div className="p-12 text-center text-sm font-bold text-gray-400 animate-pulse">Loading {activeTab}...</div>}>
+            <motion.div
+              key={`${activeTab}-${selectedYear}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
+            >
+              {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} />}
+              {activeTab === "tasks" && !isSubAdmin && <TasksTab year={selectedYear} />}
+              {activeTab === "expenses" && !isSubAdmin && <ExpensesTab year={selectedYear} />}
+              {activeTab === "invitations" && !isSubAdmin && <InvitationsTab />}
+              {activeTab === "suppliers" && !isSubAdmin && <SuppliersTab />}
+              {activeTab === "letterhead" && !isSubAdmin && <LetterheadTab />}
+              {activeTab === "vargani-slips" && <VarganiSlipTab />}
+              {activeTab === "user-management" && !isSubAdmin && <UserManagementTab />}
+              {activeTab === "logs" && !isSubAdmin && <LogsTab />}
+            </motion.div>
+          </Suspense>
         </div>
       </main>
     </div>

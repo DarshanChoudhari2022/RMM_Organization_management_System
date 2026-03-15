@@ -5,8 +5,6 @@ import { Shield, Lock, Mail, ArrowRight, ChevronLeft, AlertCircle } from "lucide
 import { supabase } from "@/lib/supabase";
 
 const Login = () => {
-    const [searchParams] = useSearchParams();
-    const [isSignUp, setIsSignUp] = useState(searchParams.get('mode') === 'signup');
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -24,28 +22,12 @@ const Login = () => {
         const finalEmail = email.includes('@') ? email : `${email.trim().toLowerCase()}@rmm.auth`;
 
         try {
-            if (isSignUp) {
-                const { error, data } = await supabase.auth.signUp({
-                    email: finalEmail,
-                    password,
-                });
-                if (error) throw error;
-                
-                // If email confirmation is off in Supabase, data.session will be present
-                if (data.session) {
-                    navigate("/dashboard");
-                } else if (data.user) {
-                    setMessage("Account created successfully!");
-                    setTimeout(() => setIsSignUp(false), 2000);
-                }
-            } else {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email: finalEmail,
-                    password,
-                });
-                if (error) throw error;
-                navigate("/dashboard");
-            }
+            const { error } = await supabase.auth.signInWithPassword({
+                email: finalEmail,
+                password,
+            });
+            if (error) throw error;
+            navigate("/dashboard");
         } catch (err: any) {
             setError(err.message || "Authentication failed. Please check your credentials.");
         } finally {
@@ -80,7 +62,7 @@ const Login = () => {
                             <Shield className="transform -rotate-45" size={28} />
                         </div>
                         <h1 className="text-3xl font-display font-black text-foreground mb-2 uppercase tracking-wide">
-                            {isSignUp ? "Create Admin" : "Admin Portal"}
+                            Admin Portal
                         </h1>
                         <p className="font-marathi text-secondary font-bold text-lg mb-1">राहुल मित्र मंडळ</p>
                         <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">Authorized Access Only</p>
@@ -145,23 +127,12 @@ const Login = () => {
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : (
                                 <>
-                                    {isSignUp ? "Create Account" : "Access Dashboard"}
+                                    Access Dashboard
                                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
                         </button>
                     </form>
-
-                    {isSignUp && (
-                        <div className="mt-8 pt-6 border-t border-secondary/5 text-center relative z-10">
-                            <button
-                                onClick={() => { setIsSignUp(false); navigate("/login", { replace: true }); }}
-                                className="text-muted-foreground hover:text-primary text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 mx-auto"
-                            >
-                                Already have an account? Login
-                            </button>
-                        </div>
-                    )}
                 </div>
             </motion.div>
             

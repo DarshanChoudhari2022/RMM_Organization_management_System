@@ -7,20 +7,22 @@ const supabase = supabaseClient as any;
 
 // --- Members & Vargani ---
 
-export const useMembers = () => {
+export const useMembers = (year?: number) => {
     const queryClient = useQueryClient();
 
     const query = useQuery({
-        queryKey: ["members"],
+        queryKey: ["members", year],
         queryFn: async () => {
-            // Fetch members with their vargani history
-            const { data, error } = await supabase
-                .from('members')
-                .select('*, vargani_payments(*)');
+            let membersQuery = supabase.from('members').select('*, vargani_payments(*)');
+            
+            // If year is provided, we still fetch members but we can't easily filter 
+            // the inner vargani_payments without complex subqueries or separate fetches.
+            // For now, let's just optimize the main list.
+            
+            const { data, error } = await membersQuery;
 
             if (error) throw error;
 
-            // Transform to frontend Member type
             return data.map((m: any) => ({
                 id: m.id,
                 name: m.name,
@@ -105,16 +107,18 @@ export const useMembers = () => {
 
 // --- Tasks ---
 
-export const useTasks = () => {
+export const useTasks = (year?: number) => {
     const queryClient = useQueryClient();
 
     const query = useQuery({
-        queryKey: ["tasks"],
+        queryKey: ["tasks", year],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from('tasks')
-                .select('*')
-                .order('date', { ascending: false });
+            let q = supabase.from('tasks').select('*');
+            if (year) {
+                q = q.eq('year', year);
+            }
+            const { data, error } = await q.order('date', { ascending: false });
+            
             if (error) throw error;
             return data.map((t: any) => ({
                 ...t,
@@ -236,16 +240,17 @@ export const useTaskResponses = (taskId?: string) => {
 
 // --- Expenses ---
 
-export const useExpenses = () => {
+export const useExpenses = (year?: number) => {
     const queryClient = useQueryClient();
 
     const query = useQuery({
-        queryKey: ["expenses"],
+        queryKey: ["expenses", year],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from('expenses')
-                .select('*')
-                .order('created_at', { ascending: false });
+            let q = supabase.from('expenses').select('*');
+            if (year) {
+                q = q.eq('year', year);
+            }
+            const { data, error } = await q.order('created_at', { ascending: false });
 
             if (error) throw error;
 
@@ -256,7 +261,7 @@ export const useExpenses = () => {
                 category: e.category,
                 date: e.date,
                 status: e.status,
-                year: parseInt(e.date.split('-')[0]), // Extract year from date
+                year: e.year || parseInt(e.date.split('-')[0]),
                 paidBy: e.paid_by || 'Mandal',
                 isRefunded: e.is_refunded || false,
                 vendorName: e.vendor_name || 'General'

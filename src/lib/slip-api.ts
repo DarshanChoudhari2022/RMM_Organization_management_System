@@ -10,7 +10,7 @@ const supabase = supabaseClient as any;
 // ==========================================
 
 export const useUserProfile = () => {
-    return useQuery({
+    const query = useQuery({
         queryKey: ["user-profile"],
         queryFn: async () => {
             const { data: { session } } = await supabase.auth.getSession();
@@ -19,37 +19,21 @@ export const useUserProfile = () => {
             const { data, error } = await supabase
                 .from('user_profiles')
                 .select('*')
-                .eq('auth_user_id', session.user.id)
-                .single();
-
-            // No profile found → auto-create
-            if (error && error.code === 'PGRST116') {
-                // Check if ANY admin exists. If not, first user becomes admin.
-                const { count } = await supabase
-                    .from('user_profiles')
-                    .select('*', { count: 'exact', head: true });
-
-                const role = count === 0 ? 'admin' : 'sub_admin';
-
-                const { data: newProfile, error: createError } = await supabase
-                    .from('user_profiles')
-                    .insert([{
-                        auth_user_id: session.user.id,
-                        email: session.user.email,
-                        display_name: session.user.email?.split('@')[0] || 'User',
-                        role: role
-                    }])
-                    .select()
-                    .single();
-
-                if (createError) throw createError;
-                return newProfile as UserProfile;
-            }
+                .eq('auth_user_id', session.user.id);
 
             if (error) throw error;
-            return data as UserProfile;
+            
+            // If no profile exists, the user is not an authorized admin/subadmin
+            if (!data || data.length === 0) {
+                // You might want to sign the user out or redirect here
+                // For now, we return null so the UI can handle the unauthorized state
+                return null;
+            }
+
+            return data[0] as UserProfile;
         },
     });
+    return query;
 };
 
 export const useAllProfiles = () => {

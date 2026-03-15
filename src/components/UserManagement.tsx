@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Shield, UserCog, X, Check, Search } from "lucide-react";
-import { useAllProfiles } from "@/lib/slip-api";
+import { Users, Shield, UserCog, X, Check, Search, FileText } from "lucide-react";
+import { useAllProfiles, useVarganiSlips } from "@/lib/slip-api";
 import { UserProfile } from "@/types/admin";
 import { toast } from "sonner";
 
 const UserManagementTab = () => {
     const { data: profiles, isLoading, updateProfile } = useAllProfiles();
+    const { data: slips } = useVarganiSlips();
     const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
     const [editName, setEditName] = useState("");
     const [editRole, setEditRole] = useState<'admin' | 'sub_admin'>('sub_admin');
     const [search, setSearch] = useState("");
+
+    // Count entries per user (by auth_user_id)
+    const entryCountMap = new Map<string, number>();
+    slips?.forEach(slip => {
+        if (slip.created_by_user_id) {
+            entryCountMap.set(slip.created_by_user_id, (entryCountMap.get(slip.created_by_user_id) || 0) + 1);
+        }
+    });
+    const totalEntries = slips?.length || 0;
 
     const filteredProfiles = profiles?.filter(p =>
         p.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,7 +77,7 @@ const UserManagementTab = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-2">Total Users</div>
                     <div className="text-3xl font-black text-[#0F172A]">{profiles?.length || 0}</div>
@@ -80,24 +90,31 @@ const UserManagementTab = () => {
                     <div className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Sub-Admins</div>
                     <div className="text-3xl font-black text-blue-600">{subAdminCount}</div>
                 </div>
+                <div className="p-6 bg-white border border-green-100 rounded-2xl shadow-sm bg-green-50/30">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-2">Total Entries</div>
+                    <div className="text-3xl font-black text-green-600">{totalEntries}</div>
+                </div>
             </div>
 
             {/* User List */}
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
                 <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
-                    <div className="col-span-4">User</div>
+                    <div className="col-span-3">User</div>
                     <div className="col-span-3">Email</div>
                     <div className="col-span-2">Role</div>
-                    <div className="col-span-3 text-right">Actions</div>
+                    <div className="col-span-2 text-center">Entries</div>
+                    <div className="col-span-2 text-right">Actions</div>
                 </div>
 
                 {filteredProfiles.length === 0 ? (
                     <div className="p-10 text-center text-[#0F172A]/60 text-sm">No users found.</div>
                 ) : (
                     <div className="flex flex-col">
-                        {filteredProfiles.map((profile) => (
-                            <div key={profile.id} className="flex flex-col md:grid md:grid-cols-12 gap-4 p-4 border-b border-gray-50 md:items-center hover:bg-[#FDFBF7] transition-colors">
-                                <div className="md:col-span-4">
+                        {filteredProfiles.map((profile) => {
+                            const userEntries = entryCountMap.get(profile.auth_user_id) || 0;
+                            return (
+                            <div key={profile.id} className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 p-4 border-b border-gray-50 md:items-center hover:bg-[#FDFBF7] transition-colors">
+                                <div className="md:col-span-3">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 ${profile.role === 'admin' ? 'bg-[#1D4ED8]' : 'bg-blue-500'}`}>
                                             {(profile.display_name || profile.email)[0].toUpperCase()}
@@ -112,14 +129,27 @@ const UserManagementTab = () => {
                                 </div>
                                 <div className="md:col-span-3 text-sm text-[#0F172A]/70 font-mono truncate">{profile.email}</div>
                                 <div className="md:col-span-2">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex ${profile.role === 'admin'
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex whitespace-nowrap ${profile.role === 'admin'
                                         ? 'bg-[#1D4ED8]/10 text-[#1D4ED8]'
                                         : 'bg-blue-100 text-blue-600'
                                         }`}>
                                         {profile.role === 'admin' ? '🛡️ Admin' : '👤 Sub-Admin'}
                                     </span>
                                 </div>
-                                <div className="md:col-span-3 flex md:justify-end mt-2 md:mt-0">
+                                <div className="md:col-span-2 flex items-center md:justify-center">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-black ${
+                                            userEntries > 0
+                                                ? 'bg-green-50 text-green-700 border border-green-200'
+                                                : 'bg-gray-50 text-gray-400 border border-gray-200'
+                                        }`}>
+                                            <FileText size={14} />
+                                            <span>{userEntries}</span>
+                                        </div>
+                                        <span className="text-[9px] text-[#0F172A]/40 font-bold uppercase tracking-wider md:hidden">Entries</span>
+                                    </div>
+                                </div>
+                                <div className="md:col-span-2 flex md:justify-end mt-1 md:mt-0">
                                     <button
                                         onClick={() => openEdit(profile)}
                                         className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-3 md:py-2 bg-[#F5F5F0] hover:bg-[#1D4ED8]/10 text-[#0F172A]/70 hover:text-[#1D4ED8] rounded-xl text-[10px] md:text-[10px] font-black uppercase tracking-widest transition-all border border-gray-200 hover:border-[#1D4ED8]/20"
@@ -129,7 +159,8 @@ const UserManagementTab = () => {
                                     </button>
                                 </div>
                             </div>
-                        ))}
+                        );
+                        })}
                     </div>
                 )}
             </div>

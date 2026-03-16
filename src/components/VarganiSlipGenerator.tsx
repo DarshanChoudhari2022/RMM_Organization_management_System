@@ -15,7 +15,7 @@ import SlipPreviewContent from "./SlipPreview";
 // Main Vargani Slip Tab Component
 // ============================================
 
-const VarganiSlipTab = () => {
+const VarganiSlipTab = ({ year }: { year?: number }) => {
     const { data: slips, isLoading, addSlip, updateSlip, confirmPayment, deleteSlip } = useVarganiSlips();
     const { data: userProfile } = useUserProfile();
     const isSubAdmin = userProfile?.role === 'sub_admin';
@@ -74,9 +74,21 @@ const VarganiSlipTab = () => {
 
     const slipRef = useRef<HTMLDivElement>(null);
 
+    // Year-filtered slips (base filter)
+    const yearFilteredSlips = useMemo(() => {
+        let result = slips ? [...slips] : [];
+        if (year) {
+            result = result.filter(s => {
+                const slipYear = new Date(s.created_at).getFullYear();
+                return slipYear === year;
+            });
+        }
+        return result;
+    }, [slips, year]);
+
     // Filtered + searched slips
     const filteredSlips = useMemo(() => {
-        let result = slips ? [...slips] : [];
+        let result = [...yearFilteredSlips];
         if (filter !== 'all') result = result.filter(s => s.status === filter);
         if (search) {
             const q = search.toLowerCase();
@@ -96,11 +108,11 @@ const VarganiSlipTab = () => {
         result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
 
         return result;
-    }, [slips, filter, search]);
+    }, [yearFilteredSlips, filter, search]);
 
     // Stats
     const stats = useMemo(() => {
-        const all = slips || [];
+        const all = yearFilteredSlips;
         const paid = all.filter(s => s.status === 'paid');
         const pending = all.filter(s => s.status === 'pending');
         const totalCollected = paid.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -125,7 +137,7 @@ const VarganiSlipTab = () => {
             .sort((a, b) => b.count - a.count);
 
         return { total: all.length, paidCount: paid.length, pendingCount: pending.length, totalCollected, totalPending, locationPendingArray, adminStatsArray };
-    }, [slips]);
+    }, [yearFilteredSlips]);
 
     // Reset form and clear cache
     const resetForm = () => {

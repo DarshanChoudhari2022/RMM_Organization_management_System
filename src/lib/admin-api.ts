@@ -13,7 +13,7 @@ export const useMembers = (year?: number) => {
     const query = useQuery({
         queryKey: ["members", year],
         staleTime: 15_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -117,7 +117,7 @@ export const useTasks = (year?: number) => {
     const query = useQuery({
         queryKey: ["tasks", year],
         staleTime: 15_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -196,7 +196,7 @@ export const useTaskResponses = (taskId?: string) => {
     const query = useQuery({
         queryKey: ["task-responses", taskId],
         staleTime: 15_000,
-        cacheTime: 180_000,
+        gcTime: 180_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -258,7 +258,7 @@ export const useExpenses = (year?: number) => {
     const query = useQuery({
         queryKey: ["expenses", year],
         staleTime: 15_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -363,7 +363,7 @@ export const useSuppliers = () => {
     const query = useQuery({
         queryKey: ["suppliers"],
         staleTime: 30_000,
-        cacheTime: 360_000,
+        gcTime: 360_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -469,7 +469,7 @@ export const useInvitations = () => {
     const query = useQuery({
         queryKey: ["invitations"],
         staleTime: 30_000,
-        cacheTime: 360_000,
+        gcTime: 360_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -517,7 +517,7 @@ export const useLogs = () => {
     return useQuery({
         queryKey: ["system-logs"],
         staleTime: 30_000,
-        cacheTime: 600_000,
+        gcTime: 600_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {

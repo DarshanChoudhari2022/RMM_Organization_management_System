@@ -13,7 +13,7 @@ export const useUserProfile = () => {
     const query = useQuery({
         queryKey: ["user-profile"],
         staleTime: 30_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -46,7 +46,7 @@ export const useAllProfiles = () => {
     const query = useQuery({
         queryKey: ["all-profiles"],
         staleTime: 30_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -152,7 +152,7 @@ export const useVarganiSlips = () => {
     const query = useQuery({
         queryKey: ["vargani-slips"],
         staleTime: 15_000,
-        cacheTime: 300_000,
+        gcTime: 300_000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {

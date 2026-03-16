@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     year INTEGER NOT NULL,
     paid_by TEXT DEFAULT 'Mandal',
     is_refunded BOOLEAN DEFAULT FALSE,
+    vendor_name TEXT DEFAULT 'General',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -79,6 +80,12 @@ CREATE TABLE IF NOT EXISTS suppliers (
     contact TEXT NOT NULL,
     address TEXT,
     notes TEXT,
+    total_amount NUMERIC DEFAULT 0,
+    paid_amount NUMERIC DEFAULT 0,
+    terms TEXT,
+    is_confirmed BOOLEAN DEFAULT FALSE,
+    confirmed_at TIMESTAMP WITH TIME ZONE,
+    supplier_comment TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -110,6 +117,17 @@ CREATE TABLE IF NOT EXISTS vargani_slips (
     confirmed_at TIMESTAMP WITH TIME ZONE,
     created_by_user_id UUID,
     created_by_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    payment_mode TEXT DEFAULT 'cash' CHECK (payment_mode IN ('cash', 'online'))
+);
+
+-- 10. Audit Logs Table
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    action TEXT NOT NULL,
+    details TEXT,
+    user_id UUID,
+    user_name TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -123,6 +141,7 @@ ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vargani_slips ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read/write for demo purposes (Development)
 CREATE POLICY "Public Access" ON members FOR ALL USING (true) WITH CHECK (true);
@@ -134,3 +153,4 @@ CREATE POLICY "Public Access" ON invitations FOR ALL USING (true) WITH CHECK (tr
 CREATE POLICY "Public Access" ON suppliers FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public Access" ON user_profiles FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public Access" ON vargani_slips FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Public Access" ON audit_logs FOR ALL USING (true) WITH CHECK (true);

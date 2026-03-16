@@ -2176,7 +2176,7 @@ const Dashboard = () => {
               {activeTab === "invitations" && !isSubAdmin && <InvitationsTab />}
               {activeTab === "suppliers" && !isSubAdmin && <SuppliersTab />}
               {activeTab === "letterhead" && !isSubAdmin && <LetterheadTab />}
-              {activeTab === "vargani-slips" && <VarganiSlipTab />}
+              {activeTab === "vargani-slips" && <VarganiSlipTab year={selectedYear} />}
               {activeTab === "user-management" && !isSubAdmin && <UserManagementTab />}
               {activeTab === "logs" && !isSubAdmin && <LogsTab />}
             </motion.div>

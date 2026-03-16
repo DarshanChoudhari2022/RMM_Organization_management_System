@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, lazy, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -1569,7 +1569,7 @@ const LetterheadTab = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-8 items-start">
         {/* Controls */}
         <div className={`xl:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden lg:block' : ''}`}>
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar sticky top-4">
@@ -1969,6 +1969,8 @@ const Dashboard = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const invalidationQueue = useRef<Set<string>>(new Set());
+  const invalidationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Computes tab instantly without needing a post-render useEffect (fixes flicker bug)
   const activeTab = isSubAdmin ? "vargani-slips" : activeTabState;
@@ -1986,16 +1988,47 @@ const Dashboard = () => {
       if (!session) navigate("/login");
     });
 
-    // Live Portal Updates: Subscribe to Realtime DB changes
-    const publicChannel = supabase.channel('dashboard-live-updates')
-      .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
-        // Invalidate all queries on almost any change so the user instantly sees updates
-        queryClient.invalidateQueries();
-      })
-      .subscribe();
+    const scheduleInvalidation = (queryKey: string) => {
+      invalidationQueue.current.add(queryKey);
+      if (invalidationTimer.current) {
+        clearTimeout(invalidationTimer.current);
+      }
+      invalidationTimer.current = setTimeout(() => {
+        invalidationQueue.current.forEach((key) => {
+          queryClient.invalidateQueries({ queryKey: [key] });
+        });
+        invalidationQueue.current.clear();
+        invalidationTimer.current = null;
+      }, 200);
+    };
+
+    const tableToQueryKey: Record<string, string> = {
+      members: "members",
+      tasks: "tasks",
+      expenses: "expenses",
+      vargani_slips: "vargani-slips",
+      invitations: "invitations",
+      suppliers: "suppliers",
+      task_responses: "task-responses",
+      audit_logs: "system-logs",
+      user_profiles: "user-profile",
+    };
+
+    const publicChannel = supabase.channel('dashboard-live-updates');
+    Object.keys(tableToQueryKey).forEach((table) => {
+      publicChannel.on('postgres_changes', { event: '*', schema: 'public', table }, () => {
+        scheduleInvalidation(tableToQueryKey[table]);
+      });
+    });
+    publicChannel.subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+      if (invalidationTimer.current) {
+        clearTimeout(invalidationTimer.current);
+      }
       supabase.removeChannel(publicChannel);
     };
   }, [navigate, queryClient]);

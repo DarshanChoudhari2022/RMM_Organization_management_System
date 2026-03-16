@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Crown, MapPin, Phone, Mail, ArrowUpRight, Instagram, Facebook } from "lucide-react";
+import { Crown, MapPin, Phone, Mail, ArrowUpRight, Instagram } from "lucide-react";
 
 const Footer = () => {
     return (
@@ -19,9 +19,6 @@ const Footer = () => {
                     <div className="flex gap-4 mt-2">
                         <a href="https://www.instagram.com/r_m_m_group/" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
                             <Instagram size={18} />
-                        </a>
-                        <a href="https://facebook.com/rahulmitramandal" className="w-9 h-9 bg-white border border-[#DBEAFE] rounded-full flex items-center justify-center text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white transition-all shadow-sm">
-                            <Facebook size={18} />
                         </a>
                     </div>
                 </div>

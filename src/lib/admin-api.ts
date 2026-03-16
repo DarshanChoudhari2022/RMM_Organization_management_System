@@ -12,6 +12,10 @@ export const useMembers = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["members", year],
+        staleTime: 15_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             let membersQuery = supabase.from('members').select('*, vargani_payments(*)');
             
@@ -112,6 +116,10 @@ export const useTasks = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["tasks", year],
+        staleTime: 15_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             let q = supabase.from('tasks').select('*');
             if (year) {
@@ -187,6 +195,10 @@ export const useTaskResponses = (taskId?: string) => {
 
     const query = useQuery({
         queryKey: ["task-responses", taskId],
+        staleTime: 15_000,
+        cacheTime: 180_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             if (!taskId) return [];
             const { data, error } = await supabase
@@ -245,6 +257,10 @@ export const useExpenses = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["expenses", year],
+        staleTime: 15_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             let q = supabase.from('expenses').select('*');
             if (year) {
@@ -346,6 +362,10 @@ export const useSuppliers = () => {
 
     const query = useQuery({
         queryKey: ["suppliers"],
+        staleTime: 30_000,
+        cacheTime: 360_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('suppliers')
@@ -448,6 +468,10 @@ export const useInvitations = () => {
 
     const query = useQuery({
         queryKey: ["invitations"],
+        staleTime: 30_000,
+        cacheTime: 360_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('invitations')
@@ -492,6 +516,10 @@ export const useInvitations = () => {
 export const useLogs = () => {
     return useQuery({
         queryKey: ["system-logs"],
+        staleTime: 30_000,
+        cacheTime: 600_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('audit_logs')

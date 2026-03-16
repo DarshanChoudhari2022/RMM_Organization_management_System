@@ -12,6 +12,10 @@ const supabase = supabaseClient as any;
 export const useUserProfile = () => {
     const query = useQuery({
         queryKey: ["user-profile"],
+        staleTime: 30_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session?.user) return null;
@@ -41,6 +45,10 @@ export const useAllProfiles = () => {
 
     const query = useQuery({
         queryKey: ["all-profiles"],
+        staleTime: 30_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('user_profiles')
@@ -143,6 +151,10 @@ export const useVarganiSlips = () => {
 
     const query = useQuery({
         queryKey: ["vargani-slips"],
+        staleTime: 15_000,
+        cacheTime: 300_000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
         queryFn: async () => {
             const { data, error } = await supabase.from('vargani_slips').select('*').order('created_at', { ascending: false });
 

@@ -326,7 +326,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
 
         // 2. Build WhatsApp message
-        const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\n_कृपया पावती (receipt) खाली attach केली आहे._\n\nPowered by https://buzyhub.in/`;
+        const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\nPowered by https://buzyhub.in/`;
 
         // 3. OPEN WHATSAPP IMMEDIATELY — this MUST happen synchronously inside the click handler
         //    Browsers block window.open if it's called after an async operation (like html2canvas).

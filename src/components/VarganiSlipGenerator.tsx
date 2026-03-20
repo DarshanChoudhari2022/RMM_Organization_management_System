@@ -276,76 +276,101 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
     }, []);
 
-    // Share slip via WhatsApp
+    // Share slip via WhatsApp — smooth, fast, cross-device
     const handleShareSlip = useCallback(async (slip: VarganiSlip) => {
         if (slip.status !== 'paid') {
             toast.error("Slip can only be shared after payment is confirmed!");
             return;
         }
 
+        // 1. Sanitize mobile number (ensure exactly 10 digits for Indian numbers)
+        const mobile = (slip.mobile || "").toString().replace(/\D/g, '').slice(-10);
+
+        if (!mobile) {
+            toast.error("No valid WhatsApp number found for this donor.");
+            return;
+        }
+
+        // 2. Build WhatsApp message
+        const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\n_कृपया पावती (receipt) खाली attach केली आहे._`;
+
+        // 3. Build universal WhatsApp URL — wa.me works on ALL devices/browsers
+        //    Opens WhatsApp Web on desktop, WhatsApp app on mobile, no need to save contact
+        const waUrl = `https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`;
+
+        // 4. Set state and start generating the slip image
         setActiveSlip(slip);
         setIsGenerating(true);
-        await new Promise(r => setTimeout(r, 300));
 
         try {
-            const el = document.getElementById('slip-preview-capture');
-            if (!el) throw new Error("Slip preview not found");
+            // Small delay to let React render the off-screen slip preview
+            await new Promise(r => setTimeout(r, 100));
 
+            const el = document.getElementById('slip-preview-capture');
+            if (!el) throw new Error("Slip preview element not found");
+
+            // Generate canvas with optimized settings for speed
             const canvas = await html2canvas(el, {
-                scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                imageTimeout: 0,
             });
 
-            // 1. Always try to copy to clipboard (crucial for WhatsApp paste)
-            try {
-                const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
-                if (blob) {
-                    await navigator.clipboard.write([
-                        new window.ClipboardItem({ 'image/png': blob })
-                    ]);
-                }
-            } catch (err) {
-                console.warn("Clipboard copy failed:", err);
-            }
+            // Convert canvas to blob for clipboard + download
+            const blob = await new Promise<Blob | null>(resolve =>
+                canvas.toBlob(resolve, 'image/png', 0.92)
+            );
 
-            // 2. Download image as record/fallback
-            const link = document.createElement('a');
-            link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            if (blob) {
+                // Step A: Download the slip automatically
+                const objectUrl = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.download = `Vargani_${slip.slip_number || 'slip'}.png`;
+                downloadLink.href = objectUrl;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                // Revoke after a short delay to ensure download starts
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 
-            const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip: ${slip.slip_number}\n\nConfirmed by: ${slip.confirmed_by_name}\n\nदेणगी रोख मिळाली. आभारी आहोत!\n\nPowered by https://buzyhub.in/`;
-
-            // 3. Targeting Strategy
-            if (slip.mobile) {
-                // If we have a mobile number, prioritize opening THAT specific WhatsApp chat
-                window.open(`https://wa.me/91${slip.mobile}?text=${encodeURIComponent(msg)}`, '_blank');
-                toast.success("Opening donor's WhatsApp... Just PASTE (Ctrl+V) the slip image!");
-            } else if (navigator.share && navigator.canShare) {
-                // If no mobile number, use generic Web Share (allows user to pick any app/contact)
+                // Step B: Copy slip image to clipboard (for paste in WhatsApp)
                 try {
-                    const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
-                    if (blob) {
-                        const file = new File([blob], `Vargani_${slip.slip_number}.png`, { type: 'image/png' });
-                        const shareData = {
-                            files: [file],
-                            title: 'राहुल मित्र मंडल - वर्गणी पावती',
-                            text: msg,
-                        };
-                        
-                        if (navigator.canShare(shareData)) {
-                            await navigator.share(shareData);
-                            return;
-                        }
+                    if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                        const clipboardItem = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([clipboardItem]);
                     }
-                } catch (err) {
-                    console.warn("Web Share failed:", err);
+                } catch (clipErr) {
+                    console.warn("Clipboard copy not supported on this device:", clipErr);
+                    // Clipboard copy is a nice-to-have, not a blocker
                 }
+
+                // Step C: Open WhatsApp chat AFTER download + clipboard are done
+                // Using window.location.href for mobile compatibility (avoids popup blockers)
+                // On desktop, window.open works better to avoid leaving the current page
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    // On mobile: use location.href to guarantee WhatsApp app opens
+                    window.location.href = waUrl;
+                } else {
+                    // On desktop: open in new tab (WhatsApp Web)
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                }
+
+                toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat.", {
+                    duration: 5000,
+                });
             } else {
-                toast.success("Slip downloaded & copied to clipboard!");
+                throw new Error("Failed to generate slip image");
             }
         } catch (err) {
             console.error("Share error:", err);
-            toast.error("Sharing failed. Please try again.");
+            // Even if image generation fails, still open WhatsApp so user can send a text message
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+            toast.error("Slip image failed, but WhatsApp chat opened. Try downloading the slip separately.");
         } finally {
             setIsGenerating(false);
         }

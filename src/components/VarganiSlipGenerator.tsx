@@ -74,6 +74,20 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
 
     const slipRef = useRef<HTMLDivElement>(null);
 
+    // Preload slip images on mount so html2canvas doesn't re-fetch them each time
+    useEffect(() => {
+        const imagesToPreload = [
+            '/images/ambedkar-photo.png',
+            '/images/shivaji-photo.png',
+            '/images/deekshabhoomi-stupa.png',
+        ];
+        imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = src;
+        });
+    }, []);
+
     // Year-filtered slips (base filter)
     const yearFilteredSlips = useMemo(() => {
         let result = slips ? [...slips] : [];
@@ -249,25 +263,45 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
     };
 
-    // Generate and download slip image
+    // Generate and download slip image — optimized for speed
     const handleDownloadSlip = useCallback(async (slip: VarganiSlip) => {
         setActiveSlip(slip);
         setIsGenerating(true);
-        await new Promise(r => setTimeout(r, 300));
+        // Minimal delay just to let React render the off-screen preview
+        await new Promise(r => setTimeout(r, 50));
 
         try {
             const el = document.getElementById('slip-preview-capture');
             if (!el) throw new Error("Slip preview not found");
 
             const canvas = await html2canvas(el, {
-                scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false
+                scale: 1.5,           // 1.5x is crisp enough, 56% faster than 2x
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                imageTimeout: 0,      // Don't wait for slow images
+                removeContainer: true, // Clean up cloned DOM immediately
             });
 
-            const link = document.createElement('a');
-            link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            toast.success("Slip downloaded!");
+            // toBlob is async and faster than synchronous toDataURL
+            const blob = await new Promise<Blob | null>(resolve =>
+                canvas.toBlob(resolve, 'image/png', 0.9)
+            );
+
+            if (blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 500);
+                toast.success("Slip downloaded!");
+            } else {
+                throw new Error("Blob generation failed");
+            }
         } catch (err) {
             console.error("Slip generation error:", err);
             toast.error("Slip download failed. Please try again.");
@@ -292,7 +326,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
 
         // 2. Build WhatsApp message
-        const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\n_कृपया पावती (receipt) खाली attach केली आहे._`;
+        const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\n_कृपया पावती (receipt) खाली attach केली आहे._\n\nPowered by https://buzyhub.in/`;
 
         // 3. OPEN WHATSAPP IMMEDIATELY — this MUST happen synchronously inside the click handler
         //    Browsers block window.open if it's called after an async operation (like html2canvas).
@@ -308,23 +342,24 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         toast.info("Opening WhatsApp... Generating slip in background...", { duration: 2000 });
 
         try {
-            // Small delay to let React render the off-screen slip preview
-            await new Promise(r => setTimeout(r, 150));
+            // Minimal delay to let React render the off-screen slip preview
+            await new Promise(r => setTimeout(r, 50));
 
             const el = document.getElementById('slip-preview-capture');
             if (!el) throw new Error("Slip preview element not found");
 
             const canvas = await html2canvas(el, {
-                scale: 2,
+                scale: 1.5,           // 1.5x is crisp enough, much faster than 2x
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
                 allowTaint: true,
                 imageTimeout: 0,
+                removeContainer: true,
             });
 
             const blob = await new Promise<Blob | null>(resolve =>
-                canvas.toBlob(resolve, 'image/png', 0.92)
+                canvas.toBlob(resolve, 'image/png', 0.9)
             );
 
             if (blob) {

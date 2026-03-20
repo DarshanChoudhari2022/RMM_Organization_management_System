@@ -276,14 +276,14 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
     }, []);
 
-    // Share slip via WhatsApp — smooth, fast, cross-device
+    // Share slip via WhatsApp — opens chat IMMEDIATELY, then downloads slip in background
     const handleShareSlip = useCallback(async (slip: VarganiSlip) => {
         if (slip.status !== 'paid') {
             toast.error("Slip can only be shared after payment is confirmed!");
             return;
         }
 
-        // 1. Sanitize mobile number (ensure exactly 10 digits for Indian numbers)
+        // 1. Sanitize mobile number
         const mobile = (slip.mobile || "").toString().replace(/\D/g, '').slice(-10);
 
         if (!mobile) {
@@ -294,22 +294,26 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         // 2. Build WhatsApp message
         const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\n_कृपया पावती (receipt) खाली attach केली आहे._`;
 
-        // 3. Build universal WhatsApp URL — wa.me works on ALL devices/browsers
-        //    Opens WhatsApp Web on desktop, WhatsApp app on mobile, no need to save contact
+        // 3. OPEN WHATSAPP IMMEDIATELY — this MUST happen synchronously inside the click handler
+        //    Browsers block window.open if it's called after an async operation (like html2canvas).
+        //    wa.me works universally: WhatsApp app on mobile, WhatsApp Web on desktop.
+        //    No need to save the contact number.
         const waUrl = `https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank');
 
-        // 4. Set state and start generating the slip image
+        // 4. NOW generate the slip image in the background (download + clipboard)
         setActiveSlip(slip);
         setIsGenerating(true);
 
+        toast.info("Opening WhatsApp... Generating slip in background...", { duration: 2000 });
+
         try {
             // Small delay to let React render the off-screen slip preview
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 150));
 
             const el = document.getElementById('slip-preview-capture');
             if (!el) throw new Error("Slip preview element not found");
 
-            // Generate canvas with optimized settings for speed
             const canvas = await html2canvas(el, {
                 scale: 2,
                 useCORS: true,
@@ -319,13 +323,12 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                 imageTimeout: 0,
             });
 
-            // Convert canvas to blob for clipboard + download
             const blob = await new Promise<Blob | null>(resolve =>
                 canvas.toBlob(resolve, 'image/png', 0.92)
             );
 
             if (blob) {
-                // Step A: Download the slip automatically
+                // Auto-download the slip
                 const objectUrl = URL.createObjectURL(blob);
                 const downloadLink = document.createElement('a');
                 downloadLink.download = `Vargani_${slip.slip_number || 'slip'}.png`;
@@ -333,44 +336,27 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
-                // Revoke after a short delay to ensure download starts
                 setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 
-                // Step B: Copy slip image to clipboard (for paste in WhatsApp)
+                // Copy slip image to clipboard (for paste in WhatsApp chat)
                 try {
                     if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
                         const clipboardItem = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([clipboardItem]);
                     }
                 } catch (clipErr) {
-                    console.warn("Clipboard copy not supported on this device:", clipErr);
-                    // Clipboard copy is a nice-to-have, not a blocker
+                    console.warn("Clipboard copy not supported:", clipErr);
                 }
 
-                // Step C: Open WhatsApp chat AFTER download + clipboard are done
-                // Using window.location.href for mobile compatibility (avoids popup blockers)
-                // On desktop, window.open works better to avoid leaving the current page
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                if (isMobile) {
-                    // On mobile: use location.href to guarantee WhatsApp app opens
-                    window.location.href = waUrl;
-                } else {
-                    // On desktop: open in new tab (WhatsApp Web)
-                    window.open(waUrl, '_blank', 'noopener,noreferrer');
-                }
-
-                toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat.", {
+                toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat (Ctrl+V).", {
                     duration: 5000,
                 });
             } else {
-                throw new Error("Failed to generate slip image");
+                throw new Error("Failed to generate slip image blob");
             }
         } catch (err) {
-            console.error("Share error:", err);
-            // Even if image generation fails, still open WhatsApp so user can send a text message
-            window.open(waUrl, '_blank', 'noopener,noreferrer');
-            toast.error("Slip image failed, but WhatsApp chat opened. Try downloading the slip separately.");
+            console.error("Slip generation error:", err);
+            toast.error("Slip download failed. WhatsApp chat was opened — try downloading the slip separately.");
         } finally {
             setIsGenerating(false);
         }

@@ -310,7 +310,15 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
     }, []);
 
+    // Detect iOS/iPadOS (iPad reports as MacIntel with touch in newer versions)
+    const isIOS = useCallback(() => {
+        const ua = navigator.userAgent;
+        return /iPad|iPhone|iPod/.test(ua) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }, []);
+
     // Share slip via WhatsApp — opens chat IMMEDIATELY, then downloads slip in background
+    // Fully compatible with iOS/iPad Safari, Android, and Desktop browsers
     const handleShareSlip = useCallback(async (slip: VarganiSlip) => {
         if (slip.status !== 'paid') {
             toast.error("Slip can only be shared after payment is confirmed!");
@@ -328,12 +336,18 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         // 2. Build WhatsApp message
         const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\nPowered by https://buzyhub.in/`;
 
-        // 3. OPEN WHATSAPP IMMEDIATELY — this MUST happen synchronously inside the click handler
-        //    Browsers block window.open if it's called after an async operation (like html2canvas).
+        // 3. OPEN WHATSAPP IMMEDIATELY — synchronously inside the click handler
+        //    iOS Safari blocks window.open after async calls, so we use location.href as fallback.
         //    wa.me works universally: WhatsApp app on mobile, WhatsApp Web on desktop.
-        //    No need to save the contact number.
         const waUrl = `https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`;
-        window.open(waUrl, '_blank');
+
+        if (isIOS()) {
+            // iOS: window.open is unreliable — use direct navigation
+            // We open in same tab on iOS because Safari aggressively blocks popups
+            window.location.href = waUrl;
+        } else {
+            window.open(waUrl, '_blank');
+        }
 
         // 4. NOW generate the slip image in the background (download + clipboard)
         setActiveSlip(slip);
@@ -343,7 +357,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
 
         try {
             // Minimal delay to let React render the off-screen slip preview
-            await new Promise(r => setTimeout(r, 50));
+            await new Promise(r => setTimeout(r, 100));
 
             const el = document.getElementById('slip-preview-capture');
             if (!el) throw new Error("Slip preview element not found");
@@ -363,29 +377,64 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             );
 
             if (blob) {
-                // Auto-download the slip
-                const objectUrl = URL.createObjectURL(blob);
-                const downloadLink = document.createElement('a');
-                downloadLink.download = `Vargani_${slip.slip_number || 'slip'}.png`;
-                downloadLink.href = objectUrl;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+                const fileName = `Vargani_${slip.slip_number || 'slip'}.png`;
 
-                // Copy slip image to clipboard (for paste in WhatsApp chat)
-                try {
-                    if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-                        const clipboardItem = new ClipboardItem({ 'image/png': blob });
-                        await navigator.clipboard.write([clipboardItem]);
+                // iOS/iPad: Use Web Share API (native share sheet) — best UX on Apple devices
+                // <a download> click doesn't work reliably on iOS Safari
+                if (isIOS() && navigator.share && typeof File !== 'undefined') {
+                    try {
+                        const file = new File([blob], fileName, { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Vargani Slip',
+                            });
+                            toast.success("✅ Slip shared successfully!", { duration: 3000 });
+                        } else {
+                            // Fallback: open image in new tab so user can long-press to save
+                            const objectUrl = URL.createObjectURL(blob);
+                            window.open(objectUrl, '_blank');
+                            toast.success("✅ Slip opened! Long-press the image to save it.", { duration: 5000 });
+                            setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+                        }
+                    } catch (shareErr: any) {
+                        // User cancelled the share sheet — not an error
+                        if (shareErr?.name !== 'AbortError') {
+                            console.warn("Share API error:", shareErr);
+                            const objectUrl = URL.createObjectURL(blob);
+                            window.open(objectUrl, '_blank');
+                            toast.success("✅ Slip opened! Long-press to save.", { duration: 5000 });
+                            setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+                        }
                     }
-                } catch (clipErr) {
-                    console.warn("Clipboard copy not supported:", clipErr);
-                }
+                } else {
+                    // Desktop / Android: Auto-download works reliably
+                    const objectUrl = URL.createObjectURL(blob);
+                    const downloadLink = document.createElement('a');
+                    downloadLink.download = fileName;
+                    downloadLink.href = objectUrl;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 
-                toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat (Ctrl+V).", {
-                    duration: 5000,
-                });
+                    // Copy slip image to clipboard (for paste in WhatsApp chat)
+                    try {
+                        if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                            // iOS Safari requires blob wrapped in a Promise inside ClipboardItem
+                            const clipboardItem = new ClipboardItem({
+                                'image/png': Promise.resolve(blob)
+                            });
+                            await navigator.clipboard.write([clipboardItem]);
+                        }
+                    } catch (clipErr) {
+                        console.warn("Clipboard copy not supported:", clipErr);
+                    }
+
+                    toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat (Ctrl+V).", {
+                        duration: 5000,
+                    });
+                }
             } else {
                 throw new Error("Failed to generate slip image blob");
             }
@@ -395,7 +444,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         } finally {
             setIsGenerating(false);
         }
-    }, []);
+    }, [isIOS]);
 
     const groupedSlips = useMemo(() => {
         if (groupBy === 'none') return [['All Slips', filteredSlips]] as const;

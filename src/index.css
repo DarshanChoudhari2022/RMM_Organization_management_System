@@ -6,7 +6,6 @@
 
 @layer base {
   :root {
-    /* Ambedkar Theme Colors - Premium Dark Mode */
     /* Ambedkar Theme Colors - Clean White & Blue */
     --background: 0 0% 100%; /* Pure White */
     --foreground: 222 47% 11%; /* Dark Navy #0B192C for text */
@@ -31,21 +30,38 @@
     --ring: 221 83% 53%;
     
     --radius: 0.5rem;
+
+    /* iPhone Safe Area Variables */
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
   }
 
   * {
     @apply border-border;
+    /* Disable iOS tap highlight — prevents blue flash on touch */
+    -webkit-tap-highlight-color: transparent;
   }
 
   html {
     scroll-behavior: smooth;
+    /* Prevent iOS text size adjust on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground antialiased font-sans;
     font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
-    font-size: 16px; /* Professional base size */
+    font-size: 16px; /* Professional base size — also prevents iOS zoom on focus */
     line-height: 1.6;
+    /* Pad content away from the notch, home indicator, and rounded corners */
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    /* Prevent overscroll bounce on iOS */
+    overscroll-behavior: none;
+    /* Smooth momentum scrolling everywhere */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Typography: Professional & Responsive */
@@ -59,22 +75,51 @@
   h3 { @apply text-2xl md:text-3xl mb-4; }
   
   p {
-    @apply text-foreground/80 font-normal leading-relaxed text-base md:text-lg; /* Slightly larger for readability */
+    @apply text-foreground/80 font-normal leading-relaxed text-base md:text-lg;
+  }
+
+  /* ─── iPhone Input Fixes ─────────────────────────────────────────── */
+  /* Prevent iOS zoom on focus by ensuring minimum 16px font */
+  input, select, textarea {
+    font-size: 16px !important;
+    /* Remove iOS default styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.75rem; /* match the rounded-xl used in the app */
+  }
+
+  /* Restore select dropdown arrow */
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 24 24' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px !important;
+  }
+
+  /* iOS smooth scrolling for all scrollable elements */
+  [class*="overflow-y-auto"],
+  [class*="overflow-x-auto"],
+  [class*="overflow-auto"] {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
 @layer components {
-  /* Mobile Responsive Button - Consolidated */
+  /* Mobile Responsive Button - Consolidated with 44px min touch target */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 bg-primary text-primary-foreground font-sans font-bold uppercase tracking-widest text-xs md:text-sm rounded-lg transition-all shadow-md hover:bg-primary/90 hover:shadow-lg active:scale-95 w-full md:w-auto;
+    min-height: 44px; /* iOS HIG minimum touch target */
   }
   
   .btn-secondary {
      @apply inline-flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 bg-secondary text-secondary-foreground font-sans font-bold uppercase tracking-widest text-xs md:text-sm rounded-lg transition-all shadow-md hover:bg-secondary/90 hover:shadow-lg active:scale-95 w-full md:w-auto;
+     min-height: 44px;
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 border-2 border-foreground/20 text-foreground font-sans font-bold uppercase tracking-widest text-xs md:text-sm rounded-lg transition-all hover:bg-foreground hover:text-background w-full md:w-auto;
+    min-height: 44px;
   }
 
   /* Components */
@@ -84,20 +129,137 @@
   
   .input-clean {
     @apply w-full bg-white border border-foreground/20 rounded-lg px-4 py-3 text-foreground placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-sans;
+    min-height: 44px;
+  }
+
+  /* ─── iPhone Bottom Tab Bar ──────────────────────────────────────── */
+  .mobile-bottom-tabs {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    /* Account for iPhone home indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mobile-tab-button {
+    @apply flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all;
+    min-height: 50px;
+    min-width: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tab-button.active {
+    @apply text-[#1D4ED8];
+  }
+
+  .mobile-tab-button:not(.active) {
+    @apply text-[#0F172A]/40;
+  }
+
+  /* ─── iPhone Modal Styles ────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .modal-content-iphone {
+      border-radius: 1.5rem 1.5rem 0 0 !important;
+      margin-top: auto !important;
+      max-height: calc(100vh - env(safe-area-inset-top, 0px) - 20px) !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+  }
+
+  /* ─── iPhone Safe Area Utilities ─────────────────────────────────── */
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .safe-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+  .safe-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Add padding at bottom of main content to avoid overlap with bottom tabs (mobile only) */
+  @media (max-width: 1023px) {
+    .has-bottom-tabs {
+      padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    }
   }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
+/* Scrollbar styling — hide on mobile for cleaner UI */
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary) / 0.5);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--primary));
+  }
 }
-::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+
+/* Hide scrollbar on mobile */
+@media (max-width: 1023px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    scrollbar-width: none;
+  }
 }
-::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--primary) / 0.5);
+
+/* Utility: hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar for editors */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.15);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--primary));
+
+/* ─── Touch-Friendly Enhancements ──────────────────────────────── */
+@media (max-width: 640px) {
+  /* Make all interactive elements have minimum iOS HIG touch targets */
+  button, 
+  a, 
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Reduce letter-spacing on mobile for better readability */
+  .tracking-widest {
+    letter-spacing: 0.08em;
+  }
+  .tracking-wider {
+    letter-spacing: 0.04em;
+  }
 }

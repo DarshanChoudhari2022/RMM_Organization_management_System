@@ -30,7 +30,9 @@ import {
   ClipboardList,
   Activity,
   Receipt,
-  UserCog
+  UserCog,
+  MoreVertical,
+  Edit3
 } from "lucide-react";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -43,15 +45,131 @@ import { toast } from "sonner";
 const VarganiSlipTab = lazy(() => import("@/components/VarganiSlipGenerator"));
 const UserManagementTab = lazy(() => import("@/components/UserManagement"));
 
+// iPhone Bottom Tab Bar Component
+const BottomTabBar = ({ activeTab, onTabChange, isSubAdmin }: { activeTab: string, onTabChange: (tab: string) => void, isSubAdmin: boolean }) => {
+  const [showMore, setShowMore] = useState(false);
+
+  // Primary tabs to show in bottom bar (max 5)
+  const primaryTabs = isSubAdmin ? [
+    { id: 'vargani-slips', label: 'Slips', icon: Receipt },
+  ] : [
+    { id: 'members', label: 'Members', icon: Users },
+    { id: 'vargani-slips', label: 'Slips', icon: Receipt },
+    { id: 'expenses', label: 'Expenses', icon: Wallet },
+    { id: 'tasks', label: 'Tasks', icon: Shield },
+    { id: 'more', label: 'More', icon: MoreHorizontal },
+  ];
+
+  // Overflow tabs (hidden for sub-admins)
+  const overflowTabs = isSubAdmin ? [] : [
+    { id: 'suppliers', label: 'Suppliers', icon: Users },
+    { id: 'letterhead', label: 'Letterhead', icon: FileText },
+    { id: 'invitations', label: 'Invitations', icon: Send },
+    { id: 'user-management', label: 'User Mgmt', icon: UserCog },
+    { id: 'logs', label: 'Logs', icon: ClipboardList },
+  ];
+
+  const isOverflowActive = overflowTabs.some(t => t.id === activeTab);
+
+  return (
+    <>
+      {/* Overflow Menu Sheet */}
+      <AnimatePresence>
+        {showMore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[55]"
+            onClick={() => setShowMore(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl"
+              style={{ paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}
+            >
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-4" />
+              <div className="px-4 pb-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-[#0F172A]/40 mb-3 px-2">More Options</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {overflowTabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        onTabChange(tab.id);
+                        setShowMore(false);
+                      }}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-95 ${
+                        activeTab === tab.id
+                          ? 'bg-[#1D4ED8]/10 text-[#1D4ED8]'
+                          : 'text-[#0F172A]/60 hover:bg-gray-50 active:bg-gray-100'
+                      }`}
+                    >
+                      <tab.icon size={22} />
+                      <span className="text-[9px] font-bold uppercase tracking-wider">{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom Tab Bar */}
+      <div className="mobile-bottom-tabs lg:hidden">
+        <div className="flex items-stretch justify-around px-2">
+          {primaryTabs.map(tab => {
+            if (tab.id === 'more') {
+              return (
+                <button
+                  key="more"
+                  onClick={() => setShowMore(true)}
+                  className={`mobile-tab-button flex-1 ${isOverflowActive ? 'active' : ''}`}
+                >
+                  <tab.icon size={22} strokeWidth={isOverflowActive ? 2.5 : 1.5} />
+                  <span className="text-[9px] font-bold tracking-wide">{tab.label}</span>
+                  {isOverflowActive && (
+                    <div className="w-1 h-1 rounded-full bg-[#1D4ED8] -mt-0.5" />
+                  )}
+                </button>
+              );
+            }
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`mobile-tab-button flex-1 ${isActive ? 'active' : ''}`}
+              >
+                <tab.icon size={22} strokeWidth={isActive ? 2.5 : 1.5} />
+                <span className="text-[9px] font-bold tracking-wide">{tab.label}</span>
+                {isActive && (
+                  <div className="w-1 h-1 rounded-full bg-[#1D4ED8] -mt-0.5" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+};
+
 // --- Components ---
 
 const SidebarItem = ({ id, label, icon: Icon, active, onClick }: any) => (
   <button
     onClick={() => onClick(id)}
-    className={`w-full flex items-center gap-4 px-6 py-4 transition-all relative rounded-xl text-left mb-1 font-bold ${active
+    className={`w-full flex items-center gap-4 px-6 py-4 transition-all relative rounded-xl text-left mb-1 font-bold active:scale-[0.98] ${active
       ? "bg-[#1D4ED8]/10 text-[#1D4ED8]"
       : "text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5"
       }`}
+    style={{ minHeight: '48px' }}
   >
     <Icon size={20} className={active ? "text-[#1D4ED8]" : "text-[#0F172A]/40"} />
     <span className="text-[11px] uppercase tracking-[0.15em]">{label}</span>
@@ -284,24 +402,65 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
           const vargani = member.varganiHistory.find(v => v.year === year);
           const isPaid = vargani?.paid;
           const amount = vargani?.amount || 1500;
+          const isEditing = editingVargani?.id === member.id;
           return (
-            <div key={member.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div key={member.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-bold text-[#0F172A] text-lg leading-tight">{member.name}</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.1em] text-[#0F172A]/40 mt-1">{member.role}</div>
+                  <div className="font-bold text-[#0F172A] text-base leading-tight">{member.name}</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.1em] text-[#0F172A]/40 mt-0.5">{member.role}</div>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500"}`}>
                   {isPaid ? "Paid" : "Pending"}
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-xl flex justify-between items-center">
-                <div className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]/40">Vargani ({year})</div>
-                <div className="text-lg font-black text-[#0F172A]">₹{amount}</div>
+              {/* Vargani Amount — with inline edit */}
+              <div className="bg-gray-50 p-3 rounded-xl">
+                {isEditing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]/40">Vargani ({year})</div>
+                    <div className="flex items-center gap-2 ml-auto">
+                      <span className="text-sm font-bold">₹</span>
+                      <input
+                        type="number"
+                        className="w-20 px-2 py-1.5 border border-[#1D4ED8] rounded-lg text-sm font-bold outline-none"
+                        value={editingVargani.amount}
+                        onChange={(e) => setEditingVargani({ ...editingVargani, amount: parseInt(e.target.value) || 0 })}
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => saveVarganiAmount(member.id, editingVargani.amount)}
+                        className="p-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
+                      >
+                        <CheckCircle2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => setEditingVargani(null)}
+                        className="p-1.5 bg-red-50 text-red-500 rounded-lg hover:bg-red-100"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]/40">Vargani ({year})</div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-lg font-black text-[#0F172A]">₹{amount}</div>
+                      <button
+                        onClick={() => setEditingVargani({ id: member.id, amount })}
+                        className="p-1.5 text-[#1D4ED8]/50 hover:text-[#1D4ED8] hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Amount"
+                      >
+                        <Edit3 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+              <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                 <a href={`tel:${member.phone}`} className="flex items-center gap-2 text-sm text-[#0F172A]/70 font-mono">
                   <Phone size={14} className="text-[#1D4ED8]" /> {member.phone}
                 </a>
@@ -309,9 +468,9 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
                   <button onClick={() => {
                         const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - राहुल मित्र मंडळ`;
                         window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                  }} className="p-3 bg-green-50 text-green-600 rounded-xl"><MessageSquare size={18} /></button>
-                  <button onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })} className="p-3 bg-blue-50 text-[#1D4ED8] rounded-xl"><CheckCircle2 size={18} /></button>
-                  {!isSubAdmin && <button onClick={() => deleteMember.mutate(member.id)} className="p-3 bg-red-50 text-red-400 rounded-xl"><Trash2 size={18} /></button>}
+                  }} className="p-2.5 bg-green-50 text-green-600 rounded-xl" title="WhatsApp"><MessageSquare size={16} /></button>
+                  <button onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })} className="p-2.5 bg-blue-50 text-[#1D4ED8] rounded-xl" title={isPaid ? "Mark Pending" : "Mark Paid"}><CheckCircle2 size={16} /></button>
+                  {!isSubAdmin && <button onClick={() => deleteMember.mutate(member.id)} className="p-2.5 bg-red-50 text-red-400 rounded-xl" title="Delete"><Trash2 size={16} /></button>}
                 </div>
               </div>
             </div>
@@ -324,11 +483,12 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
         {isAddOpen && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
           >
             <motion.div
-              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl"
+              initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md p-6 sm:p-8 shadow-2xl max-h-[92vh] overflow-y-auto"
             >
               <h3 className="text-xl font-display font-black text-[#0F172A] mb-6">Add New Member</h3>
               <div className="space-y-4">
@@ -363,9 +523,9 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
                   </select>
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
-                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
-                <button onClick={handleAdd} className="flex-1 py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#B94A15]">Add Member</button>
+              <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]" style={{ minHeight: '48px' }}>Cancel</button>
+                <button onClick={handleAdd} className="flex-1 py-3.5 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#B94A15] active:scale-[0.98]" style={{ minHeight: '48px' }}>Add Member</button>
               </div>
             </motion.div>
           </motion.div>
@@ -624,11 +784,12 @@ const TasksTab = ({ year }: { year: number }) => {
         {isAddOpen && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
           >
             <motion.div
-              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+              initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[92vh] sm:max-h-[90vh]"
             >
               <h3 className="text-xl font-display font-black text-[#0F172A] mb-6">{editingTask ? "Edit Task" : "Assign New Task"}</h3>
               <div className="space-y-4">
@@ -680,17 +841,18 @@ const TasksTab = ({ year }: { year: number }) => {
                   />
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
+              <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
                 <button
                   onClick={() => {
                     setIsAddOpen(false);
                     setEditingTask(null);
                   }}
-                  className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200"
+                  className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]"
+                  style={{ minHeight: '48px' }}
                 >
                   Cancel
                 </button>
-                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90">
+                <button onClick={handleSave} className="flex-1 py-3.5 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90 active:scale-[0.98]" style={{ minHeight: '48px' }}>
                   {editingTask ? "Update Task" : "Create Task"}
                 </button>
               </div>
@@ -915,11 +1077,12 @@ const ExpensesTab = ({ year }: { year: number }) => {
         {isAddOpen && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
           >
             <motion.div
-              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-sm p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+              initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-sm p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[92vh] sm:max-h-[90vh]"
             >
               <h3 className="text-xl font-display font-black text-[#0F172A] mb-6">{editingEx ? "Edit Expense" : "Log Expense"}</h3>
               <div className="space-y-4">
@@ -989,9 +1152,9 @@ const ExpensesTab = ({ year }: { year: number }) => {
                   </select>
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
-                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
-                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90">{editingEx ? "Update" : "Add"}</button>
+              <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]" style={{ minHeight: '48px' }}>Cancel</button>
+                <button onClick={handleSave} className="flex-1 py-3.5 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90 active:scale-[0.98]" style={{ minHeight: '48px' }}>{editingEx ? "Update" : "Add"}</button>
               </div>
             </motion.div>
           </motion.div>
@@ -1256,11 +1419,12 @@ const SuppliersTab = () => {
         {isAddOpen && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
           >
             <motion.div
-              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+              initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[92vh] sm:max-h-[90vh]"
             >
               <h3 className="text-xl font-display font-black text-[#0F172A] mb-6">{editingSup ? "Edit Supplier" : "Add Supplier"}</h3>
               <div className="space-y-4">
@@ -1355,9 +1519,9 @@ const SuppliersTab = () => {
                   />
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
-                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
-                <button onClick={handleSave} className="flex-1 py-3 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90">{editingSup ? "Update" : "Add"}</button>
+              <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                <button onClick={() => setIsAddOpen(false)} className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]" style={{ minHeight: '48px' }}>Cancel</button>
+                <button onClick={handleSave} className="flex-1 py-3.5 text-white font-bold text-sm bg-[#1D4ED8] rounded-xl hover:bg-[#1D4ED8]/90 active:scale-[0.98]" style={{ minHeight: '48px' }}>{editingSup ? "Update" : "Add"}</button>
               </div>
             </motion.div>
           </motion.div>
@@ -1613,7 +1777,7 @@ const LetterheadTab = () => {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         {/* Controls - Hide on small screens when in preview mode */}
         <div className={`xl:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden xl:block' : 'block'}`}>
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto custom-scrollbar sticky top-4">
+          <div className="bg-white p-5 md:p-6 rounded-3xl border border-gray-100 shadow-xl space-y-5 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100vh - 220px)' }}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xl font-display font-black text-[#0F172A]">Letter Details</h3>
               <div className="text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] bg-[#1D4ED8]/5 px-2 py-1 rounded">Editor</div>
@@ -2100,9 +2264,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col lg:flex-row font-sans overflow-hidden">
+    <div className="h-screen bg-[#FDFBF7] flex flex-col lg:flex-row font-sans">
       {/* Mobile & Tablet Header (Show on screens smaller than lg) */}
-      <div className="lg:hidden bg-white p-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-30 shrink-0 shadow-sm">
+      <div className="lg:hidden bg-white/95 backdrop-blur-lg p-4 flex items-center justify-between border-b border-gray-100/80 sticky top-0 z-30 shrink-0 shadow-sm safe-top">
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
@@ -2112,7 +2276,8 @@ const Dashboard = () => {
         </div>
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="p-2 text-[#0F172A]/70 hover:bg-[#F5F5F0] rounded-lg transition-colors border border-gray-100"
+          className="p-3 text-[#0F172A]/70 hover:bg-[#F5F5F0] rounded-xl transition-colors border border-gray-100 active:scale-95"
+          style={{ minHeight: '44px', minWidth: '44px' }}
         >
           <Menu size={20} />
         </button>
@@ -2126,27 +2291,31 @@ const Dashboard = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileOpen(false)}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           />
         )}
       </AnimatePresence>
 
       {/* Sidebar */}
       <aside className={`
-                fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
-                lg:relative lg:translate-x-0
+                fixed inset-y-0 left-0 w-[85vw] max-w-[320px] bg-white border-r border-gray-100 flex flex-col z-[60] transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none overflow-hidden
+                lg:relative lg:w-72 lg:max-w-none lg:translate-x-0
                 ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
-        <div className="p-8 border-b border-gray-50 bg-white flex flex-col gap-4">
+        <div className="p-6 lg:p-8 border-b border-gray-50 bg-white flex flex-col gap-4 safe-top shrink-0">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <img src="/images/logo.png" className="w-14 h-14 object-contain drop-shadow-lg" alt="Logo" />
+              <img src="/images/logo.png" className="w-12 h-12 lg:w-14 lg:h-14 object-contain drop-shadow-lg" alt="Logo" />
               <div>
-                <span className="font-display font-black text-lg tracking-tight text-[#0F172A] block leading-none uppercase text-primary">राहुल मित्र मंडळ</span>
+                <span className="font-display font-black text-base lg:text-lg tracking-tight text-[#0F172A] block leading-none uppercase text-primary">राहुल मित्र मंडळ</span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#1D4ED8]">दापोडी, पुणे</span>
               </div>
             </div>
-            <button onClick={() => setIsMobileOpen(false)} className="md:hidden text-[#0F172A]/60 hover:text-red-500 transition-colors">
+            <button 
+              onClick={() => setIsMobileOpen(false)} 
+              className="lg:hidden p-3 text-[#0F172A]/60 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors active:scale-95"
+              style={{ minHeight: '44px', minWidth: '44px' }}
+            >
               <X size={20} />
             </button>
           </div>
@@ -2163,7 +2332,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <nav className="flex-1 p-4 overflow-y-auto">
+        <nav className="flex-1 p-4 overflow-y-auto min-h-0">
           {!isSubAdmin && (
             <>
               <SidebarItem id="members" label="Members & Vargani" icon={Users} active={activeTab === "members"} onClick={handleTabChange} />
@@ -2183,8 +2352,12 @@ const Dashboard = () => {
           )}
         </nav>
 
-        <div className="p-4 border-t border-gray-50 bg-[#FDFBF7]">
-          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-4 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-xs uppercase tracking-wider group bg-white border border-gray-200 shadow-sm hover:border-red-200">
+        <div className="p-4 border-t border-gray-50 bg-[#FDFBF7] safe-bottom shrink-0">
+          <button 
+            onClick={handleLogout} 
+            className="w-full flex items-center gap-4 px-6 py-4 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold text-xs uppercase tracking-wider group bg-white border border-gray-200 shadow-sm hover:border-red-200 active:scale-[0.98]"
+            style={{ minHeight: '48px' }}
+          >
             <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
             Logout
           </button>
@@ -2192,24 +2365,24 @@ const Dashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] lg:h-screen">
+      <main className="flex-1 relative flex flex-col min-h-0 h-[calc(100vh-65px)] lg:h-screen">
         {/* Header with Global Year Selector */}
-        <div className="bg-white border-b border-gray-100 p-4 sm:px-6 lg:px-12 flex items-center justify-between shrink-0">
-          <h1 className="text-xl md:text-2xl font-black text-[#0F172A] capitalize">{activeTab}</h1>
-          <div className="flex items-center gap-4">
+        <div className="bg-white/95 backdrop-blur-lg border-b border-gray-100/80 p-3 sm:px-6 lg:px-12 flex items-center justify-between shrink-0">
+          <h1 className="text-lg md:text-2xl font-black text-[#0F172A] capitalize truncate mr-2">{activeTab.replace(/-/g, ' ')}</h1>
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <span className="text-xs font-black uppercase tracking-widest text-[#0F172A]/40 hidden md:block">Active Year</span>
             <YearSelector selected={selectedYear} onChange={setSelectedYear} />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-12 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-12 scrollbar-hide">
           <Suspense fallback={<div className="p-12 text-center text-sm font-bold text-gray-400 animate-pulse">Loading {activeTab}...</div>}>
             <motion.div
               key={`${activeTab}-${selectedYear}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
+              className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8 pb-28 lg:pb-4"
             >
               {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} isSubAdmin={isSubAdmin} />}
               {activeTab === "tasks" && !isSubAdmin && <TasksTab year={selectedYear} />}
@@ -2224,6 +2397,9 @@ const Dashboard = () => {
           </Suspense>
         </div>
       </main>
+
+      {/* iPhone Bottom Tab Bar */}
+      <BottomTabBar activeTab={activeTab} onTabChange={handleTabChange} isSubAdmin={isSubAdmin} />
     </div>
   );
 };

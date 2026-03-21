@@ -9,11 +9,44 @@ const supabase = supabaseClient as any;
 // User Profiles & Role Management
 // ==========================================
 
+// Cache user info in memory to avoid repeated Supabase calls
+let _cachedUser: { userId: string; userName: string; expiresAt: number } | null = null;
+
+const getCachedUserName = async (): Promise<{ userId: string | undefined; userName: string }> => {
+    // Return cached if still valid (5 minutes)
+    if (_cachedUser && Date.now() < _cachedUser.expiresAt) {
+        return { userId: _cachedUser.userId, userName: _cachedUser.userName };
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+    let userName = user?.email?.split('@')[0] || 'Unknown';
+
+    if (user) {
+        const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('display_name')
+            .eq('auth_user_id', user.id)
+            .single();
+        if (profile?.display_name) userName = profile.display_name;
+    }
+
+    // Cache for 5 minutes
+    if (user) {
+        _cachedUser = { userId: user.id, userName, expiresAt: Date.now() + 5 * 60 * 1000 };
+    }
+
+    return { userId: user?.id, userName };
+};
+
+// Clear cached user on logout
+export const clearCachedUser = () => { _cachedUser = null; };
+
 export const useUserProfile = () => {
     const query = useQuery({
         queryKey: ["user-profile"],
-        staleTime: 30_000,
-        gcTime: 300_000,
+        staleTime: 5 * 60 * 1000,   // 5 min — profile rarely changes
+        gcTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -27,10 +60,7 @@ export const useUserProfile = () => {
 
             if (error) throw error;
             
-            // If no profile exists, the user is not an authorized admin/subadmin
             if (!data || data.length === 0) {
-                // You might want to sign the user out or redirect here
-                // For now, we return null so the UI can handle the unauthorized state
                 return null;
             }
 
@@ -45,8 +75,8 @@ export const useAllProfiles = () => {
 
     const query = useQuery({
         queryKey: ["all-profiles"],
-        staleTime: 30_000,
-        gcTime: 300_000,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -74,17 +104,13 @@ export const useAllProfiles = () => {
                 .eq('id', id);
 
             if (error) throw error;
+            // Clear user cache since a profile changed
+            _cachedUser = null;
             createLog("User Role Changed", `Changed user role to ${role}${display_name ? ` (Name: ${display_name})` : ''}`);
         },
-        // Optimistic Update
         onMutate: async (newUserData) => {
-            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
             await queryClient.cancelQueries({ queryKey: ["all-profiles"] });
-
-            // Snapshot the previous value
             const previousProfiles = queryClient.getQueryData<UserProfile[]>(["all-profiles"]);
-
-            // Optimistically update to the new value
             if (previousProfiles) {
                 queryClient.setQueryData<UserProfile[]>(["all-profiles"], (old) =>
                     old?.map((profile) =>
@@ -94,17 +120,13 @@ export const useAllProfiles = () => {
                     )
                 );
             }
-
-            // Return a context object with the snapshotted value
             return { previousProfiles };
         },
-        // If the mutation fails, use the context returned from onMutate to roll back
         onError: (err, newUserData, context) => {
             if (context?.previousProfiles) {
                 queryClient.setQueryData(["all-profiles"], context.previousProfiles);
             }
         },
-        // Always refetch after error or success to ensure we're in sync with the server
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ["all-profiles"] });
             queryClient.invalidateQueries({ queryKey: ["user-profile"] });
@@ -115,35 +137,15 @@ export const useAllProfiles = () => {
 };
 
 // ==========================================
-// Vargani Slips
+// Vargani Slips — Performance Optimized
 // ==========================================
 
-// Helper: Get current user's display name from profile
-const getCurrentUserName = async (): Promise<{ userId: string | undefined; userName: string }> => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    let userName = user?.email?.split('@')[0] || 'Unknown';
-
-    if (user) {
-        const { data: profile } = await supabase
-            .from('user_profiles')
-            .select('display_name')
-            .eq('auth_user_id', user.id)
-            .single();
-        if (profile?.display_name) userName = profile.display_name;
-    }
-
-    return { userId: user?.id, userName };
-};
-
-// Helper: Generate slip number SGP-YYYY-XXXX
-const generateSlipNumber = async (): Promise<string> => {
+// Generate slip number using timestamp + random — ZERO network calls
+const generateSlipNumberFast = (): string => {
     const year = new Date().getFullYear();
-    const { count } = await supabase
-        .from('vargani_slips')
-        .select('*', { count: 'exact', head: true });
-    const num = ((count || 0) + 1).toString().padStart(4, '0');
-    return `SGP-${year}-${num}`;
+    const ts = Date.now().toString(36).slice(-4).toUpperCase();
+    const rand = Math.random().toString(36).slice(2, 4).toUpperCase();
+    return `SGP-${year}-${ts}${rand}`;
 };
 
 export const useVarganiSlips = () => {
@@ -151,8 +153,8 @@ export const useVarganiSlips = () => {
 
     const query = useQuery({
         queryKey: ["vargani-slips"],
-        staleTime: 15_000,
-        gcTime: 300_000,
+        staleTime: 60_000,          // 1 min — reduce refetch frequency
+        gcTime: 10 * 60 * 1000,     // 10 min cache
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -178,8 +180,11 @@ export const useVarganiSlips = () => {
             tentative_date?: string | null;
             payment_mode?: 'cash' | 'online' | null;
         }) => {
-            const { userId, userName } = await getCurrentUserName();
-            const slipNumber = await generateSlipNumber();
+            // Parallel: get user name + generate slip number simultaneously
+            const [{ userId, userName }, slipNumber] = await Promise.all([
+                getCachedUserName(),
+                Promise.resolve(generateSlipNumberFast())
+            ]);
 
             const insertData: any = {
                 name: newSlip.name,
@@ -215,7 +220,36 @@ export const useVarganiSlips = () => {
             createLog("Vargani Slip Created", `Slip ${slipNumber} for ${newSlip.name} - ₹${newSlip.amount} (${newSlip.status})`);
             return data as VarganiSlip;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
+        // Optimistic Update: Add to list immediately
+        onMutate: async (newSlip) => {
+            await queryClient.cancelQueries({ queryKey: ["vargani-slips"] });
+            const previous = queryClient.getQueryData<VarganiSlip[]>(["vargani-slips"]);
+            const optimistic: VarganiSlip = {
+                id: `temp-${Date.now()}`,
+                name: newSlip.name,
+                shop_name: newSlip.shop_name,
+                amount: newSlip.amount,
+                location: newSlip.location,
+                address: newSlip.address || '',
+                mobile: newSlip.mobile,
+                status: newSlip.status,
+                slip_number: generateSlipNumberFast(),
+                created_at: new Date().toISOString(),
+                created_by_user_id: _cachedUser?.userId || '',
+                created_by_name: _cachedUser?.userName || 'Admin',
+                payment_mode: newSlip.payment_mode || 'cash',
+                tentative_date: newSlip.tentative_date || null,
+                confirmed_at: newSlip.status === 'paid' ? new Date().toISOString() : null,
+                confirmed_by_user_id: newSlip.status === 'paid' ? (_cachedUser?.userId || '') : null,
+                confirmed_by_name: newSlip.status === 'paid' ? (_cachedUser?.userName || 'Admin') : null,
+            } as VarganiSlip;
+            queryClient.setQueryData<VarganiSlip[]>(["vargani-slips"], (old) => [optimistic, ...(old || [])]);
+            return { previous };
+        },
+        onError: (err, newSlip, context) => {
+            if (context?.previous) queryClient.setQueryData(["vargani-slips"], context.previous);
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });
 
     const updateSlip = useMutation({
@@ -231,9 +265,8 @@ export const useVarganiSlips = () => {
             tentative_date?: string | null;
             payment_mode?: 'cash' | 'online' | null;
         }) => {
-            const { userId, userName } = await getCurrentUserName();
+            const { userId, userName } = await getCachedUserName();
 
-            // Build update object with only provided fields
             const updateData: any = {};
             if (update.name !== undefined) updateData.name = update.name;
             if (update.shop_name !== undefined) updateData.shop_name = update.shop_name;
@@ -244,7 +277,6 @@ export const useVarganiSlips = () => {
             if (update.tentative_date !== undefined) updateData.tentative_date = update.tentative_date;
             if (update.payment_mode !== undefined) updateData.payment_mode = update.payment_mode;
 
-            // Handle status change
             if (update.status !== undefined) {
                 updateData.status = update.status;
                 if (update.status === 'paid') {
@@ -252,7 +284,6 @@ export const useVarganiSlips = () => {
                     updateData.confirmed_by_name = userName;
                     updateData.confirmed_at = new Date().toISOString();
                 } else if (update.status === 'pending') {
-                    // Reverting to pending clears confirmation
                     updateData.confirmed_by_user_id = null;
                     updateData.confirmed_by_name = null;
                     updateData.confirmed_at = null;
@@ -270,12 +301,24 @@ export const useVarganiSlips = () => {
             createLog("Vargani Slip Updated", `Updated slip ${data.slip_number} - ${data.name} - ₹${data.amount} (${data.status})`);
             return data as VarganiSlip;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
+        // Optimistic Update
+        onMutate: async (update) => {
+            await queryClient.cancelQueries({ queryKey: ["vargani-slips"] });
+            const previous = queryClient.getQueryData<VarganiSlip[]>(["vargani-slips"]);
+            queryClient.setQueryData<VarganiSlip[]>(["vargani-slips"], (old) =>
+                old?.map(s => s.id === update.id ? { ...s, ...update } as VarganiSlip : s)
+            );
+            return { previous };
+        },
+        onError: (err, update, context) => {
+            if (context?.previous) queryClient.setQueryData(["vargani-slips"], context.previous);
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });
 
     const confirmPayment = useMutation({
         mutationFn: async ({ id, payment_mode }: { id: string; payment_mode?: 'cash' | 'online' }) => {
-            const { userId, userName } = await getCurrentUserName();
+            const { userId, userName } = await getCachedUserName();
 
             const updateData: any = {
                 status: 'paid',
@@ -299,7 +342,24 @@ export const useVarganiSlips = () => {
             createLog("Payment Confirmed", `Confirmed payment for slip ${data.slip_number} - ${data.name} - ₹${data.amount}`);
             return data as VarganiSlip;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
+        // Optimistic: mark as paid instantly
+        onMutate: async ({ id }) => {
+            await queryClient.cancelQueries({ queryKey: ["vargani-slips"] });
+            const previous = queryClient.getQueryData<VarganiSlip[]>(["vargani-slips"]);
+            queryClient.setQueryData<VarganiSlip[]>(["vargani-slips"], (old) =>
+                old?.map(s => s.id === id ? {
+                    ...s,
+                    status: 'paid' as const,
+                    confirmed_at: new Date().toISOString(),
+                    confirmed_by_name: _cachedUser?.userName || 'Admin'
+                } : s)
+            );
+            return { previous };
+        },
+        onError: (err, vars, context) => {
+            if (context?.previous) queryClient.setQueryData(["vargani-slips"], context.previous);
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });
 
     const deleteSlip = useMutation({
@@ -308,7 +368,17 @@ export const useVarganiSlips = () => {
             if (error) throw error;
             createLog("Vargani Slip Deleted", `Deleted slip ID: ${id}`);
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
+        // Optimistic: remove from list instantly
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ["vargani-slips"] });
+            const previous = queryClient.getQueryData<VarganiSlip[]>(["vargani-slips"]);
+            queryClient.setQueryData<VarganiSlip[]>(["vargani-slips"], (old) => old?.filter(s => s.id !== id));
+            return { previous };
+        },
+        onError: (err, id, context) => {
+            if (context?.previous) queryClient.setQueryData(["vargani-slips"], context.previous);
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["vargani-slips"] }),
     });
 
     return { ...query, addSlip, updateSlip, confirmPayment, deleteSlip };

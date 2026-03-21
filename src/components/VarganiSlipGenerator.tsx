@@ -73,6 +73,8 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
     });
 
     const slipRef = useRef<HTMLDivElement>(null);
+    // Cache generated slip blobs to avoid re-rendering same slip
+    const slipBlobCache = useRef<Map<string, Blob>>(new Map());
 
     // Preload slip images on mount so html2canvas doesn't re-fetch them each time
     useEffect(() => {
@@ -263,52 +265,70 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         }
     };
 
-    // Generate and download slip image — optimized for speed
-    const handleDownloadSlip = useCallback(async (slip: VarganiSlip) => {
+    // Shared helper: generate slip blob (with cache)
+    const generateSlipBlob = useCallback(async (slip: VarganiSlip): Promise<Blob> => {
+        // Check cache first
+        const cacheKey = `${slip.id}-${slip.status}-${slip.amount}`;
+        const cached = slipBlobCache.current.get(cacheKey);
+        if (cached) return cached;
+
         setActiveSlip(slip);
+        // Wait for React to render the slip preview — needs enough time for state + DOM update
+        await new Promise(r => setTimeout(r, 150));
+
+        const el = document.getElementById('slip-preview-capture');
+        if (!el) throw new Error("Slip preview not found");
+
+        const canvas = await html2canvas(el, {
+            scale: 1.5,              // 1.5x for good quality on WhatsApp
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0,
+            removeContainer: true,
+            width: el.scrollWidth,
+            height: el.scrollHeight,
+        });
+
+        const blob = await new Promise<Blob | null>(resolve =>
+            canvas.toBlob(resolve, 'image/png', 0.92)  // PNG for universal clipboard/share compatibility
+        );
+
+        if (!blob) throw new Error("Blob generation failed");
+
+        // Cache for future use
+        slipBlobCache.current.set(cacheKey, blob);
+        // Limit cache size to 20 entries
+        if (slipBlobCache.current.size > 20) {
+            const firstKey = slipBlobCache.current.keys().next().value;
+            if (firstKey) slipBlobCache.current.delete(firstKey);
+        }
+
+        return blob;
+    }, []);
+
+    // Generate and download slip image — uses cached blob if available
+    const handleDownloadSlip = useCallback(async (slip: VarganiSlip) => {
         setIsGenerating(true);
-        // Minimal delay just to let React render the off-screen preview
-        await new Promise(r => setTimeout(r, 50));
-
         try {
-            const el = document.getElementById('slip-preview-capture');
-            if (!el) throw new Error("Slip preview not found");
-
-            const canvas = await html2canvas(el, {
-                scale: 1.5,           // 1.5x is crisp enough, 56% faster than 2x
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                allowTaint: true,
-                imageTimeout: 0,      // Don't wait for slow images
-                removeContainer: true, // Clean up cloned DOM immediately
-            });
-
-            // toBlob is async and faster than synchronous toDataURL
-            const blob = await new Promise<Blob | null>(resolve =>
-                canvas.toBlob(resolve, 'image/png', 0.9)
-            );
-
-            if (blob) {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
-                link.href = url;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(url), 500);
-                toast.success("Slip downloaded!");
-            } else {
-                throw new Error("Blob generation failed");
-            }
+            const blob = await generateSlipBlob(slip);
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `Vargani_${slip.slip_number || 'slip'}.png`;
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 500);
+            toast.success("Slip downloaded!");
         } catch (err) {
             console.error("Slip generation error:", err);
             toast.error("Slip download failed. Please try again.");
         } finally {
             setIsGenerating(false);
         }
-    }, []);
+    }, [generateSlipBlob]);
 
     // Detect iOS/iPadOS (iPad reports as MacIntel with touch in newer versions)
     const isIOS = useCallback(() => {
@@ -317,8 +337,16 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     }, []);
 
-    // Share slip via WhatsApp — opens chat IMMEDIATELY, then downloads slip in background
-    // Fully compatible with iOS/iPad Safari, Android, and Desktop browsers
+    // Detect mobile device (any phone/tablet)
+    const isMobile = useCallback(() => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }, []);
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SHARE SLIP — bulletproof WhatsApp opening + slip download
+    // Works on: iPhone, iPad, Android, Laptop, Desktop — all browsers
+    // ═══════════════════════════════════════════════════════════════════
     const handleShareSlip = useCallback(async (slip: VarganiSlip) => {
         if (slip.status !== 'paid') {
             toast.error("Slip can only be shared after payment is confirmed!");
@@ -327,7 +355,6 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
 
         // 1. Sanitize mobile number
         const mobile = (slip.mobile || "").toString().replace(/\D/g, '').slice(-10);
-
         if (!mobile) {
             toast.error("No valid WhatsApp number found for this donor.");
             return;
@@ -336,115 +363,95 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
         // 2. Build WhatsApp message
         const msg = `*राहुल मित्र मंडल - वर्गणी पावती*\n\nName: ${slip.name}\nShop: ${slip.shop_name}\nAmount: ₹${Number(slip.amount).toLocaleString('en-IN')}\nSlip No: ${slip.slip_number}\nDate: ${slip.confirmed_at ? new Date(slip.confirmed_at).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN')}\n\nConfirmed by: ${slip.confirmed_by_name || 'Admin'}\n\nदेणगी रोख मिळाली. आभारी आहोत! 🙏\n\nPowered by https://buzyhub.in/`;
 
-        // 3. OPEN WHATSAPP IMMEDIATELY — synchronously inside the click handler
-        //    iOS Safari blocks window.open after async calls, so we use location.href as fallback.
-        //    wa.me works universally: WhatsApp app on mobile, WhatsApp Web on desktop.
         const waUrl = `https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`;
 
-        if (isIOS()) {
-            // iOS: window.open is unreliable — use direct navigation
-            // We open in same tab on iOS because Safari aggressively blocks popups
-            window.location.href = waUrl;
-        } else {
-            window.open(waUrl, '_blank');
+        // ─── STEP 3: OPEN WHATSAPP — triple fallback approach ─────────
+        // Method A: window.open() — MUST be synchronous, before any await
+        // This is the most reliable method on iPad/iPhone Safari for opening URLs
+        // Safari treats this as proper navigation when called in a click handler
+        let whatsappOpened = false;
+        try {
+            const win = window.open(waUrl, '_blank');
+            if (win) whatsappOpened = true;
+        } catch (_e) { /* blocked */ }
+
+        // Method B: Hidden <a> element if window.open was blocked
+        if (!whatsappOpened) {
+            try {
+                const a = document.createElement('a');
+                a.href = waUrl;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                whatsappOpened = true;
+            } catch (_e2) { /* also blocked */ }
         }
 
-        // 4. NOW generate the slip image in the background (download + clipboard)
-        setActiveSlip(slip);
-        setIsGenerating(true);
+        // Method C: If both failed, show clickable toast with manual link
+        if (!whatsappOpened) {
+            toast.error(
+                "Could not open WhatsApp. Tap to open manually.",
+                {
+                    duration: 10000,
+                    action: {
+                        label: "Open WhatsApp",
+                        onClick: () => { window.location.href = waUrl; }
+                    }
+                }
+            );
+        }
 
-        toast.info("Opening WhatsApp... Generating slip in background...", { duration: 2000 });
+        // ─── STEP 4: Generate slip in background ─────────────────────
+        // Small delay to let the browser process the WhatsApp navigation
+        // before starting heavy canvas work
+        await new Promise(r => setTimeout(r, 100));
+        setIsGenerating(true);
+        toast.info("Generating slip image...", { duration: 2000 });
 
         try {
-            // Minimal delay to let React render the off-screen slip preview
-            await new Promise(r => setTimeout(r, 100));
+            const blob = await generateSlipBlob(slip);
+            const fileName = `Vargani_${slip.slip_number || 'slip'}.png`;
 
-            const el = document.getElementById('slip-preview-capture');
-            if (!el) throw new Error("Slip preview element not found");
+            // Auto-download the slip on ALL platforms
+            const objectUrl = URL.createObjectURL(blob);
+            const dlLink = document.createElement('a');
+            dlLink.download = fileName;
+            dlLink.href = objectUrl;
+            dlLink.style.display = 'none';
+            document.body.appendChild(dlLink);
+            dlLink.click();
+            document.body.removeChild(dlLink);
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
 
-            const canvas = await html2canvas(el, {
-                scale: 1.5,           // 1.5x is crisp enough, much faster than 2x
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                allowTaint: true,
-                imageTimeout: 0,
-                removeContainer: true,
-            });
-
-            const blob = await new Promise<Blob | null>(resolve =>
-                canvas.toBlob(resolve, 'image/png', 0.9)
-            );
-
-            if (blob) {
-                const fileName = `Vargani_${slip.slip_number || 'slip'}.png`;
-
-                // iOS/iPad: Use Web Share API (native share sheet) — best UX on Apple devices
-                // <a download> click doesn't work reliably on iOS Safari
-                if (isIOS() && navigator.share && typeof File !== 'undefined') {
-                    try {
-                        const file = new File([blob], fileName, { type: 'image/png' });
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Vargani Slip',
-                            });
-                            toast.success("✅ Slip shared successfully!", { duration: 3000 });
-                        } else {
-                            // Fallback: open image in new tab so user can long-press to save
-                            const objectUrl = URL.createObjectURL(blob);
-                            window.open(objectUrl, '_blank');
-                            toast.success("✅ Slip opened! Long-press the image to save it.", { duration: 5000 });
-                            setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
-                        }
-                    } catch (shareErr: any) {
-                        // User cancelled the share sheet — not an error
-                        if (shareErr?.name !== 'AbortError') {
-                            console.warn("Share API error:", shareErr);
-                            const objectUrl = URL.createObjectURL(blob);
-                            window.open(objectUrl, '_blank');
-                            toast.success("✅ Slip opened! Long-press to save.", { duration: 5000 });
-                            setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
-                        }
-                    }
-                } else {
-                    // Desktop / Android: Auto-download works reliably
-                    const objectUrl = URL.createObjectURL(blob);
-                    const downloadLink = document.createElement('a');
-                    downloadLink.download = fileName;
-                    downloadLink.href = objectUrl;
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-
-                    // Copy slip image to clipboard (for paste in WhatsApp chat)
-                    try {
-                        if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-                            // iOS Safari requires blob wrapped in a Promise inside ClipboardItem
-                            const clipboardItem = new ClipboardItem({
-                                'image/png': Promise.resolve(blob)
-                            });
-                            await navigator.clipboard.write([clipboardItem]);
-                        }
-                    } catch (clipErr) {
-                        console.warn("Clipboard copy not supported:", clipErr);
-                    }
-
-                    toast.success("✅ Slip downloaded & copied! Paste it in the WhatsApp chat (Ctrl+V).", {
-                        duration: 5000,
+            // Try to copy to clipboard (works on desktop Chrome/Edge, some mobile)
+            let copiedToClipboard = false;
+            try {
+                if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                    const clipboardItem = new ClipboardItem({
+                        'image/png': Promise.resolve(blob)
                     });
+                    await navigator.clipboard.write([clipboardItem]);
+                    copiedToClipboard = true;
                 }
+            } catch (_clipErr) {
+                // Clipboard not supported — silent fail
+            }
+
+            if (copiedToClipboard) {
+                toast.success("✅ Slip downloaded & copied! Paste in WhatsApp (Ctrl+V).", { duration: 3000 });
             } else {
-                throw new Error("Failed to generate slip image blob");
+                toast.success("✅ Slip downloaded! Attach it in WhatsApp chat.", { duration: 3000 });
             }
         } catch (err) {
             console.error("Slip generation error:", err);
-            toast.error("Slip download failed. WhatsApp chat was opened — try downloading the slip separately.");
+            toast.error("Slip download failed. WhatsApp chat was opened.");
         } finally {
             setIsGenerating(false);
         }
-    }, [isIOS]);
+    }, [generateSlipBlob, isMobile]);
 
     const groupedSlips = useMemo(() => {
         if (groupBy === 'none') return [['All Slips', filteredSlips]] as const;
@@ -622,17 +629,16 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             {/* Slips Table */}
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
                 {/* Desktop Header */}
-                <div className="hidden lg:block overflow-x-auto">
-                    <div className="min-w-[900px]">
-                        <div className="grid grid-cols-12 gap-3 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
+                <div className="hidden xl:block overflow-x-auto">
+                    <div className="min-w-[800px]">
+                        <div className="grid grid-cols-12 gap-2 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
                             <div className="col-span-1">Slip #</div>
                             <div className="col-span-2">Name / Shop</div>
                             <div className="col-span-1">Amount</div>
                             <div className="col-span-2">Mobile</div>
-                            <div className="col-span-1">Status</div>
-                            <div className="col-span-2">Date / Info</div>
-                            <div className="col-span-1">Mode</div>
-                            <div className="col-span-2 text-right">Actions</div>
+                            <div className="col-span-2">Status / Mode</div>
+                            <div className="col-span-1">Date / Info</div>
+                            <div className="col-span-3 text-right">Actions</div>
                         </div>
                     </div>
                 </div>
@@ -651,8 +657,8 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                 ) : (
                     <>
                         {/* Desktop Table */}
-                        <div className="hidden lg:block overflow-x-auto">
-                            <div className="min-w-[900px]">
+                        <div className="hidden xl:block overflow-x-auto">
+                            <div className="min-w-[800px]">
                                 {groupedSlips.map(([groupName, groupList]) => (
                                     <div key={groupName}>
                                         {groupBy !== 'none' && (
@@ -662,85 +668,87 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                                             </div>
                                         )}
                                         {groupList.map((slip) => (
-                                    <div key={slip.id} className="grid grid-cols-12 gap-3 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
+                                    <div key={slip.id} className="grid grid-cols-12 gap-2 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
                                         <div className="col-span-1">
                                             <span className="text-[11px] font-bold text-[#1D4ED8] font-mono">{slip.slip_number?.split('-').pop()}</span>
                                         </div>
-                                        <div className="col-span-2">
-                                            <div className="font-bold text-[#0F172A] text-sm">{slip.name}</div>
-                                            <div className="text-[10px] text-[#0F172A]/50 flex items-center gap-1">
-                                                <Store size={10} /> {slip.shop_name}
+                                        <div className="col-span-2 min-w-0">
+                                            <div className="font-bold text-[#0F172A] text-sm truncate">{slip.name}</div>
+                                            <div className="text-[10px] text-[#0F172A]/50 flex items-center gap-1 truncate">
+                                                <Store size={10} className="shrink-0" /> {slip.shop_name}
                                             </div>
                                         </div>
                                         <div className="col-span-1">
                                             <div className="font-black text-[#0F172A] text-sm">{'\u20B9'}{Number(slip.amount).toLocaleString('en-IN')}</div>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 min-w-0">
                                             {slip.mobile ? (
                                                 <a href={`https://wa.me/91${slip.mobile}`} target="_blank" rel="noreferrer"
                                                     className="text-sm text-green-600 font-mono hover:underline flex items-center gap-1">
-                                                    <Phone size={12} /> {slip.mobile}
+                                                    <Phone size={12} className="shrink-0" /> {slip.mobile}
                                                 </a>
                                             ) : (
                                                 <span className="text-xs text-gray-400 italic">No mobile</span>
                                             )}
                                         </div>
+                                        {/* Status + Mode merged */}
+                                        <div className="col-span-2">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                {slip.status === 'paid' ? (
+                                                    <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 flex items-center gap-1 w-fit">
+                                                        <CheckCircle2 size={12} /> Paid
+                                                    </span>
+                                                ) : (
+                                                    <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 flex items-center gap-1 w-fit">
+                                                        <Clock size={12} /> Pending
+                                                    </span>
+                                                )}
+                                                {slip.payment_mode && (
+                                                    <span className="text-[9px] font-bold text-[#1D4ED8] bg-blue-50 px-1.5 py-0.5 rounded uppercase">
+                                                        {slip.payment_mode}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
                                         <div className="col-span-1">
                                             {slip.status === 'paid' ? (
-                                                <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 flex items-center gap-1 w-fit">
-                                                    <CheckCircle2 size={12} /> Paid
-                                                </span>
-                                            ) : (
-                                                <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 flex items-center gap-1 w-fit">
-                                                    <Clock size={12} /> Pending
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="col-span-2">
-                                            {slip.status === 'paid' ? (
                                                 <div>
-                                                    <div className="text-[10px] text-green-600 font-bold">{slip.confirmed_by_name}</div>
+                                                    <div className="text-[10px] text-green-600 font-bold truncate">{slip.confirmed_by_name}</div>
                                                     <div className="text-[9px] text-[#0F172A]/40">{slip.confirmed_at && new Date(slip.confirmed_at).toLocaleDateString('en-IN')}</div>
                                                 </div>
                                             ) : (
                                                 <div>
-                                                    <div className="text-[10px] text-amber-600 font-bold flex items-center gap-1"><Calendar size={10} /> Tentative</div>
-                                                    <div className="text-[11px] text-[#0F172A] font-bold">{slip.tentative_date ? new Date(slip.tentative_date).toLocaleDateString('en-IN') : 'Not set'}</div>
+                                                    <div className="text-[10px] text-amber-600 font-bold flex items-center gap-1"><Calendar size={10} /> Tent.</div>
+                                                    <div className="text-[10px] text-[#0F172A] font-bold">{slip.tentative_date ? new Date(slip.tentative_date).toLocaleDateString('en-IN') : '—'}</div>
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="col-span-1">
-                                            {slip.payment_mode && (
-                                                <span className="text-[10px] font-bold text-[#1D4ED8] bg-blue-50 px-2 py-1 rounded-md uppercase tracking-wider">
-                                                    {slip.payment_mode}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="col-span-2 flex justify-end gap-2">
-                                            <button onClick={() => openEditModal(slip)} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-amber-100 transition-all">
-                                                <Edit3 size={12} /> Edit
+                                        {/* Actions — col-span-3 with flex-wrap */}
+                                        <div className="col-span-3 flex justify-end gap-1.5 flex-wrap">
+                                            <button onClick={() => openEditModal(slip)} className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase hover:bg-amber-100 transition-all whitespace-nowrap">
+                                                <Edit3 size={11} /> Edit
                                             </button>
                                             {slip.status === 'pending' && (
                                                 <button onClick={() => handleConfirmPayment(slip.id)} disabled={confirmingId === slip.id}
-                                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm">
-                                                    {confirmingId === slip.id ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 bg-green-500 text-white rounded-lg text-[10px] font-black uppercase hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm whitespace-nowrap">
+                                                    {confirmingId === slip.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle2 size={11} />}
                                                     Confirm
                                                 </button>
                                             )}
                                             {slip.status === 'paid' && (
                                                 <>
-                                                    <button onClick={() => handleDownloadSlip(slip)} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all">
-                                                        <Download size={12} /> Slip
+                                                    <button onClick={() => handleDownloadSlip(slip)} className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-[10px] font-black uppercase hover:bg-blue-100 transition-all whitespace-nowrap">
+                                                        <Download size={11} /> Slip
                                                     </button>
-                                                    <button onClick={() => handleShareSlip(slip)} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 border border-green-200 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-green-100 transition-all">
-                                                        <Share2 size={12} /> Share
+                                                    <button onClick={() => handleShareSlip(slip)} className="flex items-center gap-1 px-2.5 py-1.5 bg-green-50 text-green-600 border border-green-200 rounded-lg text-[10px] font-black uppercase hover:bg-green-100 transition-all whitespace-nowrap">
+                                                        <Share2 size={11} /> Share
                                                     </button>
                                                 </>
                                             )}
                                             {!isSubAdmin && (
                                                 <button onClick={() => { if (window.confirm("Delete this entry?")) deleteSlip.mutate(slip.id); }}
                                                     className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                                    <Trash2 size={14} />
+                                                    <Trash2 size={13} />
                                                 </button>
                                             )}
                                         </div>
@@ -752,7 +760,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                         </div>
 
                         {/* Mobile & Tablet Card View */}
-                        <div className="lg:hidden divide-y divide-gray-50">
+                        <div className="xl:hidden divide-y divide-gray-50">
                             {groupedSlips.map(([groupName, groupList]) => (
                                 <div key={groupName}>
                                     {groupBy !== 'none' && (
@@ -813,14 +821,16 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                                         </div>
                                     )}
 
-                                    <div className="flex gap-2 pt-1">
+                                    <div className="flex gap-2 pt-2">
                                         <button onClick={() => openEditModal(slip)}
-                                            className="flex items-center justify-center gap-1 py-2 px-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl text-[10px] font-black uppercase">
+                                            className="flex items-center justify-center gap-1 py-2.5 px-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl text-[10px] font-black uppercase active:scale-95"
+                                            style={{ minHeight: '44px' }}>
                                             <Edit3 size={12} /> Edit
                                         </button>
                                         {slip.status === 'pending' && (
                                             <button onClick={() => handleConfirmPayment(slip.id)} disabled={confirmingId === slip.id}
-                                                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-green-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-600 disabled:opacity-50">
+                                                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-green-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-600 disabled:opacity-50 active:scale-95"
+                                                style={{ minHeight: '44px' }}>
                                                 {confirmingId === slip.id ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
                                                 Confirm Payment
                                             </button>
@@ -828,18 +838,21 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                                         {slip.status === 'paid' && (
                                             <>
                                                 <button onClick={() => handleDownloadSlip(slip)}
-                                                    className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl text-[10px] font-black uppercase">
+                                                    className="flex-1 flex items-center justify-center gap-1 py-2.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl text-[10px] font-black uppercase active:scale-95"
+                                                    style={{ minHeight: '44px' }}>
                                                     <Download size={12} /> Download
                                                 </button>
                                                 <button onClick={() => handleShareSlip(slip)}
-                                                    className="flex-1 flex items-center justify-center gap-1 py-2 bg-green-50 text-green-600 border border-green-200 rounded-xl text-[10px] font-black uppercase">
+                                                    className="flex-1 flex items-center justify-center gap-1 py-2.5 bg-green-50 text-green-600 border border-green-200 rounded-xl text-[10px] font-black uppercase active:scale-95"
+                                                    style={{ minHeight: '44px' }}>
                                                     <Share2 size={12} /> WhatsApp
                                                 </button>
                                             </>
                                         )}
                                         {!isSubAdmin && (
                                             <button onClick={() => { if (window.confirm("Delete?")) deleteSlip.mutate(slip.id); }}
-                                                className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl">
+                                                className="p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl active:scale-95"
+                                                style={{ minHeight: '44px', minWidth: '44px' }}>
                                                 <Trash2 size={14} />
                                             </button>
                                         )}
@@ -857,9 +870,10 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             <AnimatePresence>
                 {isFormOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                        <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
-                            className="bg-white rounded-2xl w-full max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4">
+                        <motion.div initial={{ scale: 0.95, y: 100 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 100 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[92vh] sm:max-h-[90vh]">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
                                     <h3 className="text-xl font-display font-black text-[#0F172A]">New Vargani Entry</h3>
@@ -979,10 +993,11 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                                 </AnimatePresence>
                             </div>
 
-                            <div className="flex gap-3 mt-8">
-                                <button onClick={() => setIsFormOpen(false)} className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                            <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                                <button onClick={() => setIsFormOpen(false)} className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]" style={{ minHeight: '48px' }}>Cancel</button>
                                 <button onClick={handleSubmit} disabled={addSlip.isPending}
-                                    className={`flex-1 py-3 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 ${formData.paymentStatus === 'paid' ? 'bg-green-500 hover:bg-green-600' : 'bg-amber-500 hover:bg-amber-600'}`}>
+                                    className={`flex-1 py-3.5 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 active:scale-[0.98] ${formData.paymentStatus === 'paid' ? 'bg-green-500 hover:bg-green-600' : 'bg-amber-500 hover:bg-amber-600'}`}
+                                    style={{ minHeight: '48px' }}>
                                     {addSlip.isPending ? <Loader2 size={16} className="animate-spin" /> : formData.paymentStatus === 'paid' ? <><CheckCircle2 size={16} /> Confirm & Generate Slip</> : <><Clock size={16} /> Save as Pending</>}
                                 </button>
                             </div>
@@ -995,9 +1010,10 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             <AnimatePresence>
                 {isEditOpen && editingSlip && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                        <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
-                            className="bg-white rounded-2xl w-full max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+                        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4">
+                        <motion.div initial={{ scale: 0.95, y: 100 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 100 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[92vh] sm:max-h-[90vh]">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
                                     <h3 className="text-xl font-display font-black text-[#0F172A]">Edit Vargani Entry</h3>
@@ -1091,11 +1107,12 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                                 </AnimatePresence>
                             </div>
 
-                            <div className="flex gap-3 mt-8">
+                            <div className="flex gap-3 mt-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
                                 <button onClick={() => { setIsEditOpen(false); setEditingSlip(null); }}
-                                    className="flex-1 py-3 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200">Cancel</button>
+                                    className="flex-1 py-3.5 text-[#0F172A]/70 font-bold text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-[0.98]" style={{ minHeight: '48px' }}>Cancel</button>
                                 <button onClick={handleEditSubmit} disabled={updateSlip.isPending}
-                                    className="flex-1 py-3 text-white font-bold text-sm rounded-xl bg-[#1D4ED8] hover:bg-[#B94A15] flex items-center justify-center gap-2 disabled:opacity-50">
+                                    className="flex-1 py-3.5 text-white font-bold text-sm rounded-xl bg-[#1D4ED8] hover:bg-[#B94A15] flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98]"
+                                    style={{ minHeight: '48px' }}>
                                     {updateSlip.isPending ? <Loader2 size={16} className="animate-spin" /> : <><Edit3 size={16} /> Save Changes</>}
                                 </button>
                             </div>

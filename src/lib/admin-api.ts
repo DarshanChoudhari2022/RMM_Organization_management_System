@@ -12,8 +12,8 @@ export const useMembers = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["members", year],
-        staleTime: 15_000,
-        gcTime: 300_000,
+        staleTime: 2 * 60 * 1000,   // 2 min — reduce network calls
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -103,6 +103,16 @@ export const useMembers = (year?: number) => {
             if (error) throw error;
             createLog("Member Deleted", `Deleted member with ID ${id}`);
         },
+        // Optimistic delete
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ["members"] });
+            const previous = queryClient.getQueryData<Member[]>(["members", year]);
+            queryClient.setQueryData<Member[]>(["members", year], (old) => old?.filter(m => m.id !== id));
+            return { previous };
+        },
+        onError: (err, id, context) => {
+            if (context?.previous) queryClient.setQueryData(["members", year], context.previous);
+        },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
     });
 
@@ -116,8 +126,8 @@ export const useTasks = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["tasks", year],
-        staleTime: 15_000,
-        gcTime: 300_000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -195,8 +205,8 @@ export const useTaskResponses = (taskId?: string) => {
 
     const query = useQuery({
         queryKey: ["task-responses", taskId],
-        staleTime: 15_000,
-        gcTime: 180_000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -257,8 +267,8 @@ export const useExpenses = (year?: number) => {
 
     const query = useQuery({
         queryKey: ["expenses", year],
-        staleTime: 15_000,
-        gcTime: 300_000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -326,6 +336,16 @@ export const useExpenses = (year?: number) => {
             if (error) throw error;
             createLog("Expense Deleted", `Deleted expense ID: ${id}`);
         },
+        // Optimistic delete
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ["expenses"] });
+            const previous = queryClient.getQueryData(["expenses", year]);
+            queryClient.setQueryData<Expense[]>(["expenses", year], (old) => old?.filter(e => e.id !== id));
+            return { previous };
+        },
+        onError: (err, id, context) => {
+            if (context?.previous) queryClient.setQueryData(["expenses", year], context.previous);
+        },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["expenses"] }),
     });
 
@@ -362,8 +382,8 @@ export const useSuppliers = () => {
 
     const query = useQuery({
         queryKey: ["suppliers"],
-        staleTime: 30_000,
-        gcTime: 360_000,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 15 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -437,6 +457,16 @@ export const useSuppliers = () => {
             if (error) throw error;
             createLog("Supplier Deleted", `Deleted supplier ID: ${id}`);
         },
+        // Optimistic delete
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ["suppliers"] });
+            const previous = queryClient.getQueryData<Supplier[]>(["suppliers"]);
+            queryClient.setQueryData<Supplier[]>(["suppliers"], (old) => old?.filter(s => s.id !== id));
+            return { previous };
+        },
+        onError: (err, id, context) => {
+            if (context?.previous) queryClient.setQueryData(["suppliers"], context.previous);
+        },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
     });
 
@@ -468,8 +498,8 @@ export const useInvitations = () => {
 
     const query = useQuery({
         queryKey: ["invitations"],
-        staleTime: 30_000,
-        gcTime: 360_000,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 15 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -516,8 +546,8 @@ export const useInvitations = () => {
 export const useLogs = () => {
     return useQuery({
         queryKey: ["system-logs"],
-        staleTime: 30_000,
-        gcTime: 600_000,
+        staleTime: 2 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         queryFn: async () => {
@@ -542,11 +572,25 @@ export const useLogs = () => {
     });
 };
 
+// Cache user name for logging — avoid repeated profile lookups
+let _logUserCache: { userId: string; userName: string; exp: number } | null = null;
+
 // Fire-and-forget: don't await this — mutations should not wait for logging
 export const createLog = (action: string, details: string) => {
     // Run in background, never block the caller
     (async () => {
         try {
+            // Use cached user if available
+            if (_logUserCache && Date.now() < _logUserCache.exp) {
+                await supabase.from('audit_logs').insert([{
+                    action,
+                    details,
+                    user_id: _logUserCache.userId,
+                    user_name: _logUserCache.userName
+                }]);
+                return;
+            }
+
             const { data: { session } } = await supabase.auth.getSession();
             const user = session?.user;
 
@@ -558,6 +602,9 @@ export const createLog = (action: string, details: string) => {
                     .eq('auth_user_id', user.id)
                     .single();
                 if (profile?.display_name) userName = profile.display_name;
+
+                // Cache for 10 min
+                _logUserCache = { userId: user.id, userName: userName || '', exp: Date.now() + 10 * 60 * 1000 };
             }
 
             await supabase.from('audit_logs').insert([{

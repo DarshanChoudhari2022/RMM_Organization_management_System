@@ -1553,26 +1553,26 @@ const LetterheadTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Mobile Mode Toggle */}
-      <div className="lg:hidden flex p-1 bg-gray-100 rounded-2xl border border-gray-100 mb-4">
+      {/* Mobile Mode Toggle (Show on screens smaller than xl - iPad Landscape included) */}
+      <div className="xl:hidden flex p-1 bg-gray-100 rounded-2xl border border-gray-100 mb-4 overflow-hidden">
         <button
           onClick={() => setActiveMode('edit')}
-          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeMode === 'edit' ? 'bg-[#1D4ED8] text-white shadow-md' : 'text-gray-500'}`}
+          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeMode === 'edit' ? 'bg-[#1D4ED8] text-white shadow-md' : 'text-gray-500 hover:text-[#0F172A]'}`}
         >
           Edit Details
         </button>
         <button
           onClick={() => setActiveMode('preview')}
-          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeMode === 'preview' ? 'bg-[#1D4ED8] text-white shadow-md' : 'text-gray-500'}`}
+          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeMode === 'preview' ? 'bg-[#1D4ED8] text-white shadow-md' : 'text-gray-500 hover:text-[#0F172A]'}`}
         >
           View Preview
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-8 items-start">
-        {/* Controls */}
-        <div className={`xl:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden lg:block' : ''}`}>
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar sticky top-4">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        {/* Controls - Hide on small screens when in preview mode */}
+        <div className={`xl:col-span-4 space-y-6 ${activeMode === 'preview' ? 'hidden xl:block' : 'block'}`}>
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto custom-scrollbar sticky top-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xl font-display font-black text-[#0F172A]">Letter Details</h3>
               <div className="text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] bg-[#1D4ED8]/5 px-2 py-1 rounded">Editor</div>
@@ -1765,24 +1765,24 @@ const LetterheadTab = () => {
           </div>
         </div>
 
-        {/* Preview Container - Improved Responsive Handling */}
-        <div className={`xl:col-span-8 ${activeMode === 'edit' ? 'hidden lg:block' : ''}`}>
+        {/* Preview Container - Scaled for Tablet/Desktop */}
+        <div className={`xl:col-span-8 ${activeMode === 'edit' ? 'hidden xl:block' : 'block'}`}>
           <div className="flex flex-col items-center">
-            {/* Download Button - Desktop only */}
-            <div className="hidden lg:flex w-full justify-end mb-6">
+            {/* Download Button - Visible on Desktop side-by-side OR in Tablet/Mobile Preview mode */}
+            <div className={`w-full flex justify-end mb-6 ${activeMode === 'preview' ? 'flex' : 'hidden xl:flex'}`}>
               <button
                 onClick={downloadPDF}
-                className="flex items-center gap-2 bg-[#1D4ED8] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#B84D19] transition-all shadow-lg hover:shadow-orange-200/50 active:scale-95 group"
+                className="flex items-center gap-2 bg-[#1D4ED8] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#B84D19] transition-all shadow-lg hover:shadow-orange-200/50 active:scale-95 group w-full sm:w-auto justify-center sm:justify-start"
               >
                 <Download size={18} className="group-hover:-translate-y-1 transition-transform" />
                 Download PDF
               </button>
             </div>
 
-            {/* Paper Container Wrapper */}
-            <div className="w-full bg-gray-200/50 backdrop-blur-sm rounded-[40px] p-4 md:p-12 lg:p-16 border-2 border-dashed border-gray-300 flex justify-center items-start overflow-hidden min-h-[850px] shadow-inner mb-20">
-              {/* Scale Wrapper for Responsive Viewport */}
-              <div className="origin-top transition-transform bg-white shadow-2xl scale-[0.35] sm:scale-[0.5] md:scale-[0.7] lg:scale-[0.8] xl:scale-90 2xl:scale-100">
+            {/* Paper Container Wrapper - Refined responsive padding and overflow */}
+            <div className="w-full bg-gray-200/50 backdrop-blur-sm rounded-[40px] p-4 sm:p-8 md:p-12 lg:p-16 border-2 border-dashed border-gray-300 flex justify-center items-start overflow-hidden min-h-[500px] lg:min-h-[850px] shadow-inner mb-20 relative">
+              {/* Scale Wrapper with iPad-specific breakpoints */}
+              <div className="origin-top transition-all duration-500 bg-white shadow-2xl scale-[0.4] sm:scale-[0.55] md:scale-[0.65] lg:scale-[0.8] xl:scale-[0.7] 2xl:scale-[0.85]">
                 {/* A4 Frame (Capture Target) */}
                 <div
                   id="letter-preview"
@@ -2059,9 +2059,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col md:flex-row font-sans overflow-hidden">
-      {/* Mobile Header */}
-      <div className="md:hidden bg-white p-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-30 shrink-0 shadow-sm">
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col lg:flex-row font-sans overflow-hidden">
+      {/* Mobile & Tablet Header (Show on screens smaller than lg) */}
+      <div className="lg:hidden bg-white p-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-30 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <div>
@@ -2092,8 +2092,8 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <aside className={`
-                fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none
-                md:relative md:translate-x-0
+                fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
+                lg:relative lg:translate-x-0
                 ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
         <div className="p-8 border-b border-gray-50 bg-white flex flex-col gap-4">
@@ -2151,7 +2151,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] md:h-screen">
+      <main className="flex-1 relative overflow-hidden flex flex-col h-[calc(100vh-65px)] lg:h-screen">
         {/* Header with Global Year Selector */}
         <div className="bg-white border-b border-gray-100 p-4 sm:px-6 lg:px-12 flex items-center justify-between shrink-0">
           <h1 className="text-xl md:text-2xl font-black text-[#0F172A] capitalize">{activeTab}</h1>

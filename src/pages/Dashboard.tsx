@@ -178,7 +178,7 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
       </div>
 
       {/* List - Scrollable Table for desktop, Card view for tablet/mobile */}
-      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden xl:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -279,7 +279,7 @@ const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean })
       </div>
 
       {/* Members Card View (Tablet & Mobile) */}
-      <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
         {members?.map((member) => {
           const vargani = member.varganiHistory.find(v => v.year === year);
           const isPaid = vargani?.paid;
@@ -784,7 +784,7 @@ const ExpensesTab = ({ year }: { year: number }) => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden xl:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[900px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -862,7 +862,7 @@ const ExpensesTab = ({ year }: { year: number }) => {
       </div>
 
       {/* List - Mobile & Tablet View */}
-      <div className="lg:hidden space-y-4">
+      <div className="xl:hidden space-y-4">
         {filteredExpenses.length === 0 ? (
           <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#0F172A]/60 text-sm">No expenses found for {year}.</div>
         ) : (
@@ -1067,7 +1067,7 @@ const SuppliersTab = () => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden xl:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[1000px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -1080,12 +1080,12 @@ const SuppliersTab = () => {
             </div>
           </div>
         </div>
-        {suppliers?.length === 0 ? (
+        {!suppliers || suppliers.length === 0 ? (
           <div className="p-10 text-center text-[#0F172A]/60 text-sm">No suppliers found.</div>
         ) : (
           <div className="overflow-x-auto">
             <div className="min-w-[1000px]">
-              {suppliers?.map((sup) => {
+              {suppliers.map((sup) => {
                 const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
                 return (
                   <div key={sup.id} className="grid grid-cols-12 gap-4 p-4 border-b border-gray-50 items-center hover:bg-[#FDFBF7] transition-colors">
@@ -1162,11 +1162,11 @@ const SuppliersTab = () => {
       </div>
 
       {/* List - Mobile & Tablet View */}
-      <div className="lg:hidden space-y-4">
-        {suppliers?.length === 0 ? (
+      <div className="xl:hidden space-y-4">
+        {!suppliers || suppliers.length === 0 ? (
           <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#0F172A]/60 text-sm">No suppliers found.</div>
         ) : (
-          suppliers?.map((sup) => {
+          suppliers.map((sup) => {
             const progress = (sup.paid_amount || 0) / (sup.total_amount || 1) * 100;
             return (
               <div key={sup.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">

@@ -513,29 +513,29 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                 </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {/* Stats - Responsive Grid for all screens */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Total Entries</div>
-                    <div className="text-xl md:text-3xl font-black text-[#0F172A]">{stats.total}</div>
+                    <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-[#0F172A]">{stats.total}</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-green-600 mb-1 md:mb-2">Collected</div>
-                    <div className="text-xl md:text-3xl font-black text-green-600">{'\u20B9'}{stats.totalCollected.toLocaleString('en-IN')}</div>
+                    <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-green-600">{'\u20B9'}{stats.totalCollected.toLocaleString('en-IN')}</div>
                     <div className="text-[10px] text-green-600/60 mt-1 hidden md:block">{stats.paidCount} Paid</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-red-500 mb-1 md:mb-2">Pending</div>
-                    <div className="text-xl md:text-3xl font-black text-red-500">{'\u20B9'}{stats.totalPending.toLocaleString('en-IN')}</div>
+                    <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-red-500">{'\u20B9'}{stats.totalPending.toLocaleString('en-IN')}</div>
                     <div className="text-[10px] text-red-500/60 mt-1 hidden md:block">{stats.pendingCount} Pending</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-green-100 rounded-2xl shadow-sm bg-green-50/30">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-green-700 mb-1 md:mb-2">Paid Slips</div>
-                    <div className="text-xl md:text-3xl font-black text-green-700">{stats.paidCount}</div>
+                    <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-green-700">{stats.paidCount}</div>
                 </div>
                 <div className="p-4 md:p-6 bg-white border border-orange-100 rounded-2xl shadow-sm bg-orange-50/30">
                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] mb-1 md:mb-2">Pending Slips</div>
-                    <div className="text-xl md:text-3xl font-black text-[#1D4ED8]">{stats.pendingCount}</div>
+                    <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-[#1D4ED8]">{stats.pendingCount}</div>
                 </div>
             </div>
 
@@ -622,7 +622,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
             {/* Slips Table */}
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
                 {/* Desktop Header */}
-                <div className="hidden md:block overflow-x-auto">
+                <div className="hidden lg:block overflow-x-auto">
                     <div className="min-w-[900px]">
                         <div className="grid grid-cols-12 gap-3 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
                             <div className="col-span-1">Slip #</div>
@@ -651,7 +651,7 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                 ) : (
                     <>
                         {/* Desktop Table */}
-                        <div className="hidden md:block overflow-x-auto">
+                        <div className="hidden lg:block overflow-x-auto">
                             <div className="min-w-[900px]">
                                 {groupedSlips.map(([groupName, groupList]) => (
                                     <div key={groupName}>
@@ -751,8 +751,8 @@ const VarganiSlipTab = ({ year }: { year?: number }) => {
                             </div>
                         </div>
 
-                        {/* Mobile Cards */}
-                        <div className="md:hidden divide-y divide-gray-50">
+                        {/* Mobile & Tablet Card View */}
+                        <div className="lg:hidden divide-y divide-gray-50">
                             {groupedSlips.map(([groupName, groupList]) => (
                                 <div key={groupName}>
                                     {groupBy !== 'none' && (

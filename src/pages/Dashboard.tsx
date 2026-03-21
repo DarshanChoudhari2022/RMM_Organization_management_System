@@ -82,7 +82,7 @@ const YearSelector = ({ selected, onChange }: { selected: number, onChange: (y: 
 
 // --- Tabs ---
 
-const MembersTab = ({ year }: { year: number }) => {
+const MembersTab = ({ year, isSubAdmin }: { year: number, isSubAdmin: boolean }) => {
   const { data: members, addMember, deleteMember, updateVargani } = useMembers();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newMember, setNewMember] = useState({ name: "", phone: "", role: "Member" });
@@ -144,41 +144,41 @@ const MembersTab = ({ year }: { year: number }) => {
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+      {/* Stats - Responsive Grid for all screens */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Total Members</div>
-          <div className="text-xl md:text-3xl font-black text-[#0F172A]">{stats.total}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-[#0F172A]">{stats.total}</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Member Vargani</div>
-          <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-green-600">₹{stats.collected.toLocaleString()}</div>
           <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.paid} Members Paid</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Slip Vargani</div>
-          <div className="text-xl md:text-3xl font-black text-green-600">₹{stats.slipCollected.toLocaleString()}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-green-600">₹{stats.slipCollected.toLocaleString()}</div>
           <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.slipEntriesCount} Slips Paid</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60 mb-1 md:mb-2">Pending (Members)</div>
-          <div className="text-xl md:text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-red-500">₹{stats.pending.toLocaleString()}</div>
           <div className="text-[10px] text-[#0F172A]/60 mt-1 hidden md:block">{stats.total - stats.paid} Pending</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm bg-orange-50/30 border-orange-100">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#1D4ED8] mb-1 md:mb-2">Mandal Expenses</div>
-          <div className="text-xl md:text-3xl font-black text-[#1D4ED8]">₹{stats.mandalExpenses.toLocaleString()}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-[#1D4ED8]">₹{stats.mandalExpenses.toLocaleString()}</div>
           <div className="text-[10px] text-[#1D4ED8]/60 mt-1 hidden md:block">Paid by Mandal</div>
         </div>
         <div className="p-4 md:p-6 bg-white border border-gray-100 rounded-2xl shadow-sm bg-blue-50/30 border-blue-100">
           <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1 md:mb-2">Remaining Balance</div>
-          <div className="text-xl md:text-3xl font-black text-blue-600">₹{stats.remainingBalance.toLocaleString()}</div>
+          <div className="text-xl md:text-2xl 2xl:text-3xl font-black text-blue-600">₹{stats.remainingBalance.toLocaleString()}</div>
           <div className="text-[10px] text-blue-600/60 mt-1 hidden md:block">Available Funds</div>
         </div>
       </div>
 
-      {/* List - Scrollable Table for all screens */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      {/* List - Scrollable Table for desktop, Card view for tablet/mobile */}
+      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -276,6 +276,47 @@ const MembersTab = ({ year }: { year: number }) => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Members Card View (Tablet & Mobile) */}
+      <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+        {members?.map((member) => {
+          const vargani = member.varganiHistory.find(v => v.year === year);
+          const isPaid = vargani?.paid;
+          const amount = vargani?.amount || 1500;
+          return (
+            <div key={member.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-bold text-[#0F172A] text-lg leading-tight">{member.name}</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.1em] text-[#0F172A]/40 mt-1">{member.role}</div>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPaid ? "bg-green-100 text-green-700" : "bg-red-50 text-red-500"}`}>
+                  {isPaid ? "Paid" : "Pending"}
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-xl flex justify-between items-center">
+                <div className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]/40">Vargani ({year})</div>
+                <div className="text-lg font-black text-[#0F172A]">₹{amount}</div>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                <a href={`tel:${member.phone}`} className="flex items-center gap-2 text-sm text-[#0F172A]/70 font-mono">
+                  <Phone size={14} className="text-[#1D4ED8]" /> {member.phone}
+                </a>
+                <div className="flex gap-2">
+                  <button onClick={() => {
+                        const msg = `नमस्कार ${member.name}, कृपया ${year} ची वर्गणी (₹${amount}) जमा करावी ही विनंती. - राहुल मित्र मंडळ`;
+                        window.open(`https://wa.me/91${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                  }} className="p-3 bg-green-50 text-green-600 rounded-xl"><MessageSquare size={18} /></button>
+                  <button onClick={() => updateVargani.mutate({ id: member.id, paid: !isPaid, year: year, amount })} className="p-3 bg-blue-50 text-[#1D4ED8] rounded-xl"><CheckCircle2 size={18} /></button>
+                  {!isSubAdmin && <button onClick={() => deleteMember.mutate(member.id)} className="p-3 bg-red-50 text-red-400 rounded-xl"><Trash2 size={18} /></button>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Add Modal */}
@@ -517,7 +558,7 @@ const TasksTab = ({ year }: { year: number }) => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredTasks.length === 0 ? (
           <div className="col-span-full py-20 text-center bg-[#F5F5F0] rounded-3xl border border-dashed border-gray-200">
             <div className="text-[#0F172A]/60 font-medium">No tasks scheduled yet.</div>
@@ -743,7 +784,7 @@ const ExpensesTab = ({ year }: { year: number }) => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[900px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -820,8 +861,8 @@ const ExpensesTab = ({ year }: { year: number }) => {
         )}
       </div>
 
-      {/* List - Mobile View */}
-      <div className="md:hidden space-y-4">
+      {/* List - Mobile & Tablet View */}
+      <div className="lg:hidden space-y-4">
         {filteredExpenses.length === 0 ? (
           <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#0F172A]/60 text-sm">No expenses found for {year}.</div>
         ) : (
@@ -1026,7 +1067,7 @@ const SuppliersTab = () => {
       </div>
 
       {/* List - Desktop View */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <div className="min-w-[1000px]">
             <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-[#F5F5F0] text-[10px] font-black uppercase tracking-widest text-[#0F172A]/60">
@@ -1120,8 +1161,8 @@ const SuppliersTab = () => {
         )}
       </div>
 
-      {/* List - Mobile View */}
-      <div className="md:hidden space-y-4">
+      {/* List - Mobile & Tablet View */}
+      <div className="lg:hidden space-y-4">
         {suppliers?.length === 0 ? (
           <div className="p-10 text-center bg-white rounded-2xl border border-gray-100 text-[#0F172A]/60 text-sm">No suppliers found.</div>
         ) : (
@@ -2170,7 +2211,7 @@ const Dashboard = () => {
               transition={{ duration: 0.3 }}
               className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-20"
             >
-              {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} />}
+              {activeTab === "members" && !isSubAdmin && <MembersTab year={selectedYear} isSubAdmin={isSubAdmin} />}
               {activeTab === "tasks" && !isSubAdmin && <TasksTab year={selectedYear} />}
               {activeTab === "expenses" && !isSubAdmin && <ExpensesTab year={selectedYear} />}
               {activeTab === "invitations" && !isSubAdmin && <InvitationsTab />}
